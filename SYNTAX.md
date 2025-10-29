@@ -106,3 +106,146 @@ class Person {
 }
 ```
 - Typy i średniki nie są obowiązkowe, ale staramy się je pisać.
+
+
+# Pętle
+## C#
+```cs
+while (x > 5) {
+    ...
+}
+
+for (int i = 0; i < 10; i++) {
+    ...
+}
+
+foreach (User user in userList) {
+    ...
+}
+```
+
+
+```kotlin
+while (x > 5) {
+    ...
+}
+
+for (i in 0..10) {
+    ...
+}
+
+for (user in userList) {
+    ...
+}
+```
+
+```ts
+while (x > 5) {
+    ...
+}
+
+for (let i = 0; i < 10; i++) {
+    ...
+}
+
+for (let user of userList) {
+    ...
+}
+```
+
+# If / switch
+## C#
+```cs
+if (user1.Equals(user2)) {
+    ...
+} else if (...) {
+    ...
+} else {
+    ...
+}
+
+List<Animal> zoo = ...;
+
+switch (animal) {
+    // animal == burek
+    case burek:
+        ...
+        break;
+    
+    // animal jest typu Cat 
+    case is Cat:
+        ...
+        break;
+    
+    // animal jest w zoo
+    case Animal x when zoo.Contains(x):
+        ...
+        break;
+        
+    // Inne przypadki
+    default:
+        ...
+        break;
+}
+```
+
+## Kotlin
+```kotlin
+if (user1 == user2) {
+    ...
+} else if (...) {
+    ...
+} else {
+    ...
+}
+
+
+val zoo: List<Animal> = ...
+
+when (animal) {
+    // animal == burek
+    burek -> ...
+    
+    // animal jest w zoo
+    in zoo -> ...
+    
+    // animal jest typu Cat
+    is Cat -> ...
+    
+    // inne przypadki
+    else -> ...
+}
+```
+
+## TypeScript
+```ts
+if (user1 === user2) { // potórjne ===
+    ...
+} else if (...) {
+    ...
+} else {
+    ...
+}
+
+const zoo: Animal[] = ...;
+
+switch (animal) {
+    // animal === burek
+    case burek:
+        ...
+        break;
+        
+    default:
+        // animal jest w zoo
+        if (zoo.includes(animal)) {
+            ...
+        // animal jest typu Cat
+        else if (animal isInstanceOf Cat) {
+            ...
+        // inne przyapdki
+        } else {
+            ...
+        }
+        break;
+}
+```
