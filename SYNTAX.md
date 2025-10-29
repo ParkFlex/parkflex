@@ -124,7 +124,7 @@ foreach (User user in userList) {
 }
 ```
 
-
+## Kotlin
 ```kotlin
 while (x > 5) {
     ...
@@ -139,6 +139,7 @@ for (user in userList) {
 }
 ```
 
+## TypeScript
 ```ts
 while (x > 5) {
     ...
