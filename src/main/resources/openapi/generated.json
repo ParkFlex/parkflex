@@ -1,0 +1,123 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "ParkFlex",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "If someone goes to \"/\" then redirect them to the frontend",
+                "responses": {
+                    "302": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/demo": {
+            "put": {
+                "summary": "Save provided note to the database.",
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DemoNoteModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
+            "get": {
+                "summary": "Retrieve a note from the database by title.",
+                "parameters": [
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemoNoteModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/web": {
+            "get": {
+                "summary": "Redirect /web to /web/ which is handled by the single page application routes",
+                "responses": {
+                    "302": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DemoNoteModel": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "contents": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiErrorModel": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "context": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

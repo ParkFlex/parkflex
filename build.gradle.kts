@@ -55,14 +55,20 @@ ktor {
     @OptIn(OpenApiPreview::class)
     openApi {
         title = "ParkFlex"
-        //version = "2.1"
-        //summary = "This is a sample API"
-        //description = "This is a longer description"
-        //termsOfService = "https://example.com/terms/"
-        //contact = "contact@example.com"
-        //license = "Apache/1.0"
 
-        // Location of the generated specification (defaults to openapi/generated.json)
-        //target = project.layout.buildDirectory.file("generated.json")
+        // Kinda a hack but this way we can keep the spec in the repo
+        target = project.layout.projectDirectory.file("src/main/resources/openapi/generated.json")
+    }
+}
+
+tasks.register("apiDoc") {
+    group = "documentation"
+
+    dependsOn("clean")
+    dependsOn("build")
+    dependsOn("buildOpenApi")
+
+    doLast {
+        println("API Documentation generated")
     }
 }
