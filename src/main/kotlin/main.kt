@@ -12,6 +12,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.plugins.swagger.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -82,10 +83,13 @@ fun main(args: Array<String>) {
                 apiRoutes()
             }
 
-            /// If someone goes to "/" then redirect them to the frontend
+            // If someone goes to "/" then redirect them to the frontend
             get("/") {
                 call.respondRedirect("/web/")
             }
+
+            // API documentation
+            swaggerUI(path = "swagger", swaggerFile = "openapi/generated.json")
         }
     } //end of val server = ...
 
