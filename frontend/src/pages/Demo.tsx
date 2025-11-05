@@ -20,10 +20,10 @@ export function Demo() {
     async function saveNote() {
         const noteJson: string = JSON.stringify(note);
 
-        const requestURL: string = "/api/demo/save";
+        const requestURL: string = "/api/demo";
 
         const requestOptions: RequestInit = {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -40,7 +40,7 @@ export function Demo() {
     }
 
     async function getNote() {
-        const requestURL: string = `/api/demo/get?title=${note.title}`;
+        const requestURL: string = `/api/demo?title=${note.title}`;
 
         const response = await fetch(requestURL);
 

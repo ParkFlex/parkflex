@@ -13,45 +13,52 @@ fun Route.demoRoutes() {
     /**
      * Save provided note to the database.
      */
-    post("/save") {
+    put {
         // Get note from the request body
         val noteFromRequest: DemoNoteModel = call.receive<DemoNoteModel>()
 
-        runDB {
-            // Is there a note with this title already in the database?
-            val noteFromDB: DemoNoteEntity? =
-                DemoNoteEntity
-                    .all()   // Get all notes from the database
-                    .find { it.title == noteFromRequest.title } // Find the one that has the matching title
+        // Is there a note with this title already in the database?
+        val noteFromDB: DemoNoteEntity? = runDB {
+            DemoNoteEntity
+                .all()   // Get all notes from the database
+                .find { it.title == noteFromRequest.title } // Find the one that has the matching title
+        }
 
-            // Create a new note if there is no note matching this title
-            if (noteFromDB == null)
+        // Create a new note if there is no note matching this title
+        if (noteFromDB == null) {
+            runDB {
                 DemoNoteEntity.new {
                     title = noteFromRequest.title
                     contents = noteFromRequest.contents
                 }
-            // Update the note, if there is one that matches the title
-            else
-                noteFromDB.contents = noteFromRequest.contents
-        }
+            }
 
-        call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.Created)
+
+            // Update the note, if there is one that matches the title
+        } else {
+            runDB {
+                noteFromDB.contents = noteFromRequest.contents
+            }
+
+            call.respond(HttpStatusCode.OK)
+        }
     }
 
     /**
      * Retrieve a note from the database by title.
      */
-    get("/get") {
+    get {
 
         /* Query parameters are stored in the URL,
-         * For example: /api/demo/get?title=test1
+         * For example: GET /api/demo?title=test1
          */
         val noteTitle: String? = call.queryParameters["title"] // ?title=...
 
         if (noteTitle == null) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("No title parameter provided", "/api/demo/get handler")
+                message = ApiErrorModel("No title parameter provided", "/api/demo GET handler")
             )
         } else {
 
@@ -66,7 +73,7 @@ fun Route.demoRoutes() {
             if (note == null) {
                 call.respond(
                     status = HttpStatusCode.NotFound,
-                    message = ApiErrorModel("Note not found", "/api/demo/get")
+                    message = ApiErrorModel("Note not found", "/api/demo GET handler")
                 )
             } else {
                 // Create note model from the note entity
