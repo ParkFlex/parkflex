@@ -18,6 +18,13 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
 import parkflex.db.DemoNoteTable
+import parkflex.db.ParameterTable
+import parkflex.db.PenaltyTable
+import parkflex.db.ReservationTable
+import parkflex.db.SpotEntity
+import parkflex.db.SpotTable
+import parkflex.db.UserEntity
+import parkflex.db.UserTable
 import parkflex.models.ApiErrorModel
 
 /**
@@ -67,7 +74,14 @@ fun main(args: Array<String>) {
 
         /* Create database tables */
         runDB {
-            SchemaUtils.create(DemoNoteTable)
+            SchemaUtils.create(
+                DemoNoteTable,
+                SpotTable,
+                UserTable,
+                ReservationTable,
+                PenaltyTable,
+                ParameterTable
+            )
         }
 
 
