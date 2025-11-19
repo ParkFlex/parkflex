@@ -2,6 +2,14 @@ import {type ChangeEvent, useState} from "react";
 import {DemoNoteModel} from "../models/DemoNoteModel.tsx";
 import {ApiErrorModel} from "../models/ApiErrorModel.tsx";
 
+// Prime components
+import {InputText} from "primereact/inputtext";
+import {InputTextarea} from "primereact/inputtextarea";
+import {Button} from "primereact/button";
+
+// Prime icons
+import 'primeicons/primeicons.css';
+
 export function Demo() {
     const initialNote = new DemoNoteModel("", "");
 
@@ -57,16 +65,16 @@ export function Demo() {
 
     return (
         <>
-            title:
-            <input type="text" defaultValue={note.title} onChange={setTitle}/>
+            <label htmlFor="note-title">title:</label>
+            <InputText id="note-title" value={note.title} onChange={setTitle}/>
             <br/>
 
-            contents:
-            <textarea value={note.contents} onChange={setContents}/>
+            <label htmlFor="note-contents">contents:</label>
+            <InputTextarea id="note-contents" value={note.contents} onChange={setContents}/>
             <br/>
 
-            <button onClick={saveNote}>Save note</button>
-            <button onClick={getNote}>Get note</button>
+            <Button icon="pi pi-save" onClick={saveNote} label="Save note"/>
+            <Button icon="pi pi-expand" onClick={getNote} label="Get note"/>
         </>
     );
 }

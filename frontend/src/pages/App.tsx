@@ -3,6 +3,8 @@ import reactLogo from '../assets/react.svg'
 import viteLogo from '/vite.svg'
 import '../App.css'
 
+import {Button} from "primereact/button";
+
 export function App() {
     const [count, setCount] = useState(0)
 
@@ -22,9 +24,7 @@ export function App() {
             </div>
             <h1>Vite + React</h1>
             <div className="card">
-                <button onClick={increment}>
-                    count is {count}
-                </button>
+                <Button onClick={increment} label={`count is ${count}`}/>
                 <p>
                     Edit <code>src/App.tsx</code> and save to test HMR
                 </p>
