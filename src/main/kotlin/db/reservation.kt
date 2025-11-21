@@ -26,4 +26,8 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
     var user by UserEntity referencedOn ReservationTable.user
 
     companion object : LongEntityClass<ReservationEntity>(ReservationTable)
+
+    val hasPenalty: Boolean
+        get() = PenaltyEntity.find { PenaltyTable.reservation eq id }.empty().not()
+
 }
