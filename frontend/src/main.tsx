@@ -9,6 +9,8 @@ import './index.css';
 import {App} from './pages/App.tsx';
 import {Demo} from "./pages/Demo.tsx";
 import {NotFound} from "./pages/NotFound.tsx";
+import {History} from "./pages/History.tsx";
+
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -17,6 +19,7 @@ createRoot(document.getElementById('root')!).render(
                 <Routes>
                     <Route path="/web" element={<App/>}/>
                     <Route path="/web/demo" element={<Demo/>}/>
+                    <Route path="/web/history" element={<History/>}/>
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </BrowserRouter>
