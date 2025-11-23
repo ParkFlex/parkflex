@@ -155,4 +155,3 @@ fun generateMockData() {
     println("   - Penalties: 2")
     println("   - Parameters: 4")
 }
-
