@@ -1,4 +1,8 @@
-export const postReservation = async (spot_id: Number, start: Date, end: Date) => {
+export const postReservation = async (
+  spot_id: number,
+  start: Date,
+  end: Date
+) => {
   // const url = `/api/reservation`
   // fetch(url, {
   //   method: "POST",
@@ -18,8 +22,16 @@ export const postReservation = async (spot_id: Number, start: Date, end: Date) =
   //
   //   .catch(() => {
   //     alert("Blad w wyslaniu danych")
-  //     return { message: "adsf" }
+  //     return apiErrorModel("Network error", "posting reservation")
   //   })
 
-  return { message: "ok" }
-}
+  console.log(
+    "Making reservation for spot ",
+    spot_id,
+    " from ",
+    start,
+    " to ",
+    end
+  );
+  return { message: "ok" };
+};

@@ -1,6 +1,6 @@
 // mocki, pozniej fetch
 
-export type SpotRole = "normal" | "blank"
+export type SpotRole = "normal" | "blank";
 
 export interface Spot {
   id: number;
@@ -8,7 +8,7 @@ export interface Spot {
   reservations: {
     start: string;
     time: number;
-  }[]
+  }[];
 }
 
 export interface SpotState {
@@ -18,25 +18,29 @@ export interface SpotState {
 }
 
 export const getSpot = async (id: number): Promise<Spot> => {
-  const url = `/api/spot?spot_id=${id}`
+  const url = `/api/spot?spot_id=${id}`;
+  console.log("Fetching spot from ", url);
   return {
     id: 1,
     role: "normal",
     reservations: [
       {
         start: "2025-11-16T7:30",
-        time: 30000
+        time: 30000,
       },
     ],
-  }
-}
+  };
+};
 
-export const getSpots = async (start: Date, end: Date): Promise<SpotState[]> => {
-  const url = `/api/spots?start=${start}&end=${end}`
+export const getSpots = async (
+  start: Date,
+  end: Date
+): Promise<SpotState[]> => {
+  const url = `/api/spots?start=${start}&end=${end}`;
+  console.log("Fetching spots from ", url);
   return [
-    { "id": 1, "role": "normal", "occupied": true },
-    { "id": 2, "role": "normal", "occupied": false },
-    { "id": 3, "role": "normal", "occupied": false }
-  ]
-
-}
+    { id: 1, role: "normal", occupied: true },
+    { id: 2, role: "normal", occupied: false },
+    { id: 3, role: "normal", occupied: false },
+  ];
+};

@@ -1,23 +1,22 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Route, Routes, BrowserRouter } from "react-router";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router";
 
-import { PrimeReactProvider } from 'primereact/api';
-import "primereact/resources/themes/md-light-indigo/theme.css";
+import { PrimeReactProvider } from "primereact/api";
 
-import './index.css';
-import { App } from './pages/App.tsx';
+import { Layout } from "./components/Layout.tsx";
+import "./index.css";
 import { NotFound } from "./pages/NotFound.tsx";
-import { ReservationPage } from './pages/reservation_view.tsx';
+import { ParkingPage } from "./pages/reservation_view.tsx";
 
-createRoot(document.getElementById('root')!).render(
-    <PrimeReactProvider>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<App />} />
-                <Route path="/view" element={<ReservationPage />} />
-                <Route path="*" element={<NotFound />} />
-            </Routes>
-        </BrowserRouter>
-    </PrimeReactProvider>
-)
+createRoot(document.getElementById("root")!).render(
+  <PrimeReactProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/parking" element={<ParkingPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </PrimeReactProvider>
+);
