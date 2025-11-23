@@ -1,65 +1,36 @@
 import { useState, useEffect } from 'react';
 import { HistoryEntry } from '../models/HistoryEntry.tsx';
+import axios from 'axios';
 
 export const useHistoryEntries = () => {
     const [entries, setEntries] = useState<HistoryEntry[]>([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchEntries = async () => {
-            setLoading(true);
+            const userId = 1;
 
-            // Mock data - replace with actual API call
-            const mockData: HistoryEntry[] = [
-                {
-                    startTime: new Date('2026-01-15T10:00:00'),
-                    durationMin: 367,
-                    status: 'completed',
-                    spot: 12
-                },
-                {
-                    startTime: new Date('2027-01-16T14:30:00'),
-                    durationMin: 544,
-                    status: 'parked',
-                    spot: 7
-                },
-                {
-                    startTime: new Date('2024-01-17T09:15:00'),
-                    durationMin: 60,
-                    status: 'cancelled',
-                    spot: 23
-                },
-                {
-                    startTime: new Date('2024-01-15T20:00:00'),
-                    durationMin: 367,
-                    status: 'completed',
-                    spot: 12
-                },
-                {
-                    startTime: new Date('2024-01-16T15:30:00'),
-                    durationMin: 544,
-                    status: 'parked',
-                    spot: 7
-                },
-                {
-                    startTime: new Date('2024-01-17T19:15:00'),
-                    durationMin: 60,
-                    status: 'cancelled',
-                    spot: 23
+            try {
+                const resp = await axios.get(`/api/historyEntry?userId=${userId}`);
+
+                const data: Array<{ startTime: string; durationMin: number; status: string; spot: number }> = resp.data;
+                const mapped: HistoryEntry[] = data.map(d => new HistoryEntry(new Date(d.startTime), d.durationMin, d.status, d.spot));
+                setEntries(mapped);
+
+            } catch (err: any) {
+                if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
+                    return;
                 }
-            ];
-
-            setEntries(mockData);
-            setLoading(false);
+                console.error('Error fetching history entries', err);
+                setEntries([]);
+            }
         };
-
         fetchEntries();
     }, []);
 
     const sortedEntries = [...entries].sort((a, b) => {
-        return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+        // entries now have Date objects for startTime
+        return b.startTime.getTime() - a.startTime.getTime();
     });
 
-    return { entries: sortedEntries, loading };
+    return { entries: sortedEntries };
 };
-
