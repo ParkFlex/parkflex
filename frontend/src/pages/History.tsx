@@ -1,6 +1,5 @@
 import { DataView } from 'primereact/dataview';
 import { useHistoryEntries } from '../hooks/useHistoryEntries';
-import { HistoryEntry } from '../models/HistoryEntry.tsx';
 import {formatDate, isSameDay, isBeforeNow, formatDateWeek} from '../utils/dateUtils';
 import {useState} from "react";
 import { Button } from "primereact/button";
@@ -8,6 +7,7 @@ import HistoryEntryComp from "../components/HistoryEntry";
 import {Calendar} from "primereact/calendar";
 import type {Nullable} from "primereact/ts-helpers";
 import { Dialog } from "primereact/dialog";
+import type {HistoryEntry} from "../models/HistoryEntry.tsx";
 
 interface DateHeaderProps {
     date: Date;

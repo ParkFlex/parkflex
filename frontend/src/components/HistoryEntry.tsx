@@ -1,6 +1,6 @@
 import { Card } from 'primereact/card';
-import { HistoryEntry } from "../models/HistoryEntry.tsx";
 import {addMinutes, formatTime, isActiveNow, isBeforeNow} from "../utils/dateUtils";
+import type {HistoryEntry} from "../models/HistoryEntry.tsx";
 
 
 export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {

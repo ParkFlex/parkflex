@@ -1,4 +1,6 @@
-export class HistoryEntry {
-        constructor(public startTime: Date, public durationMin: number, public status: string, public spot: number) {
-        }
+export interface HistoryEntry {
+    startTime: Date;
+    durationMin: number;
+    status: string;
+    spot: number;
 }

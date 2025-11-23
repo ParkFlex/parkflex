@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { HistoryEntry } from '../models/HistoryEntry.tsx';
+
 import axios from 'axios';
+import type {HistoryEntry} from "../models/HistoryEntry.tsx";
 
 export const useHistoryEntries = () => {
     const [entries, setEntries] = useState<HistoryEntry[]>([]);
@@ -9,12 +10,16 @@ export const useHistoryEntries = () => {
         const fetchEntries = async () => {
             const userId = 1;
 
-            try {
-                const resp = await axios.get(`/api/historyEntry?userId=${userId}`);
+            // const json = {
+            //     "userId": userId
+            // }
+            // ===
+            // const json = {userId}
 
-                const data: Array<{ startTime: string; durationMin: number; status: string; spot: number }> = resp.data;
-                const mapped: HistoryEntry[] = data.map(d => new HistoryEntry(new Date(d.startTime), d.durationMin, d.status, d.spot));
-                setEntries(mapped);
+            try {
+                const resp = await axios.get<Array<HistoryEntry>>(`/api/historyEntry`, {params: {userId}});
+
+                setEntries(resp.data);
 
             } catch (err: any) {
                 if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
@@ -28,7 +33,6 @@ export const useHistoryEntries = () => {
     }, []);
 
     const sortedEntries = [...entries].sort((a, b) => {
-        // entries now have Date objects for startTime
         return b.startTime.getTime() - a.startTime.getTime();
     });
 
