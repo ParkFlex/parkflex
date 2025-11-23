@@ -17,13 +17,13 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
+import parkflex.config.AppConfig
+import parkflex.data.generateMockData
 import parkflex.db.DemoNoteTable
 import parkflex.db.ParameterTable
 import parkflex.db.PenaltyTable
 import parkflex.db.ReservationTable
-import parkflex.db.SpotEntity
 import parkflex.db.SpotTable
-import parkflex.db.UserEntity
 import parkflex.db.UserTable
 import parkflex.models.ApiErrorModel
 
@@ -73,7 +73,8 @@ fun main(args: Array<String>) {
         )
 
         /* Create database tables */
-        runDB {
+        transaction {
+            println("Creating database tables...")
             SchemaUtils.create(
                 DemoNoteTable,
                 SpotTable,
@@ -82,8 +83,16 @@ fun main(args: Array<String>) {
                 PenaltyTable,
                 ParameterTable
             )
-        }
+            println("Database tables created successfully")
 
+            /* Generate mock data if enabled */
+            if (AppConfig.ENABLE_MOCK_DATA) {
+                generateMockData()
+                println("Mock data generation completed")
+            } else {
+                println("Mock data generation is disabled")
+            }
+        }
 
         /* Configure routes */
         routing {
