@@ -1,7 +1,7 @@
 import { DataView } from 'primereact/dataview';
 import { useHistoryEntries } from '../hooks/useHistoryEntries';
 import { HistoryEntry } from '../models/HistoryEntry.tsx';
-import {formatDate, isSameDay, isBeforeToday, formatDateWeek} from '../utils/dateUtils';
+import {formatDate, isSameDay, isBeforeNow, formatDateWeek} from '../utils/dateUtils';
 import {useState} from "react";
 import { Button } from "primereact/button";
 import HistoryEntryComp from "../components/HistoryEntry";
@@ -47,7 +47,7 @@ export function History() {
             return <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>Brak rezerwacji</div>;
         }
 
-        let displayItems = onlyNow ? items.filter(entry => !isBeforeToday(new Date(entry.startTime))) : items;
+        let displayItems = onlyNow ? items.filter(entry => !isBeforeNow(new Date(entry.startTime))) : items;
 
         if (dates && dates.length === 2 && dates[0] && dates[1]) {
             const startDate = new Date(dates[0]);
