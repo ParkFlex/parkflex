@@ -1,23 +1,37 @@
-
 import { Card } from 'primereact/card';
 import { HistoryEntry } from "../models/HistoryEntry.tsx";
-import { addMinutes, formatTime } from "../utils/dateUtils";
+import {addMinutes, formatTime, isActiveNow, isBeforeNow} from "../utils/dateUtils";
 
 
 export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
     const startDate = new Date(entry.startTime);
     const endTime = addMinutes(startDate, entry.durationMin);
 
+    type StatusKey = 'kara' | 'aktywny' | 'zakończony' | 'zaplanowany' | 'brak';
+
+    const hasPenalty = ('status' in entry) && entry.status === 'penalty';
+    const activeNow = isActiveNow(entry.startTime, entry.durationMin);
+    const beforeNow = isBeforeNow(entry.startTime);
+
+    let statusKey: StatusKey;
+    if (hasPenalty) {
+        statusKey = 'kara';
+    } else if (activeNow) {
+        statusKey = 'aktywny';
+    } else if (beforeNow) {
+        statusKey = 'zakończony';
+    } else {
+        statusKey = 'zaplanowany';
+    }
+
+
     let color: string;
-    switch (entry.status) {
-        case 'completed':
-            color = 'grey';
+    switch (statusKey) {
+        case 'kara':
+            color = 'red';
             break;
-        case 'parked':
+        case 'aktywny':
             color = '#2196f3';
-            break;
-        case 'cancelled':
-            color = '#f44336';
             break;
         default:
             color = '#666';
@@ -44,7 +58,7 @@ export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
                         color: '#666',
                         textTransform: 'capitalize'
                     }}>
-                        {entry.status}
+                        {statusKey}
                     </div>
                 </div>
                 <div style={{
@@ -61,7 +75,3 @@ export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
         </Card>
     );
 }
-
-
-
-
