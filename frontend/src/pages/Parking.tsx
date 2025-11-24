@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import type { SpotState } from "../api/spots";
 import { getSpots } from "../api/spots";
-import { ReservationGrid } from "../components/reservation/grid";
+import { ParkingGrid } from "../components/reservation/Grid";
 
 export function ParkingPage() {
   const [data, setData] = useState<SpotState[]>([]);
   const defaultStartDate = new Date();
   const defaultEndDate = new Date();
+
   useEffect(() => {
     const callApi = async () => {
       try {
@@ -22,14 +23,7 @@ export function ParkingPage() {
   return (
     <div className="parking-page">
       <h1>Parking View</h1>
-      <ReservationGrid />
-      {data.length > 0 && (
-        <div className="parking-data">
-          {data.map((spot, index) => (
-            <div key={index}>{JSON.stringify(spot)}</div>
-          ))}
-        </div>
-      )}
+      <ParkingGrid spots={data} />
     </div>
   );
 }
