@@ -1,25 +1,25 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import {Route, Routes, BrowserRouter} from "react-router";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router";
 
-import {PrimeReactProvider} from 'primereact/api';
-import "primereact/resources/themes/md-light-indigo/theme.css";
+import { PrimeReactProvider } from "primereact/api";
 
-import './index.css';
-import {App} from './pages/App.tsx';
-import {Demo} from "./pages/Demo.tsx";
-import {NotFound} from "./pages/NotFound.tsx";
+import "./index.css";
+import { NotFound } from "./pages/NotFound.tsx";
+import { ParkingPage } from "./pages/Parking.tsx";
+import { Layout } from "./pages/Layout.tsx";
+import { StrictMode } from "react";
 
-createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <PrimeReactProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/web" element={<App/>}/>
-                    <Route path="/web/demo" element={<Demo/>}/>
-                    <Route path="*" element={<NotFound/>}/>
-                </Routes>
-            </BrowserRouter>
-        </PrimeReactProvider>
-    </StrictMode>
-)
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <PrimeReactProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/parking" element={<ParkingPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </PrimeReactProvider>
+  </StrictMode>
+);
