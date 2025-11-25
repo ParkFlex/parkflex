@@ -15,8 +15,8 @@ createRoot(document.getElementById('root')!).render(
         <PrimeReactProvider>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/web" element={<App/>}/>
-                    <Route path="/web/demo" element={<Demo/>}/>
+                    <Route path="/" element={<App/>}/>
+                    <Route path="/demo" element={<Demo/>}/>
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </BrowserRouter>

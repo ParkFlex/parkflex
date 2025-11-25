@@ -12,9 +12,4 @@ fun Route.frontendRoutes() {
         filesPath = "frontend/dist"
         defaultPage = "index.html"
     }
-
-    // Redirect /web to /web/ which is handled by the single page application routes
-    get {
-        call.respondRedirect("/web/")
-    }
 }

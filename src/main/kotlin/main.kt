@@ -88,18 +88,11 @@ fun main(args: Array<String>) {
         /* Configure routes */
         routing {
             // Route for our frontend (html, css, js)
-            route("/web") {
-                frontendRoutes()
-            }
+            frontendRoutes()
 
             // Route for API calls
             route("/api") {
                 apiRoutes()
-            }
-
-            // If someone goes to "/" then redirect them to the frontend
-            get("/") {
-                call.respondRedirect("/web/")
             }
 
             // API documentation
