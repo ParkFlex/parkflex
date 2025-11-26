@@ -9,6 +9,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -44,6 +45,19 @@ fun main(args: Array<String>) {
 
         }
 
+        // Enable CORS for frontend
+        install(CORS) {
+            allowHost("localhost:5173", schemes = listOf("http"))
+            allowHeader(HttpHeaders.ContentType)
+            allowHeader(HttpHeaders.Authorization)
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+            allowMethod(HttpMethod.Put)
+            allowMethod(HttpMethod.Delete)
+            allowMethod(HttpMethod.Patch)
+            allowMethod(HttpMethod.Options)
+        }
+
         // Allow sending/receiving JSON
         install(ContentNegotiation) {
             json()
@@ -68,7 +82,7 @@ fun main(args: Array<String>) {
         Database.connect(
             url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
             driver = "org.h2.Driver",
-            user = "root" ,
+            user = "root",
             password = ""
         )
 
