@@ -15,17 +15,18 @@ import io.ktor.server.routing.*
 import io.ktor.server.plugins.swagger.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
+
 import parkflex.db.DemoNoteTable
 import parkflex.db.ParameterTable
 import parkflex.db.PenaltyTable
 import parkflex.db.ReservationTable
-import parkflex.db.SpotEntity
 import parkflex.db.SpotTable
-import parkflex.db.UserEntity
 import parkflex.db.UserTable
+
 import parkflex.models.ApiErrorModel
+
+import parkflex.config.ApplicationConfig
 
 /**
  * This is the entrypoint of our program. Here we create the HTTP server and start it.
@@ -33,6 +34,7 @@ import parkflex.models.ApiErrorModel
  * to start the program.
  */
 fun main(args: Array<String>) {
+    val logger = org.slf4j.LoggerFactory.getLogger("main")
 
     // Create a new HTTP server
     val server = embeddedServer(Netty, port = 8080) {
@@ -64,13 +66,32 @@ fun main(args: Array<String>) {
             }
         }
 
-        /* Connect to database */
-        Database.connect(
-            url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-            driver = "org.h2.Driver",
-            user = "root" ,
-            password = ""
-        )
+        /* Setup DB connection */
+
+        if (ApplicationConfig.mariaDB == null) {
+            logger.info("No MariaDB config found. Connecting to in-memory H2 database")
+
+            Database.connect(
+                url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+                driver = "org.h2.Driver",
+                user = "root",
+                password = ""
+            )
+
+            org.h2.tools.Server.createTcpServer("-tcpPort", "9091", "-tcpAllowOthers").start()
+            org.h2.tools.Server.createWebServer("-webPort", "8081", "-webAllowOthers").start()
+        } else {
+            val mdb = ApplicationConfig.mariaDB
+
+            logger.info("MariaDB config found. Connecting to jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}")
+
+            Database.connect(
+                url = "jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}",
+                driver = "org.mariadb.jdbc.Driver",
+                user = mdb.user,
+                password = mdb.password
+            )
+        }
 
         /* Create database tables */
         runDB {

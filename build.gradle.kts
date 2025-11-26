@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.exposed.jdbc)
     implementation(libs.h2)
+    implementation(libs.mariadb)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)
