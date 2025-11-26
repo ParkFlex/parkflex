@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 
-import axios from 'axios';
+import { useAxios } from './useAxios';
 import type {HistoryEntry} from "../models/HistoryEntry.tsx";
 
 export const useHistoryEntries = () => {
+    const axios = useAxios();
     const [entries, setEntries] = useState<HistoryEntry[]>([]);
 
     useEffect(() => {
@@ -17,8 +18,10 @@ export const useHistoryEntries = () => {
             // const json = {userId}
 
             try {
-                const resp = await axios.get<Array<HistoryEntry>>(`/api/historyEntry`, {params: {userId}});
-
+                const resp = await axios.get<Array<HistoryEntry>>(`/historyEntry`, {params: {userId}});
+                for (const respElement of resp.data) {
+                    respElement.startTime = new Date(respElement.startTime);
+                }
                 setEntries(resp.data);
 
             } catch (err: any) {
