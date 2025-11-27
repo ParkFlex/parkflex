@@ -1,6 +1,6 @@
 package parkflex.config
 
-object ApplicationConfig {
+object AppConfig {
     private val logger = org.slf4j.LoggerFactory.getLogger("ApplicationConfig")
 
     private fun getenvWrapped(name: String): String? = runCatching { System.getenv(name) }.getOrNull()
@@ -14,7 +14,7 @@ object ApplicationConfig {
     )
 
     val mariaDB: MariaDBConfig? = run {
-        val schema = listOf(
+        val cfg = listOf(
             "host" to getenvWrapped("PARKFLEX_DB_HOST"),
             "port" to getenvWrapped("PARKFLEX_DB_PORT"),
             "database" to getenvWrapped("PARKFLEX_DB_DATABASE"),
@@ -22,7 +22,7 @@ object ApplicationConfig {
             "password" to getenvWrapped("PARKFLEX_DB_PASSWORD"),
         )
 
-        val validated = ConfigValidation.process(schema) {
+        val validated = ConfigValidation.process(cfg) {
             "Detected partial MariaDB config: $it not set"
         }
 

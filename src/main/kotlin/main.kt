@@ -26,7 +26,7 @@ import parkflex.db.UserTable
 
 import parkflex.models.ApiErrorModel
 
-import parkflex.config.ApplicationConfig
+import parkflex.config.AppConfig
 
 /**
  * This is the entrypoint of our program. Here we create the HTTP server and start it.
@@ -68,7 +68,7 @@ fun main(args: Array<String>) {
 
         /* Setup DB connection */
 
-        if (ApplicationConfig.mariaDB == null) {
+        if (AppConfig.mariaDB == null) {
             logger.info("No MariaDB config found. Connecting to in-memory H2 database")
 
             Database.connect(
@@ -81,7 +81,7 @@ fun main(args: Array<String>) {
             org.h2.tools.Server.createTcpServer("-tcpPort", "9091", "-tcpAllowOthers").start()
             org.h2.tools.Server.createWebServer("-webPort", "8081", "-webAllowOthers").start()
         } else {
-            val mdb = ApplicationConfig.mariaDB
+            val mdb = AppConfig.mariaDB
 
             logger.info("MariaDB config found. Connecting to jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}")
 
