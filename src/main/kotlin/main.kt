@@ -9,25 +9,24 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.plugins.swagger.*
-import io.ktor.server.plugins.cors.routing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
-
+import parkflex.config.AppConfig
+import parkflex.data.generateMockData
 import parkflex.db.DemoNoteTable
 import parkflex.db.ParameterTable
 import parkflex.db.PenaltyTable
 import parkflex.db.ReservationTable
 import parkflex.db.SpotTable
 import parkflex.db.UserTable
-
 import parkflex.models.ApiErrorModel
-
-import parkflex.config.AppConfig
 
 /**
  * This is the entrypoint of our program. Here we create the HTTP server and start it.
@@ -44,7 +43,6 @@ fun main(args: Array<String>) {
         // Print http requests to console
         install(CallLogging) {
             level = Level.INFO
-
         }
 
         // Enable CORS for frontend
@@ -107,7 +105,8 @@ fun main(args: Array<String>) {
         }
 
         /* Create database tables */
-        runDB {
+        transaction {
+            logger.info("Making sure that database schema is present...")
             SchemaUtils.create(
                 DemoNoteTable,
                 SpotTable,
@@ -116,8 +115,16 @@ fun main(args: Array<String>) {
                 PenaltyTable,
                 ParameterTable
             )
-        }
+            logger.info("Database schema is present")
 
+            /* Generate mock data if enabled */
+            if (AppConfig.ENABLE_MOCK_DATA) {
+                generateMockData()
+                logger.info("Mock data generation completed")
+            } else {
+                logger.info("Mock data generation is disabled")
+            }
+        }
 
         /* Configure routes */
         routing {
