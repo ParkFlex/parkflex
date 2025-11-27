@@ -5,4 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
     base: "/web", // account for the frontend route
     plugins: [react()],
+    css: {
+        preprocessorOptions: {
+            scss: {
+                silenceDeprecations: ["global-builtin", "color-functions", "import"]
+            }
+        }
+    }
 })
