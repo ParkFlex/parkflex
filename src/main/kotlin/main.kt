@@ -13,6 +13,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.plugins.swagger.*
+import io.ktor.server.plugins.cors.routing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -42,6 +43,18 @@ fun main(args: Array<String>) {
         install(CallLogging) {
             level = Level.INFO
 
+        }
+
+        // Enable CORS for frontend
+        install(CORS) {
+            allowHost("localhost:5173", schemes = listOf("http"))
+            allowHeaders( { true } )
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+            allowMethod(HttpMethod.Put)
+            allowMethod(HttpMethod.Delete)
+            allowMethod(HttpMethod.Patch)
+            allowMethod(HttpMethod.Options)
         }
 
         // Allow sending/receiving JSON
