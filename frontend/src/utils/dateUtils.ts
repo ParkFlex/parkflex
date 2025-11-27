@@ -34,9 +34,9 @@ export const isSameDay = (date1: Date, date2: Date): boolean => {
            date1.getDate() === date2.getDate();
 };
 
-export const isBeforeNow = (date: Date): boolean => {
-    const now = new Date();
-    return date < new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
+export const endsBeforeNow = (startTime: Date, duration: number): boolean => {
+    const endTime = addMinutes(startTime, duration);
+    return endTime < new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate(), endTime.getHours(), endTime.getMinutes());
 }
 
 export const isActiveNow = (startTime: Date, durationMin: number): boolean => {

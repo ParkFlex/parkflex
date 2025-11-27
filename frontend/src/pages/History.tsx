@@ -1,6 +1,6 @@
 import { DataView } from 'primereact/dataview';
 import { useHistoryEntries } from '../hooks/useHistoryEntries';
-import {formatDate, isSameDay, isBeforeNow, formatDateWeek} from '../utils/dateUtils';
+import {formatDate, isSameDay, endsBeforeNow, formatDateWeek} from '../utils/dateUtils';
 import {useState} from "react";
 import { Button } from "primereact/button";
 import HistoryEntryComp from "../components/HistoryEntry";
@@ -19,11 +19,10 @@ function DateHeader({ date, isFirstEntry }: DateHeaderProps) {
         <div style={{
             fontSize: '1.1rem',
             fontWeight: 'bold',
-            color: '#454f7e',
             marginTop: isFirstEntry ? '0.5rem' : '2rem',
             marginBottom: '1rem',
             paddingBottom: '0.5rem',
-            borderBottom: '2px solid #765b9a',
+            borderBottom: '2px solid #4b807b',
             textAlign: 'start'
         }}>
             {formatDateWeek(date)}
@@ -47,7 +46,7 @@ export function History() {
             return <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>Brak rezerwacji</div>;
         }
 
-        let displayItems = onlyNow ? items.filter(entry => !isBeforeNow(new Date(entry.startTime))) : items;
+        let displayItems = onlyNow ? items.filter(entry => !endsBeforeNow(new Date(entry.startTime),entry.durationMin)) : items;
 
         if (dates && dates.length === 2 && dates[0] && dates[1]) {
             const startDate = new Date(dates[0]);
@@ -117,17 +116,17 @@ export function History() {
                     }}
                     selectionMode="range"
                     inline
-                    style={{ width: '100%' }}
+                    style={{ width: '100%',marginBottom:'24px',marginTop:'24px'}}
                 />
             </Dialog>
 
             <DataView value={entries} listTemplate={(items) => listTemplate(items, onlyNow)}/>
 
             {(onlyNow || (dates && dates.length === 2 && dates[0] && dates[1])) && (
-                <Button label="Historia" raised onClick={() => {
+                <Button raised label="Historia" severity='secondary' onClick={() => {
                     setOnlyNow(false);
                     setDates(null);
-                }} style={{ width: '100%' }} />
+                }} style={{ width: '100%'}} />
             )}
         </div>
     );

@@ -1,5 +1,5 @@
 import { Card } from 'primereact/card';
-import {addMinutes, formatTime, isActiveNow, isBeforeNow} from "../utils/dateUtils";
+import {addMinutes, formatTime, isActiveNow, endsBeforeNow} from "../utils/dateUtils";
 import type {HistoryEntry} from "../models/HistoryEntry.tsx";
 
 
@@ -11,7 +11,7 @@ export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
 
     const hasPenalty = ('status' in entry) && entry.status === 'penalty';
     const activeNow = isActiveNow(entry.startTime, entry.durationMin);
-    const beforeNow = isBeforeNow(entry.startTime);
+    const beforeNow = endsBeforeNow(entry.startTime, entry.durationMin);
 
     let statusKey: StatusKey;
     if (hasPenalty) {
@@ -31,10 +31,10 @@ export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
             color = 'red';
             break;
         case 'aktywny':
-            color = '#2196f3';
+            color = '#4caae6';
             break;
         default:
-            color = '#666';
+            color = '#4b807b';
     }
 
     return (
@@ -64,7 +64,7 @@ export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
                 <div style={{
                     fontSize: '4rem',
                     fontWeight: 'bold',
-                    color: '#454f7e',
+                    color: '#4b807b',
                     marginLeft: '2rem',
                     minWidth: '100px',
                     textAlign: 'center'
