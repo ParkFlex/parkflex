@@ -43,4 +43,12 @@ object AppConfig {
             }
         )
     }
+
+    val ENABLE_MOCK_DATA: Boolean = run {
+        val envValue = System.getenv("ENABLE_MOCK_DATA")
+        logger.info("Environment variable ENABLE_MOCK_DATA = '$envValue'")
+        val result = envValue?.toBoolean() ?: false
+        logger.info("Mock data enabled: $result")
+        result
+    }
 }
