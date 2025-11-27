@@ -13,6 +13,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.plugins.swagger.*
+import io.ktor.server.plugins.cors.routing.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -42,6 +43,18 @@ fun main(args: Array<String>) {
         install(CallLogging) {
             level = Level.INFO
 
+        }
+
+        // Enable CORS for frontend
+        install(CORS) {
+            allowHost("localhost:5173", schemes = listOf("http"))
+            allowHeaders( { true } )
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+            allowMethod(HttpMethod.Put)
+            allowMethod(HttpMethod.Delete)
+            allowMethod(HttpMethod.Patch)
+            allowMethod(HttpMethod.Options)
         }
 
         // Allow sending/receiving JSON
@@ -88,18 +101,11 @@ fun main(args: Array<String>) {
         /* Configure routes */
         routing {
             // Route for our frontend (html, css, js)
-            route("/web") {
-                frontendRoutes()
-            }
+            frontendRoutes()
 
             // Route for API calls
             route("/api") {
                 apiRoutes()
-            }
-
-            // If someone goes to "/" then redirect them to the frontend
-            get("/") {
-                call.respondRedirect("/web/")
             }
 
             // API documentation

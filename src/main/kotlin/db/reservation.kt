@@ -25,5 +25,11 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
     /** Who is the owner of the reservation? */
     var user by UserEntity referencedOn ReservationTable.user
 
+    /** Penalties referring to this reservation */
+    val penalties by PenaltyEntity referrersOn PenaltyTable.reservation
+
+    val hasPenalty: Boolean
+        get() = this.penalties.empty()
+
     companion object : LongEntityClass<ReservationEntity>(ReservationTable)
 }
