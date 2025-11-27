@@ -34,6 +34,7 @@ import parkflex.models.ApiErrorModel
  * to start the program.
  */
 fun main(args: Array<String>) {
+    val logger = org.slf4j.LoggerFactory.getLogger("main")
 
     // Create a new HTTP server
     val server = embeddedServer(Netty, port = 8080) {
@@ -42,14 +43,12 @@ fun main(args: Array<String>) {
         // Print http requests to console
         install(CallLogging) {
             level = Level.INFO
-
         }
 
         // Enable CORS for frontend
         install(CORS) {
             allowHost("localhost:5173", schemes = listOf("http"))
-            allowHeader(HttpHeaders.ContentType)
-            allowHeader(HttpHeaders.Authorization)
+            allowHeaders( { true } )
             allowMethod(HttpMethod.Get)
             allowMethod(HttpMethod.Post)
             allowMethod(HttpMethod.Put)
@@ -78,17 +77,36 @@ fun main(args: Array<String>) {
             }
         }
 
-        /* Connect to database */
-        Database.connect(
-            url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-            driver = "org.h2.Driver",
-            user = "root",
-            password = ""
-        )
+        /* Setup DB connection */
+
+        if (AppConfig.mariaDB == null) {
+            logger.info("No MariaDB config found. Connecting to in-memory H2 database")
+
+            Database.connect(
+                url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+                driver = "org.h2.Driver",
+                user = "root",
+                password = ""
+            )
+
+            org.h2.tools.Server.createTcpServer("-tcpPort", "9091", "-tcpAllowOthers").start()
+            org.h2.tools.Server.createWebServer("-webPort", "8081", "-webAllowOthers").start()
+        } else {
+            val mdb = AppConfig.mariaDB
+
+            logger.info("MariaDB config found. Connecting to jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}")
+
+            Database.connect(
+                url = "jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}",
+                driver = "org.mariadb.jdbc.Driver",
+                user = mdb.user,
+                password = mdb.password
+            )
+        }
 
         /* Create database tables */
         transaction {
-            println("Creating database tables...")
+            logger.info("Making sure that database schema is present...")
             SchemaUtils.create(
                 DemoNoteTable,
                 SpotTable,
@@ -97,32 +115,25 @@ fun main(args: Array<String>) {
                 PenaltyTable,
                 ParameterTable
             )
-            println("Database tables created successfully")
+            logger.info("Database schema is present")
 
             /* Generate mock data if enabled */
             if (AppConfig.ENABLE_MOCK_DATA) {
                 generateMockData()
-                println("Mock data generation completed")
+                logger.info("Mock data generation completed")
             } else {
-                println("Mock data generation is disabled")
+                logger.info("Mock data generation is disabled")
             }
         }
 
         /* Configure routes */
         routing {
             // Route for our frontend (html, css, js)
-            route("/web") {
-                frontendRoutes()
-            }
+            frontendRoutes()
 
             // Route for API calls
             route("/api") {
                 apiRoutes()
-            }
-
-            // If someone goes to "/" then redirect them to the frontend
-            get("/") {
-                call.respondRedirect("/web/")
             }
 
             // API documentation
