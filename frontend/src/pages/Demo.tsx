@@ -1,7 +1,3 @@
-import {type ChangeEvent, useState} from "react";
-import {DemoNoteModel} from "../models/DemoNoteModel.tsx";
-import {ApiErrorModel} from "../models/ApiErrorModel.tsx";
-
 // Prime components
 import {InputText} from "primereact/inputtext";
 import {InputTextarea} from "primereact/inputtextarea";
@@ -9,68 +5,30 @@ import {Button} from "primereact/button";
 
 // Prime icons
 import 'primeicons/primeicons.css';
+import {useNote} from "../hooks/useNote.tsx";
+import {DemoNoteModel} from "../models/DemoNoteModel.tsx";
 
 export function Demo() {
-    const initialNote = new DemoNoteModel("", "");
+    const {saveNote, getNote, setNote, note} = useNote()
 
-    const [note, setNote] = useState(initialNote);
+    const setTitle = (title: string) => {
+        const newNote = new DemoNoteModel(title, note.contents);
+        setNote(newNote);
+    };
 
-    function setTitle(event: ChangeEvent<HTMLInputElement>) {
-        const newNote = new DemoNoteModel(event.target.value, note.contents)
-        setNote(newNote)
-    }
-
-    function setContents(event: ChangeEvent<HTMLTextAreaElement>) {
-        const newNote = new DemoNoteModel(note.title, event.target.value)
-        setNote(newNote)
-    }
-
-    async function saveNote() {
-        const noteJson: string = JSON.stringify(note);
-
-        const requestURL: string = "/api/demo";
-
-        const requestOptions: RequestInit = {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: noteJson
-        };
-
-        const response = await fetch(requestURL, requestOptions);
-
-        if (!response.ok) {
-            const object = await response.json();
-
-            alert(object.message);
-        }
-    }
-
-    async function getNote() {
-        const requestURL: string = `/api/demo?title=${note.title}`;
-
-        const response = await fetch(requestURL);
-
-        const object = await response.json();
-
-        if (response.ok) {
-            const newNote = new DemoNoteModel(object.title, object.contents);
-            setNote(newNote);
-        } else {
-            const error = new ApiErrorModel(object.message, object.context);
-            alert(error.message);
-        }
-    }
+    const setContents = (contents: string) => {
+        const newNote = new DemoNoteModel(note.title, contents);
+        setNote(newNote);
+    };
 
     return (
         <>
             <label htmlFor="note-title">title:</label>
-            <InputText id="note-title" value={note.title} onChange={setTitle}/>
+            <InputText id="note-title" value={note.title} onChange={ev => setTitle(ev.target.value)}/>
             <br/>
 
             <label htmlFor="note-contents">contents:</label>
-            <InputTextarea id="note-contents" value={note.contents} onChange={setContents}/>
+            <InputTextarea id="note-contents" value={note.contents} onChange={ev => setContents(ev.target.value)}/>
             <br/>
 
             <Button icon="pi pi-save" onClick={saveNote} label="Save note"/>
