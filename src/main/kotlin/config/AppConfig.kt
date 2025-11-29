@@ -1,23 +1,17 @@
 package parkflex.config
 
+import org.slf4j.event.Level
+
 /**
  * Application configuration object.
  * Reads configuration values from environment variables.
  */
-object AppConfig {
+class AppConfig : Config {
     private val logger = org.slf4j.LoggerFactory.getLogger("ApplicationConfig")
 
     private fun getenvWrapped(name: String): String? = runCatching { System.getenv(name) }.getOrNull()
 
-    data class MariaDBConfig(
-        val host: String,
-        val port: String,
-        val database: String,
-        val user: String,
-        val password: String
-    )
-
-    val mariaDB: MariaDBConfig? = run {
+    override val mariaDB: MariaDBConfig? = run {
         val cfg = listOf(
             "host" to getenvWrapped("PARKFLEX_DB_HOST"),
             "port" to getenvWrapped("PARKFLEX_DB_PORT"),
@@ -53,11 +47,25 @@ object AppConfig {
      * Set environment variable ENABLE_MOCK_DATA=true to enable.
      * Default: false
      */
-    val ENABLE_MOCK_DATA: Boolean = run {
+    override val ENABLE_MOCK_DATA: Boolean = run {
         val envValue = System.getenv("ENABLE_MOCK_DATA")
         logger.info("Environment variable ENABLE_MOCK_DATA = '$envValue'")
         val result = envValue?.toBoolean() ?: false
         logger.info("Mock data enabled: $result")
         result
     }
+
+    override val ENABLE_H2_SOCKETS: Boolean = runCatching {
+        System.getenv("ENABLE_H2_SOCKETS").toBoolean()
+    }.getOrElse { true }
+
+    override val CALL_LOG_LEVEL: Level = runCatching {
+        when (System.getenv("CALL_LOG_LEVEL").lowercase()) {
+            "info" -> Level.INFO
+            "debug" -> Level.DEBUG
+            "warn" -> Level.WARN
+            "trace" -> Level.TRACE
+            else -> Level.INFO
+        }
+    }.getOrElse { Level.INFO }
 }
