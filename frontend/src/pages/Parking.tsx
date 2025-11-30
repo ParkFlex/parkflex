@@ -60,19 +60,23 @@ export function ParkingPage() {
     callApi();
   }, []);
 
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+
+
   return (
     <div className="parking-page">
       <h1>Parking View</h1>
       <ParkingGrid spots={data} />
+        <div><p>"Selected spot ID:", {selectedId}</p></div>
+        <div style={{margin: '0 auto', width: '80%'}}>
         <div className="parking-spots" style={{
             display: 'grid',
-            width: '80%',
-            // gridTemplateColumns: 'repeat(4, auto)', // 10 column
+            width: '100%',
+            margin: '0 auto',
             gridTemplateColumns: 'auto auto auto auto',
             gridTemplateRows: 'repeat(10, 40px)',    // 4 row
-            gap: '10px',
-            // gridAutoFlow: 'column',
-
+            gap: '10px'
         }}>
 
             {data.length > 0 && data.map((spot, index) => (
@@ -80,9 +84,16 @@ export function ParkingPage() {
                 <Spot key={index}
                         id={spot.id}
                       role={spot.role}
-                      occupied={spot.occupied} />
+                      occupied={spot.occupied}
+                      selectedId={selectedId}
+                      onSelect={setSelectedId}/>
             ))}
 
+        </div>
+        <div>
+            <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
+            <Button label="Zatwierdź"/>
+        </div>
         </div>
     </div>
   );

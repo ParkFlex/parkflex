@@ -6,12 +6,25 @@ interface ParkingViewProps {
   spots: SpotState[];
 }
 
-export function Spot({id,occupied}: SpotState,) {
-    const[color , setColor] = useState("")
+export function Spot({ id, occupied, selectedId, onSelect }: SpotProps) {
+    const isSelected = selectedId === id;
+    const color = occupied ? "#eb2338" : (isSelected ? "#47d147" : undefined);
 
-    return <Button
-        style={{backgroundColor: occupied ? "red" : color}}
-                   onClick={() => setColor("green")}>{id}</Button>
+    function SelectSpot() {
+        if (!occupied){
+            return onSelect(id);
+        }
+    }
+
+    return (
+        <Button
+            style={{
+                backgroundColor: color,
+            }}
+            onClick={SelectSpot}>
+            {id}
+        </Button>
+    );
 }
 
 export const ParkingGrid = ({ spots }: ParkingViewProps) => {
