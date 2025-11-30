@@ -66,7 +66,7 @@ suspend fun Application.configureDB(config: Config) {
         
         if (SpotEntity.all().empty()) {
             SpotEntity.new {
-                role = "standard"
+                role = "normal"
             }
         }
     }
