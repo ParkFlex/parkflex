@@ -10,4 +10,11 @@ export default defineConfig({
         environment: "jsdom",
         globals: true,
     },
-});
+    css: {
+        preprocessorOptions: {
+            scss: {
+                silenceDeprecations: ["global-builtin", "color-functions", "import"],
+            }
+        }
+    }
+})
