@@ -54,12 +54,12 @@ suspend fun Application.configureDB(config: Config) {
         )
         println("Database tables created successfully")
 
-         /* Generate mock data if enabled */
-            if (AppConfig.ENABLE_MOCK_DATA) {
-                generateMockData()
-                println("Mock data generation completed")
-            } else {
-                println("Mock data generation is disabled")
-            }
+        /* Generate mock data if enabled */
+        if (config.ENABLE_MOCK_DATA) {
+            generateMockData()
+            println("Mock data generation completed")
+        } else {
+            println("Mock data generation is disabled")
+        }
     }
 }
