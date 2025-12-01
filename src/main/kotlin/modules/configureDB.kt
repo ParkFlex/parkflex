@@ -50,24 +50,5 @@ suspend fun Application.configureDB(config: Config) {
             PenaltyTable,
             ParameterTable
         )
-
-        // User and Spot mocks for development purposes
-        if (UserEntity.all().empty()) {
-            UserEntity.new {
-                login = "mockuser"
-                fullName = "Mock User"
-                mail = "mock@example.com"
-                hash = "mockhash"
-                plate = "ABC123"
-                role = "user"
-                blocked = false
-            }
-        }
-        
-        if (SpotEntity.all().empty()) {
-            SpotEntity.new {
-                role = "normal"
-            }
-        }
     }
 }
