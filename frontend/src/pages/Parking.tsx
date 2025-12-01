@@ -60,15 +60,13 @@ export function ParkingPage() {
     callApi();
   }, []);
 
+  // selected spot id
   const [selectedId, setSelectedId] = useState<number | null>(null);
-
-
 
   return (
     <div className="parking-page">
       <h1>Parking View</h1>
       <ParkingGrid spots={data} />
-        <div><p>"Selected spot ID:", {selectedId}</p></div>
         <div style={{margin: '0 auto', width: '80%'}}>
         <div className="parking-spots" style={{
             display: 'grid',
@@ -76,6 +74,7 @@ export function ParkingPage() {
             margin: '0 auto',
             gridTemplateColumns: 'auto auto auto auto',
             gridTemplateRows: 'repeat(10, 40px)',    // 4 row
+            gridAutoFlow: 'column',
             gap: '10px'
         }}>
 

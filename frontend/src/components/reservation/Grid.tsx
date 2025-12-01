@@ -1,10 +1,7 @@
 import type { SpotState } from "../../api/spots"
-import {useState} from "react";
 import {Button} from "primereact/button";
+import type { SpotProps } from "../../api/spots";
 
-interface ParkingViewProps {
-  spots: SpotState[];
-}
 
 export function Spot({ id, occupied, selectedId, onSelect }: SpotProps) {
     const isSelected = selectedId === id;
@@ -20,11 +17,16 @@ export function Spot({ id, occupied, selectedId, onSelect }: SpotProps) {
         <Button
             style={{
                 backgroundColor: color,
+                justifyContent: "center",
             }}
             onClick={SelectSpot}>
             {id}
         </Button>
     );
+}
+
+interface ParkingViewProps {
+    spots: SpotState[];
 }
 
 export const ParkingGrid = ({ spots }: ParkingViewProps) => {
