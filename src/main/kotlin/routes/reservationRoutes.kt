@@ -77,17 +77,33 @@ fun Route.reservationRoutes() {
             )
             return@post
         }
-        val endTime: LocalDateTime = startTime.plusSeconds(request.duration)
+        val endTime: LocalDateTime = startTime.plusMinutes(request.duration)
         
+
         // Check for reservation interval conflicts
+        val breakDurationMinutes: Long = runDB {
+            val param = ParameterEntity.find { 
+                ParameterTable.key eq "default_break_between_reservations_duration" 
+            }.firstOrNull()
+
+            return@runDB param?.value?.toLongOrNull() ?: 0L
+        }
+
         val hasConflict: Boolean = runDB {
             ReservationEntity
                 .find { ReservationTable.spot eq request.spot_id }
                 .any { existingReservation ->
                     val existingStart = existingReservation.start
-                    val existingEnd = existingStart.plusSeconds(existingReservation.duration.toLong())
+                    val existingEnd = existingStart.plusMinutes(existingReservation.duration)
                     
-                    existingStart.isBefore(endTime) && startTime.isBefore(existingEnd)
+                    // Add break duration to prevent
+                    // <reservation>---break (0minutes)---<reservation> conflicts
+                    // 08:00-09:00 and 09:00-10:00 is a conflict because driver won't have time to leave
+                    // adjusted by parameter "default_break_between_reservations_duration"
+                    val adjustedExistingEnd = existingEnd.plusMinutes(breakDurationMinutes)
+                    val adjustedExistingStart = existingStart.minusMinutes(breakDurationMinutes)
+
+                    return@any adjustedExistingStart <= endTime && startTime <= adjustedExistingEnd
                 }
         }
 

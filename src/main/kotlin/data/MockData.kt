@@ -148,6 +148,11 @@ fun generateMockData() {
         value = "3"
     }
 
+    ParameterEntity.new {
+        key = "default_break_between_reservations_duration"
+        value = "0" // maybe we want to have some break between reservations?
+    }
+
     println("✅ Mock data generated successfully!")
     println("   - Users: 4 (john.doe, jane.smith, admin, blocked.user)")
     println("   - Spots: 5 (various roles)")
