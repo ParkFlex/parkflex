@@ -27,8 +27,11 @@ export default defineConfig([
         rules: {
             "no-unused-vars": "off",
             "@typescript-eslint/no-unused-vars": "off",
-            '@stylistic/indent':  ["warn", 4],
-            '@stylistic/semi': "warn"
+            '@stylistic/indent': ["warn", 4],
+            '@stylistic/semi': "warn",
+            '@stylistic/max-len': ["warn", {
+                code: 100
+            }]
         }
     },
 ])
