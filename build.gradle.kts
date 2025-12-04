@@ -82,16 +82,12 @@ tasks.register("apiDoc") {
     }
 }
 
-val npmBin =
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.exe"
-    else "npm"
-
 val npmCi = tasks.register<Exec>("npmCi") {
     group = "npm"
 
     workingDir("frontend/")
 
-    commandLine(npmBin, "ci")
+    commandLine("npm", "ci")
 }
 
 val npmBuild = tasks.register<Exec>("npmBuild") {
@@ -101,7 +97,7 @@ val npmBuild = tasks.register<Exec>("npmBuild") {
 
     workingDir("frontend/")
 
-    commandLine(npmBin, "run", "build")
+    commandLine("npm", "run", "build")
 }
 
 val fullBuild = tasks.register("fullBuild") {
