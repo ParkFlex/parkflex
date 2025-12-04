@@ -31,7 +31,8 @@ export default defineConfig([
             '@stylistic/semi': "warn",
             '@stylistic/max-len': ["warn", {
                 code: 100
-            }]
+            }],
+            "@stylistic/object-curly-spacing": ["warn", "always"]
         }
     },
 ])
