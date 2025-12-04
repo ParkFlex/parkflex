@@ -23,14 +23,17 @@ fun Route.historyRoutes() {
             val idLong = id.toLong()
             val user = runDB { UserEntity.findById(idLong) }
             if (user == null) {
-                call.respondText("nie ma user")
+                call.respond(
+                    status = HttpStatusCode.NotFound,
+                    message = ApiErrorModel("User not found", "/api/history GET")
+                )
             }
             val reservations = user!!.reservations.toList()
             var historyList: List<HistoryEntry> = listOf()
             for (reservation in reservations) {
                 val status: String
                 if (reservation.hasPenalty){
-                   status = "penatly"
+                   status = "penalty"
                 }else{
                     status = "ok"
                 }
