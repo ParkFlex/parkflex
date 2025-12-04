@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "lintFix": "eslint --fix .",
+    "lint": "eslint src/",
+    "lintFix": "eslint --fix src/",
     "preview": "vite preview",
     "test": "vitest",
     "testUI": "vitest --ui"
