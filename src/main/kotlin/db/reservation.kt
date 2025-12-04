@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.javatime.*
 
 object ReservationTable : LongIdTable("reservation") {
     val start = datetime("start")
-    val duration = integer("duration")
+    val duration = long("duration")
     val spot = reference("spot", SpotTable.id)
     val user = reference("user", UserTable.id)
 }
@@ -24,6 +24,12 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
 
     /** Who is the owner of the reservation? */
     var user by UserEntity referencedOn ReservationTable.user
+
+    /** Penalties referring to this reservation */
+    val penalties by PenaltyEntity referrersOn PenaltyTable.reservation
+
+    val hasPenalty: Boolean
+        get() = this.penalties.empty()
 
     companion object : LongEntityClass<ReservationEntity>(ReservationTable)
 }
