@@ -9,7 +9,15 @@ import io.ktor.server.routing.*
 fun Route.apiRoutes() {
     route("/user") {
         // some routes here
+        route("/full"){
+        }
+        get("/{id}"){
+            val id = call.parameters["id"]
+
+        }
+
     }
+
 
     route("/demo") {
         demoRoutes()
