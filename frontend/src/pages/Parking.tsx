@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react";
-import type {SpotState} from "../api/spots";
-import {getSpots} from "../api/spots";
-import {ParkingGrid} from "../components/reservation/Grid";
-import {ErrorBanned} from "../components/Banned";
+import { useEffect, useState } from "react";
+import type { SpotState } from "../api/spots";
+import { getSpots } from "../api/spots";
+import { ParkingGrid } from "../components/reservation/Grid";
+import { ErrorBanned } from "../components/Banned";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
