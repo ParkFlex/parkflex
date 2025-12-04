@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.javatime.*
 
 object ReservationTable : LongIdTable("reservation") {
     val start = datetime("start")
-    val duration = integer("duration")
+    val duration = long("duration")
     val spot = reference("spot", SpotTable.id)
     val user = reference("user", UserTable.id)
 }

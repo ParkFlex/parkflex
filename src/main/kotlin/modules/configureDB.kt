@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import parkflex.config.AppConfig
+import parkflex.data.generateMockData
 import parkflex.config.Config
 import parkflex.config.MariaDBConfig
 import parkflex.db.*
@@ -42,6 +43,7 @@ suspend fun Application.configureDB(config: Config) {
 
     /* Create database tables */
     runDB {
+        println("Creating database tables...")
         SchemaUtils.create(
             DemoNoteTable,
             SpotTable,
@@ -50,5 +52,14 @@ suspend fun Application.configureDB(config: Config) {
             PenaltyTable,
             ParameterTable
         )
+        println("Database tables created successfully")
+
+        /* Generate mock data if enabled */
+        if (config.ENABLE_MOCK_DATA) {
+            generateMockData()
+            println("Mock data generation completed")
+        } else {
+            println("Mock data generation is disabled")
+        }
     }
 }
