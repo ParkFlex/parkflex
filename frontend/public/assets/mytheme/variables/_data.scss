@@ -92,7 +92,7 @@ $tableHeaderCellPadding: 1rem 1rem;
 
 /// Background of a table header cell
 /// @group data
-$tableHeaderCellBg: #f8f9fa;
+$tableHeaderCellBg: rgba(212, 226, 218, 0.6);
 
 /// Text color of a table header cell
 /// @group data
@@ -168,7 +168,7 @@ $tableBodyRowTextHoverColor: $textColor;
 
 /// Border for a cell of a table toby row
 /// @group data
-$tableBodyCellBorder: 1px solid rgba(0,0,0,0.08);
+$tableBodyCellBorder: 1px solid #d4e2da;
 
 /// Border width for a cell of a table toby row
 /// @group data
