@@ -28,17 +28,20 @@ fun Route.historyRoutes() {
                     message = ApiErrorModel("User not found", "/api/history GET")
                 )
             }
-            val reservations = user!!.reservations.toList()
+
             var historyList: List<HistoryEntry> = listOf()
-            for (reservation in reservations) {
-                val status: String
-                if (reservation.hasPenalty){
-                   status = "penalty"
-                }else{
-                    status = "ok"
+            runDB {
+                val reservations = user!!.reservations.toList()
+                for (reservation in reservations) {
+                    val status: String
+                    if (reservation.hasPenalty) {
+                        status = "penalty"
+                    } else {
+                        status = "ok"
+                    }
+                    val entry = HistoryEntry(reservation.start, reservation.duration, status, reservation.spot.id.value)
+                    historyList += entry
                 }
-                val entry = HistoryEntry(reservation.start, reservation.duration, status , reservation.spot.id.value)
-                historyList += entry
             }
             call.respond(historyList)
         }

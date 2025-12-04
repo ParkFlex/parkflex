@@ -1,6 +1,16 @@
 package parkflex.models
 
+import kotlinx.serialization.*
 import java.time.LocalDateTime
+import parkflex.LocalDateTimeSerializer
 
-data class HistoryEntry(val startTime: LocalDateTime, val durationMin:Int, val status: String, val spot: Long)
+
+@Serializable
+data class HistoryEntry(
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val startTime: LocalDateTime,
+    val durationMin:Int,
+    val status: String,
+    val spot: Long
+)
 

@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import parkflex.config.AppConfig
 import parkflex.config.Config
 import parkflex.config.MariaDBConfig
+import parkflex.data.generateMockData
 import parkflex.db.*
 import parkflex.runDB
 
@@ -38,6 +39,7 @@ suspend fun Application.configureDB(config: Config) {
             user = mdb.user,
             password = mdb.password
         )
+
     }
 
     /* Create database tables */
@@ -50,5 +52,10 @@ suspend fun Application.configureDB(config: Config) {
             PenaltyTable,
             ParameterTable
         )
+    }
+
+    /* Generate mock data if enabled */
+    if (config.ENABLE_MOCK_DATA) runDB {
+        generateMockData()
     }
 }
