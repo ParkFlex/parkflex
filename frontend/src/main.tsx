@@ -7,8 +7,8 @@ import '../public/assets/mytheme/theme.scss';
 
 import "./index.css";
 import { Demo } from "./pages/Demo.tsx";
-import { NotFound} from "./pages/NotFound.tsx";
-import {ParkingPage } from "./pages/Parking.tsx";
+import { NotFound } from "./pages/NotFound.tsx";
+import { ParkingPage } from "./pages/Parking.tsx";
 import { Layout } from "./pages/Layout.tsx";
 
 createRoot(document.getElementById("root")!).render(

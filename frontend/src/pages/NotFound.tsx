@@ -1,10 +1,10 @@
-import {Link} from "react-router";
+import { Link } from "react-router";
 
 export function NotFound() {
-  return (
-    <>
-      <span>Not found</span>
-      <Link to="/parking">Parking view</Link>
-    </>
-  );
+    return (
+        <>
+            <span>Not found</span>
+            <Link to="/parking">Parking view</Link>
+        </>
+    );
 }

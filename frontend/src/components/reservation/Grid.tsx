@@ -1,5 +1,5 @@
-import type { SpotState } from "../../api/spots"
-import {Button} from "primereact/button";
+import type { SpotState } from "../../api/spots";
+import { Button } from "primereact/button";
 import type { SpotProps } from "../../api/spots";
 
 
@@ -33,7 +33,7 @@ interface ParkingViewProps {
 
 export const ParkingGrid = ({ spots, selectedId, setSelectedId }: ParkingViewProps) => {
     return (
-        <div style={{margin: '0 auto', width: '80%'}}>
+        <div style={{ margin: '0 auto', width: '80%' }}>
             <div className="parking-spots" style={{
                 display: 'grid',
                 width: '100%',
@@ -45,11 +45,11 @@ export const ParkingGrid = ({ spots, selectedId, setSelectedId }: ParkingViewPro
             }}>
                 {spots.length > 0 && spots.map((spot, index) => (
                     <Spot key={index}
-                          id={spot.id}
-                          role={spot.role}
-                          occupied={spot.occupied}
-                          selectedId={selectedId}
-                          onSelect={setSelectedId}/>
+                        id={spot.id}
+                        role={spot.role}
+                        occupied={spot.occupied}
+                        selectedId={selectedId}
+                        onSelect={setSelectedId}/>
                 ))}
             </div>
             <div>
@@ -58,4 +58,4 @@ export const ParkingGrid = ({ spots, selectedId, setSelectedId }: ParkingViewPro
             </div>
         </div>
     );
-}
+};
