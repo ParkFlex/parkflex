@@ -2,6 +2,10 @@ package parkflex.config
 
 import org.slf4j.event.Level
 
+/**
+ * Application configuration object.
+ * Reads configuration values from environment variables.
+ */
 class AppConfig : Config {
     private val logger = org.slf4j.LoggerFactory.getLogger("AppConfig")
 
@@ -38,6 +42,15 @@ class AppConfig : Config {
         )
     }
 
+    override val hosts: List<String> = runCatching {
+        System.getenv("PARKFLEX_HOSTS").split(",")
+    }.getOrDefault(emptyList())
+
+    /**
+     * Whether to populate the database with mock data on startup.
+     * Set environment variable ENABLE_MOCK_DATA=true to enable.
+     * Default: false
+     */
     override val ENABLE_MOCK_DATA: Boolean = run {
         val envValue = System.getenv("ENABLE_MOCK_DATA")
         logger.info("Environment variable ENABLE_MOCK_DATA = '$envValue'")
