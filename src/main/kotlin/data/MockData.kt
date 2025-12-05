@@ -10,7 +10,7 @@ import java.time.LocalDateTime
  * This function should be called within a database transaction context.
  */
 fun generateMockData() {
-    println("Mock data generation is enabled")
+    val logger = org.slf4j.LoggerFactory.getLogger("MockData")
 
     // Create mock users
     val user1 = UserEntity.new {
@@ -150,13 +150,13 @@ fun generateMockData() {
 
     ParameterEntity.new {
         key = "default_break_between_reservations_duration"
-        value = "0" // maybe we want to have some break between reservations?
+        value = "0"
     }
 
-    println("✅ Mock data generated successfully!")
-    println("   - Users: 4 (john.doe, jane.smith, admin, blocked.user)")
-    println("   - Spots: 5 (various roles)")
-    println("   - Reservations: 5")
-    println("   - Penalties: 2")
-    println("   - Parameters: 4")
+    logger.info("✅ Mock data generated successfully!")
+    logger.info("   - Users: 4 (john.doe, jane.smith, admin, blocked.user)")
+    logger.info("   - Spots: 5 (various roles)")
+    logger.info("   - Reservations: 5")
+    logger.info("   - Penalties: 2")
+    logger.info("   - Parameters: 5")
 }
