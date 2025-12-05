@@ -1,14 +1,14 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import {Route, Routes, BrowserRouter} from "react-router";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Route, Routes, BrowserRouter } from "react-router";
 
-import {PrimeReactProvider} from 'primereact/api';
+import { PrimeReactProvider } from 'primereact/api';
 import '../public/assets/mytheme/theme.scss';
 
 import './index.css';
-import {App} from './pages/App.tsx';
-import {Demo} from "./pages/Demo.tsx";
-import {NotFound} from "./pages/NotFound.tsx";
+import { App } from './pages/App.tsx';
+import { Demo } from "./pages/Demo.tsx";
+import { NotFound } from "./pages/NotFound.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -22,4 +22,4 @@ createRoot(document.getElementById('root')!).render(
             </BrowserRouter>
         </PrimeReactProvider>
     </StrictMode>
-)
+);
