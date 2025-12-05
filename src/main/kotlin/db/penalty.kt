@@ -15,9 +15,9 @@ object PenaltyTable : LongIdTable("penalty") {
 class PenaltyEntity(id: EntityID<Long>) : LongEntity(id) {
     var reservation by ReservationEntity referencedOn PenaltyTable.reservation
     var reason by PenaltyTable.reason
-    val paid by PenaltyTable.paid
+    var paid by PenaltyTable.paid
     var fine by PenaltyTable.fine
-    val due by PenaltyTable.due
+    var due by PenaltyTable.due
 
     companion object : LongEntityClass<PenaltyEntity>(PenaltyTable)
 }

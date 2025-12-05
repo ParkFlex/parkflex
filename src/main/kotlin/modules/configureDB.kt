@@ -3,9 +3,11 @@ package parkflex.modules
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.transaction
 import parkflex.config.AppConfig
 import parkflex.config.Config
 import parkflex.config.MariaDBConfig
+import parkflex.data.generateMockData
 import parkflex.db.*
 import parkflex.runDB
 
@@ -41,7 +43,7 @@ suspend fun Application.configureDB(config: Config) {
     }
 
     /* Create database tables */
-    runDB {
+    transaction {
         SchemaUtils.create(
             DemoNoteTable,
             SpotTable,
@@ -50,5 +52,7 @@ suspend fun Application.configureDB(config: Config) {
             PenaltyTable,
             ParameterTable
         )
+
+        if (config.ENABLE_MOCK_DATA) generateMockData()
     }
 }
