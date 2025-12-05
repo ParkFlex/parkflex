@@ -1,9 +1,9 @@
-import {AdminList} from "../components/AdminList.tsx";
+import {AdminHistoryList} from "../components/AdminHistoryList.tsx";
 
 export function Admin(){
   return(
       <div>
-          <AdminList/>
+          <AdminHistoryList/>
       </div>
   );
 }
