@@ -40,6 +40,7 @@ suspend fun Application.configureDB(config: Config) {
             user = mdb.user,
             password = mdb.password
         )
+
     }
 
     /* Create database tables */

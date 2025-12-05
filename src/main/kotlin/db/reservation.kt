@@ -29,7 +29,7 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
     val penalties by PenaltyEntity referrersOn PenaltyTable.reservation
 
     val hasPenalty: Boolean
-        get() = this.penalties.empty()
+        get() = !this.penalties.empty()
 
     companion object : LongEntityClass<ReservationEntity>(ReservationTable)
 }
