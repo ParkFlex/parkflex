@@ -26,9 +26,9 @@ export const ParkingGrid = ({
                     className="parking-spots"
                     style={{
                         display: "grid",
-                        gridTemplateRows: "repeat(6, 120px)",
+                        gridTemplateRows: "repeat(6, min(120px, 10vh))",
                         gridAutoFlow: "column",
-                        gridAutoColumns: "70px",
+                        gridAutoColumns: "min(70px, 12vw)",
                         gap: "10px",
                         border: "2px solid #000",
                         borderRadius: "10px",
