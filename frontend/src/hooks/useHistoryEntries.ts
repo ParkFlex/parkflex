@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 
 import { useAxios } from './useAxios';
-import type {HistoryEntry} from "../models/HistoryEntry.tsx";
+import type { HistoryEntry } from "../models/HistoryEntry.tsx";
+import { isAxiosError } from "axios";
 
 export const useHistoryEntries = () => {
     const axios = useAxios();
@@ -18,22 +19,29 @@ export const useHistoryEntries = () => {
             // const json = {userId}
 
             try {
-                const resp = await axios.get<Array<HistoryEntry>>(`/historyEntry`, {params: {userId}});
+                const resp = await axios.get<Array<HistoryEntry>>(
+                    `/historyEntry`,
+                    { params: { userId } }
+                );
                 for (const respElement of resp.data) {
                     respElement.startTime = new Date(respElement.startTime);
                 }
                 setEntries(resp.data);
 
-            } catch (err: any) {
-                if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
-                    return;
+            } catch (err: unknown) {
+                if (isAxiosError(err)) {
+                    if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
+                        return;
+                    }
+                    console.error('Error fetching history entries', err);
+                    setEntries([]);
+                } else {
+                    console.error('Unexpected error occurred', err);
                 }
-                console.error('Error fetching history entries', err);
-                setEntries([]);
             }
         };
-        fetchEntries();
-    }, []);
+        void fetchEntries();
+    }, [axios]);
 
     const sortedEntries = [...entries].sort((a, b) => {
         return b.startTime.getTime() - a.startTime.getTime();

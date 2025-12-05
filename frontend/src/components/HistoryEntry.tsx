@@ -1,9 +1,9 @@
 import { Card } from 'primereact/card';
-import {addMinutes, formatTime, isActiveNow, endsBeforeNow} from "../utils/dateUtils";
-import type {HistoryEntry} from "../models/HistoryEntry.tsx";
+import { addMinutes, formatTime, isActiveNow, endsBeforeNow } from "../utils/dateUtils";
+import type { HistoryEntry } from "../models/HistoryEntry.tsx";
 
 
-export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
+export default function HistoryEntryComp({ entry }: { entry: HistoryEntry }) {
     const startDate = new Date(entry.startTime);
     const endTime = addMinutes(startDate, entry.durationMin);
 
@@ -48,9 +48,12 @@ export default function HistoryEntryComp({ entry }: {entry: HistoryEntry}) {
                 borderLeft: '10px solid ' + color,
             }}
         >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ flex: 1 , }}>
-                    <div style={{ fontSize: '1.3rem', marginBottom: '0.3rem', fontFamily: 'monospace' }}>
+                    <div style={{
+                        fontSize: '1.3rem',
+                        marginBottom: '0.3rem',
+                        fontFamily: 'monospace' }}>
                         <strong>{formatTime(startDate)}-{formatTime(endTime)}</strong>
                     </div>
                     <div style={{

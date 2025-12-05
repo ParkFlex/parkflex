@@ -1,13 +1,13 @@
 import { DataView } from 'primereact/dataview';
 import { useHistoryEntries } from '../hooks/useHistoryEntries';
-import {formatDate, isSameDay, endsBeforeNow, formatDateWeek} from '../utils/dateUtils';
-import {useState} from "react";
+import { formatDate, isSameDay, endsBeforeNow, formatDateWeek } from '../utils/dateUtils';
+import { useState } from "react";
 import { Button } from "primereact/button";
 import HistoryEntryComp from "../components/HistoryEntry";
-import {Calendar} from "primereact/calendar";
-import type {Nullable} from "primereact/ts-helpers";
+import { Calendar } from "primereact/calendar";
+import type { Nullable } from "primereact/ts-helpers";
 import { Dialog } from "primereact/dialog";
-import type {HistoryEntry} from "../models/HistoryEntry.tsx";
+import type { HistoryEntry } from "../models/HistoryEntry.tsx";
 
 interface DateHeaderProps {
     date: Date;
@@ -31,7 +31,7 @@ function DateHeader({ date, isFirstEntry }: DateHeaderProps) {
 }
 
 export function History() {
-    const { entries} = useHistoryEntries();
+    const { entries } = useHistoryEntries();
 
     const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
@@ -43,10 +43,14 @@ export function History() {
 
     const listTemplate = (items: HistoryEntry[] | undefined, onlyNow: boolean) => {
         if (!items || items.length === 0) {
-            return <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>Brak rezerwacji</div>;
+            return <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+                Brak rezerwacji
+            </div>;
         }
 
-        let displayItems = onlyNow ? items.filter(entry => !endsBeforeNow(new Date(entry.startTime),entry.durationMin)) : items;
+        let displayItems = onlyNow
+            ? items.filter(entry => !endsBeforeNow(new Date(entry.startTime),entry.durationMin))
+            : items;
 
         if (dates && dates.length === 2 && dates[0] && dates[1]) {
             const startDate = new Date(dates[0]);
@@ -61,7 +65,9 @@ export function History() {
         }
 
         if (!displayItems || displayItems.length === 0) {
-            return <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>Brak rezerwacji</div>;
+            return <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+                Brak rezerwacji
+            </div>;
         }
 
         const list = displayItems.map((entry, index) => {
@@ -97,7 +103,7 @@ export function History() {
                 label={getButtonLabel()}
                 outlined
                 onClick={()=>setShowCalendar(true)}
-                style={{width:'100%', justifyContent:'left'}}
+                style={{ width:'100%', justifyContent:'left' }}
             />
 
             <Dialog
@@ -110,13 +116,16 @@ export function History() {
                     value={dates}
                     onChange={(e) => {
                         setDates(e.value);
-                        if (e.value && Array.isArray(e.value) && e.value.length === 2 && e.value[0] && e.value[1]) {
+                        if (e.value &&
+                            Array.isArray(e.value) &&
+                            e.value.length === 2 && e.value[0] &&
+                            e.value[1]) {
                             setShowCalendar(false);
                         }
                     }}
                     selectionMode="range"
                     inline
-                    style={{ width: '100%',marginBottom:'24px',marginTop:'24px'}}
+                    style={{ width: '100%',marginBottom:'24px',marginTop:'24px' }}
                 />
             </Dialog>
 
@@ -126,7 +135,7 @@ export function History() {
                 <Button raised label="Historia" severity='secondary' onClick={() => {
                     setOnlyNow(false);
                     setDates(null);
-                }} style={{ width: '100%'}} />
+                }} style={{ width: '100%' }} />
             )}
         </div>
     );

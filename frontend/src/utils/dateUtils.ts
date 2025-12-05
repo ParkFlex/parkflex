@@ -26,7 +26,7 @@ export const formatDate = (date: Date): string => {
         month: 'numeric',
         day: 'numeric'
     });
-}
+};
 
 export const isSameDay = (date1: Date, date2: Date): boolean => {
     return date1.getFullYear() === date2.getFullYear() &&
@@ -36,11 +36,19 @@ export const isSameDay = (date1: Date, date2: Date): boolean => {
 
 export const endsBeforeNow = (startTime: Date, duration: number): boolean => {
     const endTime = addMinutes(startTime, duration);
-    return endTime < new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate(), endTime.getHours(), endTime.getMinutes());
-}
+    const endDate = new Date(
+        endTime.getFullYear(),
+        endTime.getMonth(),
+        endTime.getDate(),
+        endTime.getHours(),
+        endTime.getMinutes()
+    );
+
+    return endTime <  endDate;
+};
 
 export const isActiveNow = (startTime: Date, durationMin: number): boolean => {
     const now = new Date();
     const endTime = addMinutes(startTime, durationMin);
     return now >= startTime && now <= endTime;
-}
+};
