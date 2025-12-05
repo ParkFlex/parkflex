@@ -26,7 +26,7 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
                 style={{
                     color: "black",
                     fontWeight: "bold",
-                    fontSize: "14px",
+                    fontSize: "clamp(10px, 2vw, 14px)",
                     justifyContent: "center",
                     backgroundColor: "transparent",
                     border: "none",
@@ -56,6 +56,7 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
             style={{
                 backgroundColor: color,
                 justifyContent: "center",
+                fontSize: "clamp(12px, 2.5vw, 16px)",
             }}
             onClick={selectSpot}
         >
