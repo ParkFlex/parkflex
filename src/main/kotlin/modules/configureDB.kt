@@ -43,7 +43,7 @@ suspend fun Application.configureDB(config: Config) {
     }
 
     /* Create database tables */
-    transaction {
+    runDB {
         SchemaUtils.create(
             DemoNoteTable,
             SpotTable,
