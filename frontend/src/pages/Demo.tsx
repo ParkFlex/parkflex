@@ -1,15 +1,15 @@
 // Prime components
-import {InputText} from "primereact/inputtext";
-import {InputTextarea} from "primereact/inputtextarea";
-import {Button} from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
+import { Button } from "primereact/button";
 
 // Prime icons
 import 'primeicons/primeicons.css';
-import {useNote} from "../hooks/useNote.tsx";
-import {DemoNoteModel} from "../models/DemoNoteModel.tsx";
+import { useNote } from "../hooks/useNote.tsx";
+import { DemoNoteModel } from "../models/DemoNoteModel.tsx";
 
 export function Demo() {
-    const {saveNote, getNote, setNote, note} = useNote()
+    const { saveNote, getNote, setNote, note } = useNote();
 
     const setTitle = (title: string) => {
         const newNote = new DemoNoteModel(title, note.contents);
@@ -24,11 +24,19 @@ export function Demo() {
     return (
         <>
             <label htmlFor="note-title">title:</label>
-            <InputText id="note-title" value={note.title} onChange={ev => setTitle(ev.target.value)}/>
+            <InputText
+                id="note-title"
+                value={note.title}
+                onChange={ev => setTitle(ev.target.value)}
+            />
             <br/>
 
             <label htmlFor="note-contents">contents:</label>
-            <InputTextarea id="note-contents" value={note.contents} onChange={ev => setContents(ev.target.value)}/>
+            <InputTextarea
+                id="note-contents"
+                value={note.contents}
+                onChange={ev => setContents(ev.target.value)}
+            />
             <br/>
 
             <Button icon="pi pi-save" onClick={saveNote} label="Save note"/>
