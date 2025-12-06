@@ -50,7 +50,6 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
         );
     }
 
-    // Render normal parking spot
     return (
         <Button
             style={{
