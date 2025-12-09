@@ -2,6 +2,7 @@ import {Card} from "primereact/card";
 import {useState} from "react";
 import type {AdminHistoryEntry} from "../models/AdminHistoryEntry.tsx";
 import {mockHistoryList} from "../mocks/historyListMock.ts";
+import {formatTime, addMinutes, formatDate} from "../utils/dateUtils.ts";
 
 export function AdminHistoryCard({ plate, startTime }: { plate: string, startTime: Date }){
 
@@ -17,24 +18,6 @@ export function AdminHistoryCard({ plate, startTime }: { plate: string, startTim
         )
     }
 
-
-    const formatTime = (date: Date): string => {
-        return date.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        });
-    };
-    const addMinutes = (date: Date, minutes: number): Date => {
-        return new Date(date.getTime() + minutes * 60000);
-    };
-    const formatDate = (date: Date): string => {
-        return date.toLocaleDateString('pl-EU', {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric'
-        });
-    }
 
     const endTime = addMinutes(new Date(entry.startTime), entry.durationMin);
 
