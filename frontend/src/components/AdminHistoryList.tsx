@@ -269,4 +269,6 @@ export function AdminHistoryList() {
     )
 }
 
+//disabled button color changed
+//calendarz scroll on my phone
 //*dodac kolumne spotu dla szerszej tableli
