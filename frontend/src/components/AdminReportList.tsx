@@ -5,9 +5,15 @@ import {useState} from "react";
 import { mockReportEntries } from "../mocks/mockReportEntries";
 import {Dialog} from "primereact/dialog";
 import {FilterMatchMode} from "primereact/api";
-import {Calendar} from "primereact/calendar";
 import {Button} from "primereact/button";
 import {InputText} from "primereact/inputtext";
+import {
+    DateRangeFilterDialog,
+    type DateRangeFilter,
+    hasDateFilter,
+    filterByDateRange,
+    createEmptyDateRangeFilter
+} from "./DateRangeFilterDialog";
 
 export function AdminReportList(){
     const [reports] = useState<ReportEntry[]>(mockReportEntries);
@@ -16,9 +22,7 @@ export function AdminReportList(){
         plate: { value: null, matchMode: FilterMatchMode.CONTAINS },
         banned: { value: null, matchMode: FilterMatchMode.EQUALS }
     });
-    const [dates, setDates] = useState<(Date | null)[] | null>(null);
-    const [startTimeFilter, setStartTimeFilter] = useState<Date | null>(null);
-    const [endTimeFilter, setEndTimeFilter] = useState<Date | null>(null);
+    const [dateFilter, setDateFilter] = useState<DateRangeFilter>(createEmptyDateRangeFilter());
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
 
     const plateFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
@@ -49,33 +53,10 @@ export function AdminReportList(){
     };
 
     const getFilteredReports = (): ReportEntry[] => {
-        let filtered = reports;
-
-        if (dates && dates.length === 2 && dates[0] && dates[1]) {
-            const startDate = new Date(dates[0]);
-            if (startTimeFilter) {
-                startDate.setHours(startTimeFilter.getHours(), startTimeFilter.getMinutes(), 0, 0);
-            } else {
-                startDate.setHours(0, 0, 0, 0);
-            }
-            const endDate = new Date(dates[1]);
-            if (endTimeFilter) {
-                endDate.setHours(endTimeFilter.getHours(), endTimeFilter.getMinutes(), 59, 999);
-            } else {
-                endDate.setHours(23, 59, 59, 999);
-            }
-
-            filtered = filtered.filter(e => {
-                const entryDate = new Date(e.issueTime);
-                return entryDate >= startDate && entryDate <= endDate;
-            });
-        }
-
-        return filtered;
+        return filterByDateRange(reports, dateFilter, (e) => e.issueTime);
     };
 
     const dateHeaderTemplate = () => {
-        const hasFilter = dates && dates.length === 2 && dates[0] && dates[1];
         return (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span>Data zgłoszenia</span>
@@ -86,7 +67,7 @@ export function AdminReportList(){
                     onClick={() => setShowCalendar(true)}
                     style={{
                         padding: '0.25rem',
-                        backgroundColor: hasFilter ? '#d4e2da' : 'transparent'
+                        backgroundColor: hasDateFilter(dateFilter) ? '#d4e2da' : 'transparent'
                     }}
                 />
             </div>
@@ -123,67 +104,17 @@ export function AdminReportList(){
                 )}
             </Dialog>
 
-            <Dialog
+            <DateRangeFilterDialog
                 visible={showCalendar}
                 onHide={() => setShowCalendar(false)}
-                header="Wybierz zakres dat i godzin"
-                style={{ width: '95%', maxWidth: '400px' }}
-            >
-                <Calendar
-                    value={dates}
-                    onChange={(e) => {
-                        setDates(e.value ?? null);
-                    }}
-                    selectionMode="range"
-                    inline
-                    style={{ width: '100%'}}
-                />
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '16px' }}>
-                    <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Od godziny</label>
-                        <Calendar
-                            value={startTimeFilter}
-                            onChange={(e) => setStartTimeFilter(e.value ?? null)}
-                            timeOnly
-                            hourFormat="24"
-                            style={{ width: '100%', border: '1px solid #ccc', borderRadius: '4px' }}
-                        />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Do godziny</label>
-                        <Calendar
-                            value={endTimeFilter}
-                            onChange={(e) => setEndTimeFilter(e.value ?? null)}
-                            timeOnly
-                            hourFormat="24"
-                            style={{ width: '100%', border: '1px solid #ccc', borderRadius: '4px'  }}
-                        />
-                    </div>
-                </div>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                    <Button
-                        label="Wyczyść"
-                        icon="pi pi-times"
-                        onClick={() => {
-                            setDates(null);
-                            setStartTimeFilter(null);
-                            setEndTimeFilter(null);
-                            setShowCalendar(false);
-                        }}
-                        outlined
-                        style={{ width: '100%', marginBottom:'24px'}}
-                    />
-                    <Button
-                        label="Zastosuj"
-                        icon="pi pi-check"
-                        onClick={() => setShowCalendar(false)}
-                        style={{ width: '100%', marginBottom:'24px' }}
-                        disabled={!(dates && dates.length === 2 && dates[0] && dates[1])}
-                    />
-                </div>
-            </Dialog>
+                filter={dateFilter}
+                onFilterChange={setDateFilter}
+                onApply={() => setShowCalendar(false)}
+                onClear={() => {
+                    setDateFilter(createEmptyDateRangeFilter());
+                    setShowCalendar(false);
+                }}
+            />
         </div>
     )
 }
-
-//move calendar to different component

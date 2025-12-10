@@ -5,13 +5,19 @@ import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column
 import {mockHistoryList} from "../mocks/historyListMock.ts";
 import {Dialog} from "primereact/dialog";
 import {AdminHistoryCard} from "./AdminHistoryCard.tsx";
-import {Calendar} from "primereact/calendar";
 import {FilterMatchMode} from "primereact/api";
 import {InputText} from "primereact/inputtext";
 import {formatTime, addMinutes, formatDate, isActiveNow} from "../utils/dateUtils.ts";
 import {Button} from "primereact/button";
 import {OverlayPanel} from "primereact/overlaypanel";
 import {useRef} from "react";
+import {
+    DateRangeFilterDialog,
+    type DateRangeFilter,
+    hasDateFilter,
+    filterByDateRange,
+    createEmptyDateRangeFilter
+} from "./DateRangeFilterDialog";
 
 export function AdminHistoryList() {
      const [entry] = useState<AdminHistoryEntry[]>(mockHistoryList);
@@ -20,9 +26,7 @@ export function AdminHistoryList() {
         'plate': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         'startTime': { value: null, matchMode: FilterMatchMode.DATE_IS }
     })
-     const [dates, setDates] = useState<(Date | null)[] | null>(null);
-     const [startTimeFilter, setStartTimeFilter] = useState<Date | null>(null);
-     const [endTimeFilter, setEndTimeFilter] = useState<Date | null>(null);
+     const [dateFilter, setDateFilter] = useState<DateRangeFilter>(createEmptyDateRangeFilter());
      const [showCalendar, setShowCalendar] = useState<boolean>(false);
      const [statusFilter, setStatusFilter] = useState<string | null>(null);
      const statusOverlayRef = useRef<OverlayPanel>(null);
@@ -68,27 +72,7 @@ export function AdminHistoryList() {
     };
 
     const getFilteredEntries = (): AdminHistoryEntry[] => {
-        let filtered = entry;
-
-        if (dates && dates.length === 2 && dates[0] && dates[1]) {
-            const startDate = new Date(dates[0]);
-            if (startTimeFilter) {
-                startDate.setHours(startTimeFilter.getHours(), startTimeFilter.getMinutes(), 0, 0);
-            } else {
-                startDate.setHours(0, 0, 0, 0);
-            }
-            const endDate = new Date(dates[1]);
-            if (endTimeFilter) {
-                endDate.setHours(endTimeFilter.getHours(), endTimeFilter.getMinutes(), 59, 999);
-            } else {
-                endDate.setHours(23, 59, 59, 999);
-            }
-
-            filtered = filtered.filter(e => {
-                const entryDate = new Date(e.startTime);
-                return entryDate >= startDate && entryDate <= endDate;
-            });
-        }
+        let filtered = filterByDateRange(entry, dateFilter, (e) => new Date(e.startTime));
 
         if (statusFilter) {
             filtered = filtered.filter(e => getEntryStatus(e) === statusFilter);
@@ -98,7 +82,6 @@ export function AdminHistoryList() {
     };
 
     const dateHeaderTemplate = () => {
-        const hasFilter = dates && dates.length === 2 && dates[0] && dates[1];
         return (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span>Data i czas</span>
@@ -109,7 +92,7 @@ export function AdminHistoryList() {
                     onClick={() => setShowCalendar(true)}
                     style={{
                         padding: '0.25rem',
-                        backgroundColor: hasFilter ? '#d4e2da' : 'transparent'
+                        backgroundColor: hasDateFilter(dateFilter) ? '#d4e2da' : 'transparent'
                     }}
                 />
             </div>
@@ -202,65 +185,17 @@ export function AdminHistoryList() {
                 {/*<Column field="spot" header="Miejsce" dataType="numeric" filter style={{ width: '15%', textAlign:"center" }}></Column>*/}
             </DataTable>
 
-            <Dialog
+            <DateRangeFilterDialog
                 visible={showCalendar}
                 onHide={() => setShowCalendar(false)}
-                header="Wybierz zakres dat i godzin"
-                style={{ width: '95%', maxWidth: '400px' }}
-            >
-                <Calendar
-                    value={dates}
-                    onChange={(e) => {
-                        setDates(e.value ?? null);
-                    }}
-                    selectionMode="range"
-                    inline
-                    style={{ width: '100%'}}
-                />
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '16px' }}>
-                    <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Od godziny</label>
-                        <Calendar
-                            value={startTimeFilter}
-                            onChange={(e) => setStartTimeFilter(e.value ?? null)}
-                            timeOnly
-                            hourFormat="24"
-                            style={{ width: '100%', border: '1px solid #ccc', borderRadius: '4px' }}
-                        />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Do godziny</label>
-                        <Calendar
-                            value={endTimeFilter}
-                            onChange={(e) => setEndTimeFilter(e.value ?? null)}
-                            timeOnly
-                            hourFormat="24"
-                            style={{ width: '100%', border: '1px solid #ccc', borderRadius: '4px'  }}
-                        />
-                    </div>
-                </div>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                <Button
-                    label="Wyczyść"
-                    icon="pi pi-times"
-                    onClick={() => {
-                        setDates(null);
-                        setStartTimeFilter(null);
-                        setEndTimeFilter(null);
-                        setShowCalendar(false);
-                    }}
-                    outlined
-                    style={{ width: '100%', marginBottom:'24px'}}
-                />
-                <Button
-                    label="Zastosuj"
-                    icon="pi pi-check"
-                    onClick={() => setShowCalendar(false)}
-                    style={{ width: '100%', marginBottom:'24px' }}
-                    disabled={!(dates && dates.length === 2 && dates[0] && dates[1])}
-                />
-                </div>
-            </Dialog>
+                filter={dateFilter}
+                onFilterChange={setDateFilter}
+                onApply={() => setShowCalendar(false)}
+                onClear={() => {
+                    setDateFilter(createEmptyDateRangeFilter());
+                    setShowCalendar(false);
+                }}
+            />
 
             <Dialog header='Rezerwacja' visible={selectedEntry !== null} onHide={() => setSelectedEntry(null)} modal style={{width:'90%'}}>
                 {selectedEntry ? <AdminHistoryCard plate={selectedEntry.plate} startTime={selectedEntry.startTime} /> : null}
