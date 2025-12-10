@@ -1,6 +1,7 @@
 export interface ReportEntry{
     plate: string;
     issueTime: Date;
-    banned: boolean;
+    comment: string;
+    whoReported: string;
     photoUrl: string;
 }

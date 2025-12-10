@@ -3,8 +3,6 @@ import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column
 import type {ReportEntry} from "../models/ReportEntry.tsx";
 import {useState} from "react";
 import { mockReportEntries } from "../mocks/mockReportEntries";
-import {Tag} from "primereact/tag";
-import {TriStateCheckbox} from "primereact/tristatecheckbox";
 import {Dialog} from "primereact/dialog";
 import {FilterMatchMode} from "primereact/api";
 import {Calendar} from "primereact/calendar";
@@ -22,19 +20,6 @@ export function AdminReportList(){
     const [startTimeFilter, setStartTimeFilter] = useState<Date | null>(null);
     const [endTimeFilter, setEndTimeFilter] = useState<Date | null>(null);
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
-
-    const bannedTemplate = (rowData: ReportEntry) => {
-        return <Tag value={rowData.banned ? "Zbanowany" : "Aktywny"} severity={rowData.banned ? "danger" : "success"} />;
-    };
-
-    const bannedRowFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
-        return (
-            <TriStateCheckbox
-                value={options.value}
-                onChange={(e) => options.filterApplyCallback(e.value)}
-            />
-        );
-    };
 
     const plateFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
         return <InputText
@@ -57,10 +42,6 @@ export function AdminReportList(){
         const date = rowData.issueTime.toLocaleDateString('pl-PL');
         const time = rowData.issueTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
         return <><b>{date}</b><br/>{time}</>;
-    };
-
-    const photoTemplate = (rowData: ReportEntry) => {
-        return <img src={rowData.photoUrl} alt={rowData.plate} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />;
     };
 
     const dialogHeader = (report: ReportEntry | null) => {
@@ -134,9 +115,10 @@ export function AdminReportList(){
                 {selectedReport && (
                     <div>
                         <p><strong>{selectedReport.issueTime.toLocaleDateString('pl-PL')}</strong> {selectedReport.issueTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
-                        <p><strong>Tablica:</strong> {selectedReport.plate}</p>
-                        <p><strong>Status:</strong> {selectedReport.banned ? "Zbanowany" : "Aktywny"}</p>
-                        <img src={selectedReport.photoUrl} alt={selectedReport.plate} style={{ maxWidth: '100%', width: '300px', marginBottom: '1rem', display: 'block' }} />
+                        <p><strong>Tablica zgłoszonego:</strong> {selectedReport.plate}</p>
+                        <p><strong>Kto zgłosił:</strong> {selectedReport.whoReported}</p>
+                        <p><strong>Komentarz:</strong> {selectedReport.comment}</p>
+                        <img src={selectedReport.photoUrl} style={{ maxWidth: '100%', width: '300px', marginBottom: '1rem', display: 'block' }} />
                     </div>
                 )}
             </Dialog>
