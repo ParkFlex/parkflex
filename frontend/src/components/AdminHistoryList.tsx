@@ -206,7 +206,7 @@ export function AdminHistoryList() {
                 visible={showCalendar}
                 onHide={() => setShowCalendar(false)}
                 header="Wybierz zakres dat i godzin"
-                style={{ width: '90vw', maxWidth: '400px' }}
+                style={{ width: '95%', maxWidth: '400px' }}
             >
                 <Calendar
                     value={dates}
@@ -269,6 +269,4 @@ export function AdminHistoryList() {
     )
 }
 
-//disabled button color changed
-//calendarz scroll on my phone
 //*dodac kolumne spotu dla szerszej tableli

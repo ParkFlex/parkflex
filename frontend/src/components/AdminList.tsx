@@ -99,3 +99,5 @@ export function AdminList(){
         </div>
     )
 }
+
+//uzupelnic penalty
