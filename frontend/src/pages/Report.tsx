@@ -5,12 +5,15 @@ import {useRef, useState} from "react";
 import {InputTextarea} from "primereact/inputtextarea";
 import {Button} from "primereact/button";
 import {ConfirmDialog} from "primereact/confirmdialog";
+import axios from "axios";
 
 export function Report(){
     const [plate, setPlate] = useState('');
     const [comment, setComment] = useState('');
     const [file, setFile] = useState<File | null>(null);
+    const [base64Data, setBase64Data] = useState<string | null>(null);
     const [visible, setVisible] = useState(false);
+    // const [uploading, setUploading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const onChoose = () => inputRef.current?.click();
@@ -18,14 +21,34 @@ export function Report(){
     const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const f = e.target.files?.[0] ?? null;
         setFile(f);
+
+        // Convert file to base64 when selected
+        if (f) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setBase64Data(reader.result as string);
+            };
+            reader.readAsDataURL(f);
+        } else {
+            setBase64Data(null);
+        }
     };
 
-    const onUpload = async () => {
-        if (!file) return;
-        const fd = new FormData();
-        fd.append('file', file);
-        await fetch('/api/upload', { method: 'POST', body: fd });
-    };
+    // const onUpload = async () => {
+    //     if (!file || !base64Data) return;
+    //
+    //     setUploading(true);
+    //     try {
+    //         await axios.post('/api/upload', {
+    //             filename: file.name,
+    //             data: base64Data,
+    //             plate: plate,
+    //             comment: comment
+    //         });
+    //     } finally {
+    //         setUploading(false);
+    //     }
+    // };
 
     return(
         <Card>
@@ -41,8 +64,8 @@ export function Report(){
                 </FloatLabel>
                 <div style={{display:'flex', gap:'12px', alignItems:'center'}}>
                     <input ref={inputRef} type="file" accept="image/*" style={{display:'none'}} onChange={onFileChange}/>
-                    <Button label={file ? "Zmień zdjęcie" : "Wybierz zdjęcie"} onClick={onChoose} style={{width:'50%'}}/>
-                    <Button label="Wyślij zdjęcie" onClick={onUpload} disabled={!file} style={{width:'50%'}}/>
+                    <Button label={file ? "Zmień zdjęcie" : "Wybierz zdjęcie"} onClick={onChoose} style={{width:'100%'}}/>
+                    {/*<Button label="Wyślij zdjęcie" onClick={onUpload} disabled={!base64Data || uploading} loading={uploading} style={{width:'50%'}}/>*/}
                 </div>
                 {!file && (
                     <div style={{ backgroundColor:'white', padding:'10px', borderRadius:'3px'}}>
