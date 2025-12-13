@@ -10,6 +10,7 @@ import { App } from './pages/App.tsx';
 import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
+import {Report} from "./pages/Report.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
                     <Route path="/" element={<App/>}/>
                     <Route path="/demo" element={<Demo/>}/>
                     <Route path="/history" element={<History/>}/>
+                    <Route path="/report" element={<Report/>}/>
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </BrowserRouter>
