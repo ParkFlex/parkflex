@@ -1,6 +1,5 @@
 package parkflex.routes
 
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 /**
@@ -13,9 +12,9 @@ fun Route.apiRoutes() {
         get("/{id}"){
             val id = call.parameters["id"]
         }
-        route("/penalty") {
-            Penalty()
-        }
+
+        penaltyRoutes()
+
     }
 
 

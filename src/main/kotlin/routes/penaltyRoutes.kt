@@ -5,16 +5,15 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
+import parkflex.db.PenaltyEntity
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
-import parkflex.models.Penalty
+import parkflex.models.PenaltyModel
 import parkflex.runDB
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.Date
 
 
-fun Route.Penalty(){
+fun Route.penaltyRoutes(){
     route("/{user_id}/penalty") {
 
         get {
@@ -41,31 +40,31 @@ fun Route.Penalty(){
     }
 }
 
-private suspend fun findActivePenaltyForUser(userId: Long): Penalty? {
-    var activePenalty: Penalty? = null
+private suspend fun findActivePenaltyForUser(userId: Long): PenaltyModel? {
+    var activePenaltyModel: PenaltyModel? = null
 
     runDB {
         val user = UserEntity.findById(userId) ?: return@runDB
         val now = LocalDateTime.now()
 
         for (reservation in user.reservations) {
-            val penaltyEntity = reservation.penalties
+            val penaltyEntity: PenaltyEntity? = reservation.penalties
                 .firstOrNull { penalty ->
                     !penalty.paid && penalty.due.isAfter(now)
                 }
 
             if (penaltyEntity != null) {
-                activePenalty = Penalty(
+                activePenaltyModel = PenaltyModel(
                     reservation = reservation.id.value,
                     reason = penaltyEntity.reason,
                     paid = penaltyEntity.paid,
-                    due = Date.from(penaltyEntity.due.atZone(ZoneId.systemDefault()).toInstant()),
+                    due = penaltyEntity.due,
                     fine = penaltyEntity.fine.toDouble()
                 )
                 break
             }
         }
     }
-    return activePenalty
+    return activePenaltyModel
 }
 
