@@ -1,4 +1,14 @@
 package parkflex.models
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
-data class PenaltyModel(val reservation: Long, val reason: String, val paid: Boolean, val due: LocalDateTime, val fine: Double)
+@Serializable
+data class PenaltyModel(
+    val reservation: Long,
+    val reason: String,
+    val paid: Boolean,
+    @Contextual
+    val due: LocalDateTime,
+    val fine: Double
+)

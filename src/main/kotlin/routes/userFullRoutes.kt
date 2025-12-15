@@ -18,9 +18,9 @@ fun Route.userFullRoutes() {
         runDB{
             for (entry in UserEntity.all()) {
                 val today = LocalDateTime.now()
-                var numberOfPastReservations = 0
-                var numberOfFutureReservations = 0
-                var numberOfPastBans = 0
+                var numberOfPastReservations: Long = 0
+                var numberOfFutureReservations: Long = 0
+                var numberOfPastBans: Long = 0
                 var currentReservation = false
                 var currentPenaltyModel: PenaltyModel? = null
                 val reservations = entry.reservations.toList()
