@@ -36,7 +36,7 @@ export function AdminUserCard({ plate }: { plate: string }){
     if(!user){
         return (
             <div style={{textAlign:"left"}}>
-                <Card title={`Użytkownik nie znaleziony`}>
+                <Card title={`Użytkownik nie znaleziony`} style={{marginTop:'1rem'}}>
                     Brak użytkownika o numerze {plate}
                 </Card>
             </div>
