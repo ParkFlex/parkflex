@@ -1,6 +1,5 @@
 package parkflex.routes
 
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 /**
@@ -9,6 +8,18 @@ import io.ktor.server.routing.*
 fun Route.apiRoutes() {
     route("/user") {
         // some routes here
+        userFullRoutes()
+        get("/{id}"){
+            val id = call.parameters["id"]
+        }
+
+//        penaltyRoutes()
+
+    }
+
+    // Also expose the same handler under /user/full for clarity and documentation
+    route("/user/full") {
+        userFullRoutes()
     }
 
     route("/demo") {
