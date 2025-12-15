@@ -5,16 +5,6 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/": {
-            "get": {
-                "summary": "If someone goes to \"/\" then redirect them to the frontend",
-                "responses": {
-                    "302": {
-                        "description": ""
-                    }
-                }
-            }
-        },
         "/api/demo": {
             "put": {
                 "summary": "Save provided note to the database.",
@@ -83,16 +73,6 @@
                 }
             }
         },
-        "/web": {
-            "get": {
-                "summary": "Redirect /web to /web/ which is handled by the single page application routes",
-                "responses": {
-                    "302": {
-                        "description": ""
-                    }
-                }
-            }
-        },
         "/api/historyEntry": {
             "get": {
                 "parameters": [
@@ -106,7 +86,7 @@
                     }
                 ],
                 "responses": {
-                    "400": {
+                    "422": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -133,7 +113,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/HistoryEntryModel"
+                                        "$ref": "#/components/schemas/HistoryEntry"
                                     }
                                 }
                             }
@@ -167,11 +147,12 @@
                     }
                 }
             },
-            "HistoryEntryModel": {
+            "HistoryEntry": {
                 "type": "object",
                 "properties": {
                     "startTime": {
-                        "type": "string"
+                        "type": "string",
+                        "format": "date-time"
                     },
                     "durationMin": {
                         "type": "integer"
