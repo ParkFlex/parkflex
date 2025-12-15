@@ -1,6 +1,6 @@
-import {useCallback, useState} from "react";
-import {DemoNoteModel} from "../models/DemoNoteModel.tsx";
-import {ApiErrorModel} from "../models/ApiErrorModel.tsx";
+import { useCallback, useState } from "react";
+import { DemoNoteModel } from "../models/DemoNoteModel.tsx";
+import { ApiErrorModel } from "../models/ApiErrorModel.tsx";
 
 export function useNote() {
     const initialNote = new DemoNoteModel("", "");
@@ -30,7 +30,7 @@ export function useNote() {
             }
         };
 
-        fetchAndSet();
+        void fetchAndSet();
     }, [note]);
 
     const getNote = useCallback(() => {
@@ -48,10 +48,10 @@ export function useNote() {
                 const error = new ApiErrorModel(object.message, object.context);
                 alert(error.message);
             }
-        }
+        };
 
-        getAndSet()
+        void getAndSet();
     }, [note]);
 
-    return {saveNote, getNote, setNote, note};
+    return { saveNote, getNote, setNote, note };
 }

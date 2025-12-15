@@ -1,4 +1,5 @@
 import io.ktor.plugin.OpenApiPreview
+import org.apache.tools.ant.taskdefs.condition.Os
 
 group = "parkflex"
 version = "1.0-SNAPSHOT"
@@ -69,6 +70,21 @@ ktor {
     }
 }
 
+tasks.register("runDebug") {
+    group = "application"
+
+    doFirst {
+        tasks.run.configure {
+            environment(
+                "ENABLE_MOCK_DATA" to "true",
+                "ENABLE_H2_SOCKETS" to "true"
+            )
+        }
+    }
+
+    finalizedBy(tasks.run)
+}
+
 tasks.register("apiDoc") {
     group = "documentation"
 
@@ -79,4 +95,40 @@ tasks.register("apiDoc") {
     doLast {
         println("API Documentation generated")
     }
+}
+
+val npmBin =
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd"
+    else "npm"
+
+val npmCi = tasks.register<Exec>("npmCi") {
+    group = "npm"
+
+    workingDir("frontend")
+
+    commandLine(npmBin, "ci")
+}
+
+val npmBuild = tasks.register<Exec>("npmBuild") {
+    group = "npm"
+
+    dependsOn(npmCi)
+
+    workingDir("frontend")
+
+    commandLine(npmBin, "run", "build")
+}
+
+val fullBuild = tasks.register("fullBuild") {
+    group = "build"
+
+    dependsOn(npmBuild)
+    dependsOn("build")
+}
+
+tasks.register("fullRun") {
+    group = "application"
+
+    dependsOn(fullBuild)
+    finalizedBy("run")
 }

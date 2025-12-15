@@ -4,6 +4,7 @@ import org.slf4j.event.Level
 
 interface Config {
     val mariaDB: MariaDBConfig?
+    val hosts: List<String>
     val ENABLE_MOCK_DATA: Boolean
     val ENABLE_H2_SOCKETS: Boolean
     val CALL_LOG_LEVEL: Level

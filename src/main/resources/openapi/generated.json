@@ -5,16 +5,6 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/": {
-            "get": {
-                "summary": "If someone goes to \"/\" then redirect them to the frontend",
-                "responses": {
-                    "302": {
-                        "description": ""
-                    }
-                }
-            }
-        },
         "/api/demo": {
             "put": {
                 "summary": "Save provided note to the database.",
@@ -83,12 +73,51 @@
                 }
             }
         },
-        "/web": {
+        "/api/historyEntry": {
             "get": {
-                "summary": "Redirect /web to /web/ which is handled by the single page application routes",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
-                    "302": {
-                        "description": ""
+                    "422": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/HistoryEntry"
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -115,6 +144,24 @@
                     },
                     "context": {
                         "type": "string"
+                    }
+                }
+            },
+            "HistoryEntry": {
+                "type": "object",
+                "properties": {
+                    "startTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "durationMin": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "spot": {
+                        "type": "integer"
                     }
                 }
             }
