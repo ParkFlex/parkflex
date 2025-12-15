@@ -2,15 +2,15 @@ import {DataTable, type DataTableFilterMeta} from "primereact/datatable";
 import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column";
 import type {UserListEntry} from "../models/UserListEntry.tsx";
 import {useState} from "react";
-import { mockUserList } from "../mocks/userListMock";
 import {Tag} from "primereact/tag";
 import {classNames} from "primereact/utils";
 import {Dialog} from "primereact/dialog";
 import {AdminUserCard} from "./AdminUserCard.tsx";
 import {Button} from "primereact/button";
+import { useUserListEntry } from "../hooks/useUserListEntry";
 
 export function AdminList(){
-    const [users] = useState<UserListEntry[]>(mockUserList);
+    const { userListEntries: users } = useUserListEntry();
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         'plate': { value: null, matchMode: 'startsWith' },
         'role': { value: null, matchMode: 'equals' },
@@ -19,7 +19,7 @@ export function AdminList(){
     const [selectedUser, setSelectedUser] = useState<UserListEntry | null>(null);
 
     const blockedTemplate = (rowData: UserListEntry) => {
-        return <i className={classNames('pi', { 'pi-ban': rowData.blocked, 'pi-check': !rowData.blocked })} style={rowData.blocked ? { color: 'red' } : { color: 'green' }}></i>;
+        return <i className={classNames('pi', { 'pi-ban': rowData.currentPenalty, 'pi-check': !rowData.currentPenalty })} style={rowData.currentPenalty ? { color: 'red' } : { color: 'green' }}></i>;
     };
 
      const roleTemplate = (user: UserListEntry) => {
@@ -75,11 +75,19 @@ export function AdminList(){
             return undefined;
         }
     };
+    const filterApplyTemplate = (options: any) => {
+        return <Button label="Zastosuj" onClick={options.filterApplyCallback} size="small" />;
+    };
+
+    const filterClearTemplate = (options: any) => {
+        return <Button label="Wyczyść" onClick={options.filterClearCallback} size="small" outlined />;
+    };
+
 
     return (
         <div style={{ borderColor:'#d4e2da'}}>
             <DataTable
-                value={users}
+                value={users ?? []}
                 filters={filters}
                 onFilter={(e) => setFilters(e.filters)}
                 filterDisplay="menu"
@@ -89,8 +97,8 @@ export function AdminList(){
                 dataKey="plate"
                 emptyMessage="Brak użytkowników"
             >
-                <Column field="plate" header="Tablica Rejestracyjna" filter filterPlaceholder='wyszukaj' style={{ minWidth:'70%' }}></Column>
-                <Column field="blocked" header="Status" body={blockedTemplate} dataType="boolean" filter filterElement={blockedRowFilterTemplate} style={{ width: '20%', textAlign:"center" }}></Column>
+                <Column field="plate" header="Tablica Rejestracyjna" filter showFilterMatchModes={false} filterPlaceholder='wyszukaj' filterApply={filterApplyTemplate} filterClear={filterClearTemplate} style={{ minWidth:'70%' }}></Column>
+                <Column field="blocked" header="Status" body={blockedTemplate} dataType="boolean" filter filterElement={blockedRowFilterTemplate} filterApply={filterApplyTemplate} filterClear={filterClearTemplate} style={{ width: '20%', textAlign:"center" }}></Column>
             </DataTable>
 
             <Dialog header={dialogHeader(selectedUser)} visible={selectedUser !== null} onHide={() => setSelectedUser(null)} modal>

@@ -10,5 +10,6 @@ export interface UserListEntry{
     numberOfPastReservations?:number;
     numberOfFutureReservations?:number;
     numberOfPastBans?:number;
+    currentReservation:boolean;
 
 }

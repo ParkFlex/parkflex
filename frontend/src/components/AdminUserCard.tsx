@@ -2,9 +2,10 @@ import {Card} from "primereact/card";
 import {Button} from "primereact/button";
 import {useState} from "react";
 import type {UserListEntry} from "../models/UserListEntry.tsx";
-import {mockUserList} from "../mocks/userListMock.ts";
 import {Dialog} from "primereact/dialog";
 import {InputText} from "primereact/inputtext";
+import {useUserListEntry} from "../hooks/useUserListEntry.ts";
+import {formatDate, formatDateTime} from "../utils/dateUtils.ts";
 
 export function AdminUserCard({ plate }: { plate: string }){
 
@@ -29,7 +30,7 @@ export function AdminUserCard({ plate }: { plate: string }){
         </div>
     );
 
-    const [users] = useState<UserListEntry[]>(mockUserList);
+    const { userListEntries: users } = useUserListEntry();
     const user = users.find(u => u.plate === plate);
 
     if(!user){
@@ -42,16 +43,21 @@ export function AdminUserCard({ plate }: { plate: string }){
         )
     }
 
+    const banEnd = (
+        user.currentPenalty ? formatDateTime(new Date(user.currentPenalty.due)) : ''
+    )
+
     return (
         <div style={{textAlign:"left"}}>
                 <Card title={`${user.plate} - ${user.name}`} subTitle={user.mail} footer={footerEdit} style={{marginBottom:'1.5rem'}}>
-                        <div> Rezerwacje zakończone : {0} </div>
-                        <div> Zaplanowane : {0} </div>
-                        <div> Liczba zakończonych banów : {0} </div>
+                    {user.currentReservation && <div> Obecnie posiada rezerwację </div>}
+                        <div> Rezerwacje zakończone : {user.numberOfPastReservations} </div>
+                        <div> Zaplanowane : {user.numberOfFutureReservations} </div>
+                        <div> Liczba zakończonych banów : {user.numberOfPastBans} </div>
                 </Card>
-                {user.blocked && <Card title="Użytkownik zbanowany" footer={footerBan} style={{backgroundColor:'rgba(250,169,85,0.11)', color:"#faa955", marginBottom:'1.5rem'}}>
-                    <div> Długość banu: {0}</div>
-                    <div> Kara pieniężna: {0}</div>
+                {user.currentPenalty && <Card title="Użytkownik zbanowany" footer={footerBan} style={{backgroundColor:'rgba(250,169,85,0.11)', color:"#faa955", marginBottom:'1.5rem'}}>
+                    <div> Koniec banu: {banEnd}</div>
+                    <div> Kara pieniężna: {user.currentPenalty.fine}</div>
                 </Card>}
 
                 <Dialog footer={footerDialog} visible={visible} onHide={() => setVisible(false)} style={{width:'80%'}} showCloseIcon={false}>
