@@ -13,9 +13,10 @@ import java.util.Date
 
 
 fun Route.userFullRoutes() {
-    get{
+    get {
         val userList = mutableListOf<UserListEntry>()
-        runDB{
+
+        runDB {
             for (entry in UserEntity.all()) {
                 val today = LocalDateTime.now()
                 var numberOfPastReservations: Long = 0
@@ -24,14 +25,17 @@ fun Route.userFullRoutes() {
                 var currentReservation = false
                 var currentPenaltyModel: PenaltyModel? = null
                 val reservations = entry.reservations.toList()
+
                 for (reservation in reservations) {
                     val endTime = reservation.start.plusMinutes(reservation.duration.toLong())
                     val isFuture = today.isBefore(reservation.start)
                     val isPast = today.isAfter(endTime)
                     val status: Boolean
                     val isActive = !today.isBefore(reservation.start) && !today.isAfter(endTime)
-                    if(currentPenaltyModel == null ) {
-                        val penaltyEntity = reservation.penalties.find { !it.paid}
+
+                    if (currentPenaltyModel == null) {
+                        val penaltyEntity = reservation.penalties.find { !it.paid }
+
                         if (penaltyEntity != null) {
                             currentPenaltyModel = PenaltyModel(
                                 reservation = reservation.id.value,
@@ -42,10 +46,10 @@ fun Route.userFullRoutes() {
                             )
                         }
                     }
+
                     if (isActive) {
                         currentReservation = true
-                    }
-                    else if (isFuture) {
+                    } else if (isFuture) {
                         numberOfFutureReservations += 1
                     } else if (isPast) {
                         numberOfPastReservations += 1
@@ -54,7 +58,8 @@ fun Route.userFullRoutes() {
                         }
                     }
                 }
-                val ThisUser = UserListEntry(
+
+                val thisUser = UserListEntry(
                     plate = entry.plate,
                     role = entry.role,
                     blocked = entry.blocked,
@@ -67,11 +72,10 @@ fun Route.userFullRoutes() {
                     currentReservation = currentReservation
                 )
 
-                userList.add(ThisUser)
+                userList.add(thisUser)
             }
-    }
+        }
+
         call.respond(userList)
-
     }
-
 }
