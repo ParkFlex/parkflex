@@ -70,6 +70,21 @@ ktor {
     }
 }
 
+tasks.register("runDebug") {
+    group = "application"
+
+    doFirst {
+        tasks.run.configure {
+            environment(
+                "ENABLE_MOCK_DATA" to "true",
+                "ENABLE_H2_SOCKETS" to "true"
+            )
+        }
+    }
+
+    finalizedBy(tasks.run)
+}
+
 tasks.register("apiDoc") {
     group = "documentation"
 
