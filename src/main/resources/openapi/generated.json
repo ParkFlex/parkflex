@@ -5,6 +5,20 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/user/{id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
         "/api/demo": {
             "put": {
                 "summary": "Save provided note to the database.",
@@ -121,6 +135,44 @@
                     }
                 }
             }
+        },
+        "/api/user": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserListEntry"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/full": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserListEntry"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -162,6 +214,59 @@
                     },
                     "spot": {
                         "type": "integer"
+                    }
+                }
+            },
+            "UserListEntry": {
+                "type": "object",
+                "properties": {
+                    "plate": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "blocked": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "mail": {
+                        "type": "string"
+                    },
+                    "currentPenalty": {
+                        "type": "object",
+                        "properties": {
+                            "reservation": {
+                                "type": "integer"
+                            },
+                            "reason": {
+                                "type": "string"
+                            },
+                            "paid": {
+                                "type": "boolean"
+                            },
+                            "due": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "fine": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "numberOfPastReservations": {
+                        "type": "integer"
+                    },
+                    "numberOfFutureReservations": {
+                        "type": "integer"
+                    },
+                    "numberOfPastBans": {
+                        "type": "integer"
+                    },
+                    "currentReservation": {
+                        "type": "boolean"
                     }
                 }
             }
