@@ -8,40 +8,67 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import parkflex.db.ReservationEntity
 import parkflex.db.SpotEntity
+import parkflex.db.UserEntity
+import parkflex.models.ApiErrorModel
 import parkflex.models.SpotModel
+import parkflex.models.SpotReservationModel
 import parkflex.runDB
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 fun Route.spotRoutes() {
     get {
+        val context = "/api/spot"
 
-        // /api/spot?spot_id=dupa
         val spotID: String? = call.request.queryParameters["spot_id"]
 
         if (spotID == null) {
-            call.respondText("Nie podano spot_id")
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = ApiErrorModel("Nie podano spot_id !!", context)
+            )
+
         } else {
-            val spotIDLong = spotID.toLong()
+            try {
+                val spotIDLong = spotID.toLong()
 
-            val znaleziony: SpotEntity? = runDB {
-                SpotEntity.findById(spotIDLong)
-            }
-
-            //val spotPierwszy = SpotModel(spotIDLong, "normal")
-
-            if (znaleziony == null) {
-                call.respondText("Nie ma spotu o id ${spotID}")
-            } else {
-                val rezerwacje: List<ReservationEntity> = runDB {
-                    ReservationEntity.all().filter { it.spot == znaleziony }
+                val spot: SpotEntity? = runDB {
+                    SpotEntity.findById(spotIDLong)
                 }
 
-                println(rezerwacje)
+                if (spot == null) {
+                    call.respond(
+                        status = HttpStatusCode.NotFound,
+                        message = ApiErrorModel("Nie ma spotu o id ${spotID}", context)
+                    )
+                } else {
+                    val reservationList: List<ReservationEntity> = runDB {
+                        //ReservationEntity.all().toList()
+                        //jest problem z filtrowaniem w postaci it.spot == spot
+                        ReservationEntity.all().filter { it.spot.id.value == spotIDLong }
+                    }
+                    println(reservationList)
 
-                val model = SpotModel(znaleziony.id.value, znaleziony.role)
+                    val reservationModelList = mutableListOf<SpotReservationModel>()
+                    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+                    for (reservation in reservationList) {
+                        val reservationModel =
+                            SpotReservationModel(start = reservation.start.format(dateFormatter), reservation.duration);
+                        reservationModelList.add(reservationModel)
+                    }
+
+                    val spotModel = SpotModel(spot.id.value, spot.role, reservationModelList)
+
+                    call.respond(
+                        message = spotModel,
+                        status = HttpStatusCode.OK
+                    )
+                }
+            } catch (e: NumberFormatException) {
                 call.respond(
-                    message = model,
-                    status = HttpStatusCode.OK
+                    status = HttpStatusCode.BadRequest,
+                    message = ApiErrorModel("spot_id musi być prawilną liczbą naturalną", context)
                 )
             }
         }
@@ -49,8 +76,26 @@ fun Route.spotRoutes() {
 
     put {
         runDB {
-            SpotEntity.new {
+
+            val user1 = UserEntity.new {
+                login = "john.doe"
+                fullName = "John Doe"
+                mail = "john.doe@example.com"
+                hash = "hashed_password_123"
+                plate = "ABC-1234"
+                role = "user"
+                blocked = false
+            }
+
+            val s1 = SpotEntity.new {
                 role = "normal"
+            }
+
+            ReservationEntity.new {
+                start = LocalDateTime.now()
+                duration = 120
+                spot = s1
+                user = user1
             }
 
             SpotEntity.new {
