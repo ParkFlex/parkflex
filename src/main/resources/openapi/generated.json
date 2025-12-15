@@ -5,6 +5,20 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/user/{id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
         "/api/demo": {
             "put": {
                 "summary": "Save provided note to the database.",
@@ -121,6 +135,71 @@
                     }
                 }
             }
+        },
+        "/api/user/{user_id}/penalty": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PenaltyModel"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserListEntry"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -162,6 +241,80 @@
                     },
                     "spot": {
                         "type": "integer"
+                    }
+                }
+            },
+            "PenaltyModel": {
+                "type": "object",
+                "properties": {
+                    "reservation": {
+                        "type": "integer"
+                    },
+                    "reason": {
+                        "type": "string"
+                    },
+                    "paid": {
+                        "type": "boolean"
+                    },
+                    "due": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "fine": {
+                        "type": "number"
+                    }
+                }
+            },
+            "UserListEntry": {
+                "type": "object",
+                "properties": {
+                    "plate": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "blocked": {
+                        "type": "boolean"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "mail": {
+                        "type": "string"
+                    },
+                    "currentPenaltyModel": {
+                        "type": "object",
+                        "properties": {
+                            "reservation": {
+                                "type": "integer"
+                            },
+                            "reason": {
+                                "type": "string"
+                            },
+                            "paid": {
+                                "type": "boolean"
+                            },
+                            "due": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "fine": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "numberOfPastReservations": {
+                        "type": "integer"
+                    },
+                    "numberOfFutureReservations": {
+                        "type": "integer"
+                    },
+                    "numberOfPastBans": {
+                        "type": "integer"
+                    },
+                    "currentReservation": {
+                        "type": "boolean"
                     }
                 }
             }
