@@ -23,4 +23,8 @@ fun Route.apiRoutes() {
         spotRoutes()
     }
 
+    route("/spots"){
+        spotsRoutes()
+    }
+
 }

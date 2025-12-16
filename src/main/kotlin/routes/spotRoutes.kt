@@ -92,8 +92,8 @@ fun Route.spotRoutes() {
             }
 
             ReservationEntity.new {
-                start = LocalDateTime.now()
-                duration = 120
+                start = LocalDateTime.now().minusMinutes(60)
+                duration = 180
                 spot = s1
                 user = user1
             }
