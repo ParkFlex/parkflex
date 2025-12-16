@@ -23,21 +23,20 @@ fun Route.userFullRoutes() {
                 var numberOfFutureReservations: Long = 0
                 var numberOfPastBans: Long = 0
                 var currentReservation = false
-                var currentPenaltyModel: PenaltyModel? = null
+                var currentPenalty: PenaltyModel? = null
                 val reservations = entry.reservations.toList()
 
                 for (reservation in reservations) {
                     val endTime = reservation.start.plusMinutes(reservation.duration.toLong())
                     val isFuture = today.isBefore(reservation.start)
                     val isPast = today.isAfter(endTime)
-                    val status: Boolean
                     val isActive = !today.isBefore(reservation.start) && !today.isAfter(endTime)
 
-                    if (currentPenaltyModel == null) {
+                    if (currentPenalty == null) {
                         val penaltyEntity = reservation.penalties.find { !it.paid }
 
                         if (penaltyEntity != null) {
-                            currentPenaltyModel = PenaltyModel(
+                            currentPenalty = PenaltyModel(
                                 reservation = reservation.id.value,
                                 reason = penaltyEntity.reason,
                                 paid = penaltyEntity.paid,
@@ -65,7 +64,7 @@ fun Route.userFullRoutes() {
                     blocked = entry.blocked,
                     name = entry.fullName,
                     mail = entry.mail,
-                    currentPenaltyModel = null,
+                    currentPenaltyModel = currentPenalty,
                     numberOfPastReservations = numberOfPastReservations,
                     numberOfFutureReservations = numberOfFutureReservations,
                     numberOfPastBans = numberOfPastBans,
