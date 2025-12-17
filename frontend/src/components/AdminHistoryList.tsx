@@ -166,6 +166,15 @@ export function AdminHistoryList() {
         return null;
     };
 
+    const dialogHeaderTemplate = () => {
+        return (
+            <div style={{display:'flex', alignItems:'center', flexDirection:'row',gap:'1rem'}}>
+                <div>{selectedEntry ? statusTemplate(selectedEntry) :null}</div>
+                <div style={{marginRight:'1rem'}}>Rezerwacja</div>
+            </div>
+        );
+    }
+
     return (
         <div>
             <DataTable
@@ -197,11 +206,10 @@ export function AdminHistoryList() {
                 }}
             />
 
-            <Dialog header='Rezerwacja' visible={selectedEntry !== null} onHide={() => setSelectedEntry(null)} modal style={{width:'90%'}}>
+            <Dialog header={dialogHeaderTemplate()} visible={selectedEntry !== null} onHide={() => setSelectedEntry(null)} modal style={{width:'95%'}}>
                 {selectedEntry ? <AdminHistoryCard plate={selectedEntry.plate} startTime={selectedEntry.startTime} /> : null}
             </Dialog>
         </div>
     )
 }
 
-//*dodac kolumne spotu dla szerszej tableli
