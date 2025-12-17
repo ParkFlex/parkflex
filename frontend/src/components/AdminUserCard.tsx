@@ -50,14 +50,15 @@ export function AdminUserCard({ plate }: { plate: string }){
     return (
         <div style={{textAlign:"left"}}>
                 <Card title={`${user.plate} - ${user.name}`} subTitle={user.mail} footer={footerEdit} style={{marginBottom:'1.5rem'}}>
-                    {user.currentReservation && <div> Obecnie posiada rezerwację </div>}
+                    {user.currentReservation && <div> Posiada aktywną rezerwację </div>}
                         <div> Rezerwacje zakończone : {user.numberOfPastReservations} </div>
-                        <div> Zaplanowane : {user.numberOfFutureReservations} </div>
-                        <div> Liczba zakończonych banów : {user.numberOfPastBans} </div>
+                        <div> Rezerwacje zaplanowane : {user.numberOfFutureReservations} </div>
+                        <div> Zakończone bany : {user.numberOfPastBans} </div>
                 </Card>
                 {user.currentPenalty && <Card title="Użytkownik zbanowany" footer={footerBan} style={{backgroundColor:'rgba(250,169,85,0.11)', color:"#faa955", marginBottom:'1.5rem'}}>
-                    <div> Koniec banu: {banEnd}</div>
+                    <div> Data zakończenia banu: {banEnd}</div>
                     <div> Kara pieniężna: {user.currentPenalty.fine}</div>
+                    <div> Powód banu: {user.currentPenalty.reason} </div>
                 </Card>}
 
                 <Dialog footer={footerDialog} visible={visible} onHide={() => setVisible(false)} style={{width:'80%'}} showCloseIcon={false}>

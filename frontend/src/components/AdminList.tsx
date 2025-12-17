@@ -80,7 +80,7 @@ export function AdminList(){
     };
 
     const filterClearTemplate = (options: any) => {
-        return <Button label="Wyczyść" onClick={options.filterClearCallback} size="small" outlined />;
+        return <Button label="Wyczyść" onClick={options.filterClearCallback} size="small" outlined style={{marginRight:'0.5rem'}} />;
     };
 
 
@@ -101,11 +101,9 @@ export function AdminList(){
                 <Column field="blocked" header="Status" body={blockedTemplate} dataType="boolean" filter filterElement={blockedRowFilterTemplate} filterApply={filterApplyTemplate} filterClear={filterClearTemplate} style={{ width: '20%', textAlign:"center" }}></Column>
             </DataTable>
 
-            <Dialog header={dialogHeader(selectedUser)} visible={selectedUser !== null} onHide={() => setSelectedUser(null)} modal>
+            <Dialog header={dialogHeader(selectedUser)} visible={selectedUser !== null} onHide={() => setSelectedUser(null)} modal style={{width:'95%'}}>
                 {selectedUser ? <AdminUserCard plate={selectedUser.plate} /> : null}
             </Dialog>
         </div>
     )
 }
-
-//uzupelnic penalty
