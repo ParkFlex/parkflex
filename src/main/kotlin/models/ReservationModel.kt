@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class CreateReservationRequest(
     val spot_id: Long,
     val start: String,
-    val duration: Long
+    val duration: Int
 )
 
 @Serializable
