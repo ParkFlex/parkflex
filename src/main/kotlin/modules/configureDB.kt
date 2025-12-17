@@ -3,7 +3,6 @@ package parkflex.modules
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
 import parkflex.config.AppConfig
 import parkflex.config.Config
 import parkflex.config.MariaDBConfig

@@ -160,4 +160,3 @@ fun generateMockData() {
     logger.info("   - Penalties: 2")
     logger.info("   - Parameters: 5")
 }
-
