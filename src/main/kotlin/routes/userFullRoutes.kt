@@ -33,7 +33,7 @@ fun Route.userFullRoutes() {
                     val isActive = !today.isBefore(reservation.start) && !today.isAfter(endTime)
 
                     if (currentPenalty == null) {
-                        val penaltyEntity = reservation.penalties.find { !it.paid }
+                        val penaltyEntity = reservation.penalties.find { !it.paid && it.due.isAfter(today) }
 
                         if (penaltyEntity != null) {
                             currentPenalty = PenaltyModel(

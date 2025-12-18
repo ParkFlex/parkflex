@@ -9,9 +9,12 @@ fun Route.apiRoutes() {
     route("/user") {
         // some routes here
         userFullRoutes()
-        get("/{id}"){
+        get("/{id}") {
             val id = call.parameters["id"]
         }
+
+        updatePlateRoutes()
+
 
         penaltyRoutes()
 
