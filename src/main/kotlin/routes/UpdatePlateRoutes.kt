@@ -4,7 +4,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.put
+import io.ktor.server.routing.patch
 import io.ktor.server.routing.route
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
@@ -12,7 +12,7 @@ import parkflex.runDB
 
 fun Route.updatePlateRoutes() {
     route("/{user_id}") {
-        put {
+        patch {
 
             val id = call.queryParameters["userId"]
             if (id == null) {
@@ -21,7 +21,7 @@ fun Route.updatePlateRoutes() {
                     message = ApiErrorModel("No ID found", "/user/{user_id} PUT")
 
                 )
-                return@put
+                return@patch
             }
 
             val idLong = id.toLong()
@@ -31,7 +31,7 @@ fun Route.updatePlateRoutes() {
                     status = HttpStatusCode.NotFound,
                     message = ApiErrorModel("User not found", "/user/{user_id} PUT")
                 )
-                return@put
+                return@patch
             }
 
             val newPlate = call.receiveText()
@@ -40,7 +40,7 @@ fun Route.updatePlateRoutes() {
                     status = HttpStatusCode.BadRequest,
                     message = ApiErrorModel("Invalid or missing user_id", context = "/user/{user_id} PUT")
                 )
-                return@put
+                return@patch
             }
 
             val plateRegex = Regex("^[A-Z]{3}-\\d{4}$")
@@ -52,7 +52,7 @@ fun Route.updatePlateRoutes() {
                         context = "/user/{user_id} PUT"
                     )
                 )
-                return@put
+                return@patch
             }
 
             val isPlate = runDB {
@@ -66,7 +66,7 @@ fun Route.updatePlateRoutes() {
                         context = "/user/{user_id} PUT"
                     )
                 )
-                return@put
+                return@patch
             }
             runDB{
                 user.plate = newPlate
