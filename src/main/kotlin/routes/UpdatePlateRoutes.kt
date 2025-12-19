@@ -1,21 +1,20 @@
 package parkflex.routes
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receiveText
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.route
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
-import parkflex.models.UserListEntry
 import parkflex.runDB
 
 fun Route.updatePlateRoutes() {
     route("/{user_id}") {
         patch {
 
-            val id = call.queryParameters["userId"]
+            val id = call.parameters["user_id"]
             if (id == null) {
                 call.respond(
                     status = HttpStatusCode.UnprocessableEntity,
@@ -35,7 +34,7 @@ fun Route.updatePlateRoutes() {
                 return@patch
             }
 
-            val newPlate = call.receiveText()
+            val newPlate = call.receive<String>()
             if (newPlate.isBlank()) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,

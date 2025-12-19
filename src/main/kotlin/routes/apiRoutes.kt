@@ -15,7 +15,6 @@ fun Route.apiRoutes() {
 
         updatePlateRoutes()
 
-
         penaltyRoutes()
 
     }
