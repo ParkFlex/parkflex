@@ -77,7 +77,7 @@ fun Route.reservationRoutes() {
             )
             return@post
         }
-        val endTime: LocalDateTime = startTime.plusMinutes(request.duration)
+        val endTime: LocalDateTime = startTime.plusMinutes(request.duration.toLong())
         
 
         // Check for reservation interval conflicts
@@ -94,7 +94,7 @@ fun Route.reservationRoutes() {
                 .find { ReservationTable.spot eq request.spot_id }
                 .any { existingReservation ->
                     val existingStart = existingReservation.start
-                    val existingEnd = existingStart.plusMinutes(existingReservation.duration)
+                    val existingEnd = existingStart.plusMinutes(existingReservation.duration.toLong())
                     
                     // Add break duration to prevent
                     // <reservation>---break (0minutes)---<reservation> conflicts

@@ -11,5 +11,5 @@ data class SpotModel(
 @Serializable
 data class SpotReservationModel(
     val start: String,
-    val time: Long
+    val time: Int
 )

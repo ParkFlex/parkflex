@@ -15,6 +15,10 @@ fun Route.apiRoutes() {
         demoRoutes()
     }
 
+    route("/historyEntry"){
+        historyRoutes()
+    }
+
     route("/reservation") {
         reservationRoutes()
     }
