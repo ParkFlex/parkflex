@@ -14,13 +14,14 @@ import {
     filterByDateRange,
     createEmptyDateRangeFilter
 } from "./DateRangeFilterDialog";
+import {classNames} from "primereact/utils";
 
 export function AdminReportList(){
-    const [reports] = useState<ReportEntry[]>(mockReportEntries);
+    const [report] = useState<ReportEntry[]>(mockReportEntries);
     const [selectedReport, setSelectedReport] = useState<ReportEntry | null>(null);
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         plate: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        banned: { value: null, matchMode: FilterMatchMode.EQUALS }
+        status: { value: null, matchMode: FilterMatchMode.EQUALS }
     });
     const [dateFilter, setDateFilter] = useState<DateRangeFilter>(createEmptyDateRangeFilter());
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
@@ -48,12 +49,76 @@ export function AdminReportList(){
         return <><b>{date}</b><br/>{time}</>;
     };
 
-    const dialogHeader = (report: ReportEntry | null) => {
-        return <div style={{marginRight:'1rem'}}>Szczegóły zgłoszenia</div>;
+    const dialogHeader = (selectedReport: ReportEntry | null) => {
+        return (
+            <div>
+                    {selectedReport && selectedReport.reviewed && selectedReport.penalty && (
+                        <strong>Zgłoszenie zaakceptowne</strong>
+                    )}
+                    {selectedReport && selectedReport.reviewed && !selectedReport.penalty && (
+                        <strong>Zgłoszenie odrzucone</strong>
+                    )}
+                    {selectedReport && !selectedReport.reviewed && (
+                        <strong>Zgłoszenie oczekujące na weryfikację</strong>
+                    )}
+            </div>
+        );
     };
 
-    const getFilteredReports = (): ReportEntry[] => {
-        return filterByDateRange(reports, dateFilter, (e) => e.issueTime);
+    const getStatus = (entry: ReportEntry): string => {
+         if (!entry.reviewed) return 'pending';
+         if ((entry.reviewed) && (entry.penalty)) return 'accepted';
+         return 'rejected';
+    }
+
+    const statusRowFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
+        const current = options.value as string | null;
+        return (
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                <Button
+                    icon="pi pi-check"
+                    rounded
+                    outlined={current !== 'accepted'}
+                    severity="success"
+                    onClick={() => options.filterApplyCallback(current === 'accepted' ? null : 'accepted')}
+                />
+                <Button
+                    icon="pi pi-times"
+                    rounded
+                    outlined={current !== 'rejected'}
+                    severity="danger"
+                    onClick={() => options.filterApplyCallback(current === 'rejected' ? null : 'rejected')}
+                />
+                <Button
+                    icon="pi pi-clock"
+                    rounded
+                    outlined={current !== 'pending'}
+                    onClick={() => options.filterApplyCallback(current === 'pending' ? null : 'pending')}
+                />
+            </div>
+        );
+    };
+
+    const getFilteredReports = (): (ReportEntry & { status: string })[] => {
+        let items = filterByDateRange(report, dateFilter, (e) => new Date(e.issueTime));
+
+        const plateRaw = (filters as any)?.plate?.value;
+        if (plateRaw) {
+            const needle = String(plateRaw).toLowerCase();
+            items = items.filter(i => (i.plate || '').toLowerCase().includes(needle));
+        }
+
+        const rawStatus = (filters as any)?.status?.value;
+        let statusVal: string | null = null;
+        if (rawStatus === true || rawStatus === 'accepted' || rawStatus === 'yes') statusVal = 'accepted';
+        else if (rawStatus === false || rawStatus === 'rejected' || rawStatus === 'no') statusVal = 'rejected';
+        else if (rawStatus === 'pending') statusVal = 'pending';
+
+        if (statusVal !== null) {
+            items = items.filter(e => getStatus(e) === statusVal);
+        }
+
+        return items.map(e => ({ ...e, status: getStatus(e) }));
     };
 
     const dateHeaderTemplate = () => {
@@ -74,6 +139,13 @@ export function AdminReportList(){
         );
     };
 
+    const statusBodyTemplate = (rowData: ReportEntry) => {
+        const entryStatus = getStatus(rowData);
+        if (entryStatus === 'accepted') return <i className={classNames('pi', 'pi-check')} style={{ color: 'green' }} />;
+        if (entryStatus === 'rejected') return <i className={classNames('pi', 'pi-times')} style={{ color: 'red' }} />;
+        return <i className={classNames('pi', 'pi-clock')} style={{ color: 'grey' }} />;
+    }
+
     return (
         <div style={{ borderColor:'#d4e2da'}}>
             <DataTable
@@ -88,18 +160,26 @@ export function AdminReportList(){
                 dataKey="plate"
                 emptyMessage="Brak zgłoszeń"
             >
+                <Column field='status' body={statusBodyTemplate} style={{ width: '15%', textAlign:'center' }} filter filterElement={statusRowFilterTemplate} filterApply={filterApplyTemplate} filterClear={filterClearTemplate} showFilterMatchModes={false}></Column>
                 <Column field="plate" header="Rejestracja" filter filterElement={plateFilterTemplate} filterPlaceholder='wyszukaj' style={{ minWidth:'30%' }} showFilterMatchModes={false} filterApply={filterApplyTemplate} filterClear={filterClearTemplate}></Column>
                 <Column field="issueTime" header={dateHeaderTemplate} body={dateTemplate} style={{ width: '25%' }}></Column>
             </DataTable>
 
-            <Dialog header={dialogHeader(selectedReport)} visible={selectedReport !== null} onHide={() => setSelectedReport(null)} modal>
+            <Dialog header={dialogHeader(selectedReport)} visible={selectedReport !== null} onHide={() => setSelectedReport(null)} modal style={{width:'95%'}}>
                 {selectedReport && (
                     <div>
                         <p><strong>{selectedReport.issueTime.toLocaleDateString('pl-PL')}</strong> {selectedReport.issueTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
                         <p><strong>Tablica zgłoszonego:</strong> {selectedReport.plate}</p>
                         <p><strong>Kto zgłosił:</strong> {selectedReport.whoReported}</p>
                         <p><strong>Komentarz:</strong> {selectedReport.comment}</p>
-                        <img src={selectedReport.photoUrl} style={{ maxWidth: '100%', width: '300px', marginBottom: '1rem', display: 'block' }} />
+                        <img src={selectedReport.image} alt="report" style={{ width: '100%', marginBottom: '1rem', display: 'block' }} />
+                        {selectedReport.reviewed && !selectedReport.penalty && (
+                            <Button severity="secondary" style={{width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center'}}>Zaakceptuj</Button>)}
+                        {!selectedReport.reviewed && (
+                            <div style={{display:'flex', flexDirection:'row', gap:'1rem'}}>
+                            <Button severity="secondary" style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}}>Zaakceptuj</Button>
+                            <Button style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}}>Odrzuć</Button>
+                            </div>)}
                     </div>
                 )}
             </Dialog>
