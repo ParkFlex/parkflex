@@ -2,6 +2,7 @@ package parkflex.data
 
 import parkflex.db.*
 import java.time.LocalDateTime
+import kotlin.io.encoding.Base64
 
 /**
  * Generates mock data for development and testing purposes.
@@ -11,6 +12,12 @@ import java.time.LocalDateTime
  */
 fun generateMockData() {
     val logger = org.slf4j.LoggerFactory.getLogger("MockData")
+
+    val placeholderImg = (object {})::class.java.getResource("/placeholder.jpeg")?.let { url ->
+        val header = "data:image/jpeg;base64,"
+        val encoded = Base64.encode(url.readBytes())
+        header + encoded
+    } ?: throw Exception("placeholder.jpeg not found")
 
     // Create mock users
     val user1 = UserEntity.new {
@@ -30,16 +37,6 @@ fun generateMockData() {
         hash = "hashed_password_456"
         plate = "XYZ-9876"
         role = "user"
-        blocked = false
-    }
-
-    val admin = UserEntity.new {
-        login = "admin"
-        fullName = "Admin User"
-        mail = "admin@example.com"
-        hash = "hashed_password_admin"
-        plate = "ADM-0001"
-        role = "admin"
         blocked = false
     }
 
@@ -93,7 +90,14 @@ fun generateMockData() {
         start = LocalDateTime.now().minusDays(1)
         duration = 90
         spot = spot3
-        user = admin
+        user = user1
+    }
+
+    val reservation4 = ReservationEntity.new {
+        start = LocalDateTime.now().minusDays(5)
+        duration = 120
+        spot = spot1
+        user = user1
     }
 
     ReservationEntity.new {
@@ -119,12 +123,50 @@ fun generateMockData() {
         due = LocalDateTime.now().plusDays(7)
     }
 
-    PenaltyEntity.new {
+    val penalty1 = PenaltyEntity.new {
         reservation = reservation3
         reason = PenaltyReason.WrongSpot
         paid = true
         fine = 2500
         due = LocalDateTime.now().minusDays(1)
+    }
+
+    PenaltyEntity.new {
+        reservation = reservation4
+        reason = PenaltyReason.WrongSpot
+        paid = false
+        fine = 2500
+        due = LocalDateTime.parse("2025-12-19T08:00").plusDays(5)
+    }
+
+    // Not reviewed yer
+    ReportEntity.new {
+        penalty = null
+        description = "My spot was taken when I arrived"
+        submitter = user1
+        timestamp = LocalDateTime.parse("2025-12-19T08:43")
+        image = placeholderImg
+        reviewed = false
+    }
+
+    // Reviewed, penalty assigned
+    ReportEntity.new {
+        penalty = penalty1
+        description = "I couldn't park as my spot was blocked by some other car"
+        submitter = user2
+        timestamp = LocalDateTime.parse("2025-12-16T08:20")
+        image = placeholderImg
+        reviewed = true
+    }
+
+    // Reviewed, penalty not assigned
+    ReportEntity.new {
+        penalty = null
+        description = ":("
+        submitter = user1
+        timestamp = LocalDateTime.parse("2025-12-18T08:17")
+        image = placeholderImg
+        reviewed = true
     }
 
     // Create mock parameters
@@ -154,7 +196,7 @@ fun generateMockData() {
     }
 
     logger.info("✅ Mock data generated successfully!")
-    logger.info("   - Users: 4 (john.doe, jane.smith, admin, blocked.user)")
+    logger.info("   - Users: 3 (john.doe, jane.smith, blocked.user)")
     logger.info("   - Spots: 5 (various roles)")
     logger.info("   - Reservations: 5")
     logger.info("   - Penalties: 2")
