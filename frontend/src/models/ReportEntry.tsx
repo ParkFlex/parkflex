@@ -3,5 +3,5 @@ export interface ReportEntry{
     issueTime: Date;
     comment: string;
     whoReported: string;
-    photoUrl: string;
+    photo?: Base64URLString;
 }
