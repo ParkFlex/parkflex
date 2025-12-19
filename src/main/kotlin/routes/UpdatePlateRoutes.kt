@@ -34,6 +34,9 @@ fun Route.updatePlateRoutes() {
                 return@patch
             }
 
+            /* We use receive<String> instead of receiveText because the latter
+             * does not seem to be recognized by the OpenAPI generation plugin.
+             */
             val newPlate = call.receive<String>()
             if (newPlate.isBlank()) {
                 call.respond(

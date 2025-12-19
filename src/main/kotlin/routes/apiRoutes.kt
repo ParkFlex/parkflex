@@ -7,16 +7,11 @@ import io.ktor.server.routing.*
  */
 fun Route.apiRoutes() {
     route("/user") {
-        // some routes here
         userFullRoutes()
-        get("/{id}") {
-            val id = call.parameters["id"]
-        }
 
         updatePlateRoutes()
 
         penaltyRoutes()
-
     }
 
 
