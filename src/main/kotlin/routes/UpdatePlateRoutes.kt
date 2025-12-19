@@ -8,6 +8,7 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.route
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
+import parkflex.models.UserListEntry
 import parkflex.runDB
 
 fun Route.updatePlateRoutes() {
@@ -58,7 +59,8 @@ fun Route.updatePlateRoutes() {
             val isPlate = runDB {
                 UserEntity.all().any { it.plate == newPlate }
             }
-            if(isPlate){
+
+            if (isPlate) {
                 call.respond(
                     status = HttpStatusCode.Conflict,
                     message = ApiErrorModel(
@@ -68,11 +70,12 @@ fun Route.updatePlateRoutes() {
                 )
                 return@patch
             }
-            runDB{
+
+            runDB {
                 user.plate = newPlate
             }
-            call.respond(user)
 
+            call.respond(HttpStatusCode.NoContent)
         }
     }
 }
