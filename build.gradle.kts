@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.ktor.server.swagger)
     implementation(libs.ktor.server.cors)
     implementation(libs.exposed.java.time)
+    implementation(libs.jbcrypt)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test)
