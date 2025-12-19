@@ -50,7 +50,7 @@ fun Route.spotRoutes() {
                     println(reservationList)
 
                     val reservationModelList = mutableListOf<SpotReservationModel>()
-                    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
                     for (reservation in reservationList) {
                         val reservationModel =
