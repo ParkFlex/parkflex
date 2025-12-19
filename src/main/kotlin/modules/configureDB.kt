@@ -3,13 +3,31 @@ package parkflex.modules
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.transaction
-import parkflex.config.AppConfig
+import org.jetbrains.exposed.sql.count
+import org.jetbrains.exposed.sql.selectAll
 import parkflex.config.Config
-import parkflex.config.MariaDBConfig
 import parkflex.data.generateMockData
 import parkflex.db.*
 import parkflex.runDB
+
+private val defaultParameters =
+    mapOf(
+        "penalty/fine/wrongSpot" to 500, // one time fee
+        "penalty/fine/overtime" to 150,  // fee per 15 of overtime
+        "penalty/block/duration" to 7 * 24, // duration in hours
+        "reservation/duration/min" to 30, // minutes
+        "reservation/duration/max" to 720, // minutes
+    )
+
+private fun ensureParameters() {
+    if (ParameterTable.selectAll().count() == 0L)
+        defaultParameters.forEach {
+            ParameterEntity.new {
+                key = it.key
+                value = it.value.toString()
+            }
+        }
+}
 
 /**
  * Connects to the database server.
@@ -55,6 +73,8 @@ suspend fun Application.configureDB(config: Config) {
             ReportTable
         )
 
+
+        ensureParameters()
         if (config.ENABLE_MOCK_DATA) generateMockData()
     }
 }
