@@ -169,32 +169,6 @@ fun generateMockData() {
         reviewed = true
     }
 
-    // Create mock parameters
-    ParameterEntity.new {
-        key = "max_reservation_duration"
-        value = "180"
-    }
-
-    ParameterEntity.new {
-        key = "default_fine_amount"
-        value = "5000"
-    }
-
-    ParameterEntity.new {
-        key = "parking_fee_per_hour"
-        value = "200"
-    }
-
-    ParameterEntity.new {
-        key = "max_active_reservations_per_user"
-        value = "3"
-    }
-
-    ParameterEntity.new {
-        key = "default_break_between_reservations_duration"
-        value = "0"
-    }
-
     logger.info("✅ Mock data generated successfully!")
     logger.info("   - Users: 3 (john.doe, jane.smith, blocked.user)")
     logger.info("   - Spots: 5 (various roles)")
