@@ -51,7 +51,8 @@ suspend fun Application.configureDB(config: Config) {
             UserTable,
             ReservationTable,
             PenaltyTable,
-            ParameterTable
+            ParameterTable,
+            ReportTable
         )
 
         if (config.ENABLE_MOCK_DATA) generateMockData()
