@@ -19,21 +19,29 @@ private val defaultParameters =
         "reservation/duration/max" to 720, // minutes
     )
 
-private fun ensureParameters() {
-    if (ParameterTable.selectAll().count() == 0L)
-        defaultParameters.forEach {
-            ParameterEntity.new {
-                key = it.key
-                value = it.value.toString()
-            }
-        }
-}
-
 /**
  * Connects to the database server.
  */
 suspend fun Application.configureDB(config: Config) {
     val mdb = config.mariaDB
+
+    fun ensureParameters() {
+        if (ParameterTable.selectAll().count() == 0L)
+            defaultParameters.forEach {
+                ParameterEntity.new {
+                    key = it.key
+                    value = it.value.toString()
+                }
+            }
+    }
+
+    fun ensureAdmin() {
+        if (UserTable.selectAll().count() == 0L) {
+            log.info("User table empty, creating admin user")
+            println(config.adminData)
+        }
+    }
+
 
     if (mdb == null) {
         log.info("No MariaDB config found. Connecting to in-memory H2 database")
@@ -75,6 +83,7 @@ suspend fun Application.configureDB(config: Config) {
 
 
         ensureParameters()
+        ensureAdmin()
         if (config.ENABLE_MOCK_DATA) generateMockData()
     }
 }
