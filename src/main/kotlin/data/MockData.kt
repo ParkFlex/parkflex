@@ -21,33 +21,27 @@ fun generateMockData() {
 
     // Create mock users
     val user1 = UserEntity.new {
-        login = "john.doe"
         fullName = "John Doe"
         mail = "john.doe@example.com"
         hash = "hashed_password_123"
         plate = "ABC-1234"
         role = "user"
-        blocked = false
     }
 
     val user2 = UserEntity.new {
-        login = "jane.smith"
         fullName = "Jane Smith"
         mail = "jane.smith@example.com"
         hash = "hashed_password_456"
         plate = "XYZ-9876"
         role = "user"
-        blocked = false
     }
 
     UserEntity.new {
-        login = "blocked.user"
         fullName = "Blocked User"
         mail = "blocked@example.com"
         hash = "hashed_password_blocked"
         plate = "BLK-0000"
         role = "user"
-        blocked = true
     }
 
     // Create mock parking spots
