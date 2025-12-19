@@ -3,11 +3,11 @@ package parkflex.modules
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.count
 import org.jetbrains.exposed.sql.selectAll
 import parkflex.config.Config
 import parkflex.data.generateMockData
 import parkflex.db.*
+import parkflex.repository.UserRepository
 import parkflex.runDB
 
 private val defaultParameters =
@@ -34,14 +34,6 @@ suspend fun Application.configureDB(config: Config) {
                 }
             }
     }
-
-    fun ensureAdmin() {
-        if (UserTable.selectAll().count() == 0L) {
-            log.info("User table empty, creating admin user")
-            println(config.adminData)
-        }
-    }
-
 
     if (mdb == null) {
         log.info("No MariaDB config found. Connecting to in-memory H2 database")
@@ -83,7 +75,18 @@ suspend fun Application.configureDB(config: Config) {
 
 
         ensureParameters()
-        ensureAdmin()
+
+        if (UserTable.selectAll().count() == 0L) {
+            log.info("User table empty, creating admin user")
+            UserRepository.unsafeCreateUser(
+                mail = config.adminData.first,
+                fullName = "Admin Adminowski",
+                password = config.adminData.second,
+                role = "admin",
+                plate = ""
+            )
+        }
+
         if (config.ENABLE_MOCK_DATA) generateMockData()
     }
 }
