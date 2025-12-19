@@ -4,9 +4,13 @@ import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.javatime.datetime
 
+enum class PenaltyReason {
+    WrongSpot, Overtime, NotArrived
+}
+
 object PenaltyTable : LongIdTable("penalty") {
     val reservation = reference("reservation", ReservationTable.id)
-    val reason = text("reason")
+    val reason = enumeration("reason", PenaltyReason::class)
     val paid = bool("paid")
     val fine = long("fine")
     val due = datetime("due")

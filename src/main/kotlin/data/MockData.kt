@@ -113,7 +113,7 @@ fun generateMockData() {
     // Create mock penalties
     PenaltyEntity.new {
         reservation = pastReservation
-        reason = "Overstayed parking time by 30 minutes"
+        reason = PenaltyReason.Overtime
         paid = false
         fine = 5000
         due = LocalDateTime.now().plusDays(7)
@@ -121,7 +121,7 @@ fun generateMockData() {
 
     PenaltyEntity.new {
         reservation = reservation3
-        reason = "Parking violation - wrong spot type"
+        reason = PenaltyReason.WrongSpot
         paid = true
         fine = 2500
         due = LocalDateTime.now().minusDays(1)
