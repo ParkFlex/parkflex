@@ -13,7 +13,7 @@ import { History } from "./pages/History.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <PrimeReactProvider>
+        <PrimeReactProvider value={{ ripple: true }}>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<App/>}/>
