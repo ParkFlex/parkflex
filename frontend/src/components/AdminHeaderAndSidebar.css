@@ -1,0 +1,222 @@
+/* Admin Layout Styles */
+.admin-layout {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "sidebar content";
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: 60px 1fr;
+    min-height: 100vh;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.admin-layout.sidebar-collapsed {
+    grid-template-columns: 60px 1fr;
+}
+
+/* Header Styles */
+.admin-header {
+    grid-area: header;
+    background: var(--surface-card, #ffffff);
+    border-bottom: 1px solid var(--surface-border, #e5e7eb);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-toggle {
+    color: var(--text-color, #495057);
+}
+
+.brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color, #3B82F6);
+    margin: 0;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--surface-100, #f3f4f6);
+    border-radius: 6px;
+}
+
+.user-name {
+    font-weight: 500;
+    color: var(--text-color, #495057);
+}
+
+.logout-button {
+    color: var(--red-500, #ef4444);
+}
+
+.logout-button:hover {
+    background: var(--red-50, #fef2f2);
+}
+
+.mobile-menu-toggle {
+    display: none;
+}
+
+/* Sidebar Styles */
+.admin-sidebar {
+    grid-area: sidebar;
+    background: var(--surface-card, #ffffff);
+    border-right: 1px solid var(--surface-border, #e5e7eb);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.admin-layout.sidebar-collapsed .admin-sidebar {
+    overflow: visible;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    color: var(--text-color, #495057);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+    background: var(--surface-100, #f3f4f6);
+    color: var(--primary-color, #3B82F6);
+}
+
+.nav-link.active {
+    background: var(--primary-50, #eff6ff);
+    color: var(--primary-color, #3B82F6);
+    border-left-color: var(--primary-color, #3B82F6);
+    font-weight: 600;
+}
+
+.nav-link i {
+    font-size: 1.25rem;
+    min-width: 1.25rem;
+}
+
+.admin-layout.sidebar-collapsed .nav-link span {
+    display: none;
+}
+
+.admin-layout.sidebar-collapsed .nav-link {
+    justify-content: center;
+    padding: 1rem 0.5rem;
+}
+
+/* Main Content Styles */
+.admin-content {
+    grid-area: content;
+    background: var(--surface-ground, #f8f9fa);
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+    display: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .admin-layout {
+        grid-template-areas:
+            "header"
+            "content";
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px 1fr;
+    }
+
+    .header-left .header-toggle {
+        display: none;
+    }
+
+    .mobile-menu-toggle {
+        display: block !important;
+    }
+
+    .header-right .user-info {
+        display: none;
+    }
+
+    .admin-sidebar {
+        position: fixed;
+        top: 60px;
+        left: -250px;
+        width: 250px;
+        height: calc(100vh - 60px);
+        z-index: 999;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-sidebar.mobile-open {
+        left: 0;
+    }
+
+    .mobile-overlay {
+        display: block;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100vw;
+        height: calc(100vh - 60px);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+    }
+
+    .admin-content {
+        padding: 1rem;
+    }
+
+    .brand {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-right .logout-button span {
+        display: none;
+    }
+
+    .brand {
+        font-size: 1rem;
+    }
+
+    .admin-content {
+        padding: 0.75rem;
+    }
+}
