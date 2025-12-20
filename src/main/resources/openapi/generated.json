@@ -214,6 +214,16 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
                     "200": {
                         "description": "",
                         "content": {
@@ -225,14 +235,7 @@
                         }
                     },
                     "204": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiErrorModel"
-                                }
-                            }
-                        }
+                        "description": ""
                     }
                 }
             }
@@ -336,9 +339,6 @@
                     },
                     "role": {
                         "type": "string"
-                    },
-                    "blocked": {
-                        "type": "boolean"
                     },
                     "name": {
                         "type": "string"

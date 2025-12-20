@@ -10,7 +10,6 @@ import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.PenaltyModel
 import parkflex.runDB
-import java.time.LocalDateTime
 
 
 fun Route.penaltyRoutes() {
@@ -26,42 +25,42 @@ fun Route.penaltyRoutes() {
                 return@get
             }
 
-            val activePenalty = findActivePenaltyForUser(userId)
+            var activePenaltyModel: PenaltyModel? = null
 
-            if (activePenalty != null) {
-                call.respond(HttpStatusCode.OK, activePenalty)
+            val user = runDB{UserEntity.findById(userId)}
+            if (user == null) {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    message = ApiErrorModel("User not found", context = "/user/{user_id}/penalty GET")
+                )
+                return@get
+            }
+
+            runDB {
+                for (reservation in user.reservations) {
+                    val penaltyEntity: PenaltyEntity? = reservation.penalties
+                        .firstOrNull { penalty -> penalty.isActive() }
+
+                    if (penaltyEntity != null) {
+                        activePenaltyModel = PenaltyModel(
+                            reservation = reservation.id.value,
+                            reason = penaltyEntity.reason,
+                            paid = penaltyEntity.paid,
+                            due = penaltyEntity.due,
+                            fine = penaltyEntity.fine.toDouble()
+                        )
+                        break
+                    }
+                }
+            }
+
+            if (activePenaltyModel != null) {
+                call.respond(HttpStatusCode.OK, activePenaltyModel)
             } else {
                 call.respond(
-                    HttpStatusCode.NoContent,
-                    message = ApiErrorModel("User penalty is null", context = "/user/{user_id}/penalty GET")
+                    HttpStatusCode.NoContent
                 )
             }
         }
     }
 }
-
-private suspend fun findActivePenaltyForUser(userId: Long): PenaltyModel? {
-    var activePenaltyModel: PenaltyModel? = null
-
-    runDB {
-        val user = UserEntity.findById(userId) ?: return@runDB
-
-        for (reservation in user.reservations) {
-            val penaltyEntity: PenaltyEntity? = reservation.penalties
-                .firstOrNull { penalty -> penalty.isActive() }
-
-            if (penaltyEntity != null) {
-                activePenaltyModel = PenaltyModel(
-                    reservation = reservation.id.value,
-                    reason = penaltyEntity.reason,
-                    paid = penaltyEntity.paid,
-                    due = penaltyEntity.due,
-                    fine = penaltyEntity.fine.toDouble()
-                )
-                break
-            }
-        }
-    }
-    return activePenaltyModel
-}
-
