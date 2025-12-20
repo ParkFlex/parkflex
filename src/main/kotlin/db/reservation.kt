@@ -10,6 +10,8 @@ object ReservationTable : LongIdTable("reservation") {
     val duration = integer("duration")
     val spot = reference("spot", SpotTable.id)
     val user = reference("user", UserTable.id)
+    val arrived = datetime("arrived").nullable()
+    val left = datetime("left").nullable()
 }
 
 class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
@@ -27,6 +29,12 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
 
     /** Penalties referring to this reservation */
     val penalties by PenaltyEntity referrersOn PenaltyTable.reservation
+
+    /** When has the user arrived at the parking? */
+    val arrived by ReservationTable.arrived
+
+    /** When has the user left the parking? */
+    val left by ReservationTable.left
 
     val hasPenalty: Boolean
         get() = !this.penalties.empty()

@@ -2,6 +2,7 @@ package parkflex.config
 
 import org.slf4j.event.Level
 
+
 /**
  * Application configuration object.
  * Reads configuration values from environment variables.
@@ -10,6 +11,28 @@ class AppConfig : Config {
     private val logger = org.slf4j.LoggerFactory.getLogger("AppConfig")
 
     private fun getenvWrapped(name: String): String? = runCatching { System.getenv(name) }.getOrNull()
+
+    fun genPasswd(): String {
+        val lower = ('a'..'z').toList()
+        val upper = ('A'..'Z').toList()
+        val nums = ('0'..'9').toList()
+        val syms = ('!'..'/') + (':'..'@') + ('['..'`') + ('{'..'~')
+
+        val passwd = listOf(
+            5 to lower,
+            5 to upper,
+            5 to nums,
+            5 to syms
+        )
+            .map { pair -> (1..pair.first).map { pair.second.random() } }
+            .fold(emptyList<Char>()) { acc, current -> acc + current }
+            .shuffled()
+            .joinToString("")
+
+        logger.info("Generated admin password: \"$passwd\". Store it in a secure place, you won't be able to view it later.")
+
+        return passwd
+    }
 
     override val mariaDB: MariaDBConfig? = run {
         val cfg = listOf(
@@ -72,4 +95,11 @@ class AppConfig : Config {
             else -> Level.INFO
         }
     }.getOrElse { Level.INFO }
+
+    override val adminData: Pair<String, String> by lazy {
+        val mail = getenvWrapped("PARKFLEX_ADMIN_MAIL") ?: "admin"
+        val passwd: String = getenvWrapped("PARKFLEX_ADMIN_PASSWORD") ?: genPasswd()
+
+        mail to passwd
+    }
 }
