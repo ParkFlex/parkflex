@@ -44,7 +44,7 @@ fun Route.reservationRoutes() {
         }
 
         // Assert user is not blocked
-        if (user.blocked) {
+        if (runDB { user.isBlocked() }) {
             call.respond(
                 status = HttpStatusCode.Forbidden,
                 message = ApiErrorModel("Banowany uzytkownik nie moze robic rezerwacji", context)
@@ -83,7 +83,7 @@ fun Route.reservationRoutes() {
         // Check for reservation interval conflicts
         val breakDurationMinutes: Long = runDB {
             val param = ParameterEntity.find { 
-                ParameterTable.key eq "default_break_between_reservations_duration" 
+                ParameterTable.key eq "reservation/break/duration"
             }.firstOrNull()
 
             return@runDB param?.value?.toLongOrNull() ?: 0L

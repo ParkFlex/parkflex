@@ -242,20 +242,6 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
             }
         },
         "/api/spots": {

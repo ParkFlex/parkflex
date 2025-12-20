@@ -17,22 +17,20 @@ fun Route.spotsRoutes() {
     get {
         val context = "/api/spots"
 
-        val start : String? = call.request.queryParameters["start"]
-        val end : String? = call.request.queryParameters["end"]
+        val start: String? = call.request.queryParameters["start"]
+        val end: String? = call.request.queryParameters["end"]
 
-        if(start == null || end == null) {
+        if (start == null || end == null) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
                 message = ApiErrorModel("incorrect start or end date", context)
             )
-        }
-        else {
-            //val dateFormatter = DateTimeFormatter.ofPattern("ISO_LOCAL_DATE_TIME")
+        } else {
             try {
                 val startDate = LocalDateTime.parse(start, ISO_LOCAL_DATE_TIME)
                 val endDate = LocalDateTime.parse(end, ISO_LOCAL_DATE_TIME)
 
-                if(endDate<=startDate){
+                if (endDate <= startDate) {
                     call.respond(
                         status = HttpStatusCode.BadRequest,
                         message = ApiErrorModel("incorrect end date", context)
@@ -42,21 +40,21 @@ fun Route.spotsRoutes() {
 
                 val spotList: List<SpotEntity> = runDB {
 
-                    SpotEntity.all().filter { true}
+                    SpotEntity.all().filter { true }
                 }
 
                 val spotModelList = mutableListOf<SpotAvailability>()
 
                 for (spot in spotList) {
 
-                    var reservationCount : Int = 0;
+                    var reservationCount: Int = 0;
                     reservationCount = runDB {
 
                         ReservationEntity.all().count() {
                             val reservationEndDate = it.start.plusMinutes(it.duration.toLong())
                             val isTheSame = it.spot.id.value == spot.id.value
                             val coversStart = it.start >= startDate && it.start <= endDate
-                            val coversWhole =  it.start <= startDate && reservationEndDate >= endDate
+                            val coversWhole = it.start <= startDate && reservationEndDate >= endDate
                             val coversEnd = reservationEndDate >= startDate && reservationEndDate <= endDate
 
                             isTheSame && (coversStart || coversWhole || coversEnd)
@@ -64,9 +62,8 @@ fun Route.spotsRoutes() {
                     }
 
 
+                    val spotAvailability = SpotAvailability(spot.id.value, spot.role, reservationCount > 0);
 
-                    val spotAvailability =
-                        SpotAvailability(spot.id.value, spot.role, reservationCount > 0);
                     spotModelList.add(spotAvailability)
                 }
 
@@ -77,9 +74,11 @@ fun Route.spotsRoutes() {
                     status = HttpStatusCode.OK
                 )
 
-            }catch(e: DateTimeParseException) {call.respond(
-                status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("incorrect format of start or end date", context))
+            } catch (e: DateTimeParseException) {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = ApiErrorModel("incorrect format of start or end date", context)
+                )
             }
 
         }

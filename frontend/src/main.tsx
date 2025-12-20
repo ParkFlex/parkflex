@@ -14,7 +14,7 @@ import {Layout} from "./pages/Layout.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <PrimeReactProvider>
+        <PrimeReactProvider value={{ ripple: true }}>
             <BrowserRouter>
                 <Routes>
                     <Route element={<Layout/>}>

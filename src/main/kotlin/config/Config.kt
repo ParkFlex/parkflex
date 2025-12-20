@@ -8,6 +8,7 @@ interface Config {
     val ENABLE_MOCK_DATA: Boolean
     val ENABLE_H2_SOCKETS: Boolean
     val CALL_LOG_LEVEL: Level
+    val adminData: Pair<String, String>
 }
 
 data class MariaDBConfig(
