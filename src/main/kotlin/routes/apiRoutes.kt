@@ -1,6 +1,5 @@
 package parkflex.routes
 
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 /**
@@ -8,8 +7,13 @@ import io.ktor.server.routing.*
  */
 fun Route.apiRoutes() {
     route("/user") {
-        // some routes here
+        userFullRoutes()
+
+        updatePlateRoutes()
+
+        penaltyRoutes()
     }
+
 
     route("/demo") {
         demoRoutes()
