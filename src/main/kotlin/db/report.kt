@@ -12,11 +12,12 @@ object ReportTable : LongIdTable("report") {
     val image = text("image")
     val description = text("description")
     val reviewed = bool("reviewed")
+    val plate = text("plate")
 }
 
 class ReportEntity(id: EntityID<Long>) : LongEntity(id) {
     /** Penalty resulting from this report */
-    var penalty by PenaltyEntity optionalReferencedOn  ReportTable.penalty
+    var penalty by PenaltyEntity optionalReferencedOn ReportTable.penalty
 
     /** User who submitted the report */
     var submitter by UserEntity referencedOn ReportTable.submitter
@@ -32,6 +33,9 @@ class ReportEntity(id: EntityID<Long>) : LongEntity(id) {
 
     /** Was the report reviewed by an admin */
     var reviewed by ReportTable.reviewed
+
+    /** Plate of the reported car */
+    var plate by ReportTable.plate
 
     companion object : LongEntityClass<ReportEntity>(ReportTable)
 }

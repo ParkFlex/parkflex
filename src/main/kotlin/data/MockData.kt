@@ -141,6 +141,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-19T08:43")
         image = placeholderImg
         reviewed = false
+        plate = "BLK-0000"
     }
 
     // Reviewed, penalty assigned
@@ -151,6 +152,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-16T08:20")
         image = placeholderImg
         reviewed = true
+        plate = "BLK-0000"
     }
 
     // Reviewed, penalty not assigned
@@ -161,6 +163,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-18T08:17")
         image = placeholderImg
         reviewed = true
+        plate = "BLK-0000"
     }
 
     logger.info("✅ Mock data generated successfully!")
