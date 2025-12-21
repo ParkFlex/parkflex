@@ -6,8 +6,7 @@ import { PrimeReactProvider } from 'primereact/api';
 import '../public/assets/mytheme/theme.scss';
 
 import './index.css';
-import { Layout } from './pages/Layout.tsx'
-import { App } from './pages/App.tsx';
+import { Layout } from './pages/Layout.tsx';
 import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
