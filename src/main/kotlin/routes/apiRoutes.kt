@@ -14,7 +14,9 @@ fun Route.apiRoutes() {
         updatePlateRoutes()
 
         penaltyRoutes()
+    }
 
+    route("/users") {
         adminHistoryRoutes()
     }
 

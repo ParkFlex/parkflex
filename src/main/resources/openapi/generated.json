@@ -74,6 +74,25 @@
                 }
             }
         },
+        "/api/users/history": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AdminHistoryEntryModel"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/demo": {
             "put": {
                 "summary": "Save provided note to the database.",
@@ -269,6 +288,27 @@
                         "type": "string"
                     },
                     "context": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AdminHistoryEntryModel": {
+                "type": "object",
+                "properties": {
+                    "startTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "durationMin": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "spot": {
+                        "type": "integer"
+                    },
+                    "plate": {
                         "type": "string"
                     }
                 }
