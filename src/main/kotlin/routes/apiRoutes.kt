@@ -1,6 +1,8 @@
 package parkflex.routes
 
 import io.ktor.server.routing.*
+import parkflex.modules.adminHistoryRoutes
+
 
 /**
  * Routes for the REST API.
@@ -12,6 +14,8 @@ fun Route.apiRoutes() {
         updatePlateRoutes()
 
         penaltyRoutes()
+
+        adminHistoryRoutes()
     }
 
 
