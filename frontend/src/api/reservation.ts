@@ -33,5 +33,8 @@ export const postReservation = async (
         " to ",
         end
     );
+    if (spot_id === 13) {
+        throw new Error("Testowy błąd");
+    }
     return { message: "ok" };
 };
