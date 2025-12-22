@@ -43,6 +43,7 @@ fun Route.penaltyRoutes() {
 
                     if (penaltyEntity != null) {
                         activePenaltyModel = PenaltyModel(
+                            id = penaltyEntity.id.value,
                             reservation = reservation.id.value,
                             reason = penaltyEntity.reason,
                             paid = penaltyEntity.paid,

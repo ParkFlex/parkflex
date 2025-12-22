@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @Serializable
 data class PenaltyModel(
+    val id: Long,
     val reservation: Long,
     val reason: PenaltyReason,
     val paid: Boolean,
