@@ -17,4 +17,5 @@ fun Application.configureCORS(config: Config) = install(CORS) {
 
     anyMethod()
     allowHeaders({ true })
+    allowNonSimpleContentTypes = true
 }
