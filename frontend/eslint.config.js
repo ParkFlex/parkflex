@@ -30,7 +30,7 @@ export default defineConfig([
             '@stylistic/indent': ["warn", 4],
             '@stylistic/semi': "warn",
             '@stylistic/max-len': ["warn", {
-                code: 100
+                code: 120
             }],
             "@stylistic/object-curly-spacing": ["warn", "always"]
         }
