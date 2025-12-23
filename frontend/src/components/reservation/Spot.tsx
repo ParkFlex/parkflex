@@ -12,11 +12,18 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
     const isSelected = selectedId === id;
     const color = occupied ? "#eb2338" : isSelected ? "#47d147" : undefined;
 
+    const baseStyle = {
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        fontWeight: "bold",
+        padding: "2px",
+    };
+
     function selectSpot() {
         if (occupied) {
             return;
         }
-
         onSelect(id);
     }
 
@@ -24,40 +31,34 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
         return (
             <Button
                 style={{
+                    ...baseStyle,
                     color: "black",
-                    fontWeight: "bold",
-                    fontSize: "clamp(10px, 2vw, 14px)",
-                    justifyContent: "center",
+                    fontSize: "clamp(1px, 1.5vw, 12px)",
                     backgroundColor: "transparent",
                     border: "none",
                 }}
                 disabled
             >
-                Brama wjazdowa
+                Brama
             </Button>
         );
     }
 
     if (role === "blank") {
-        return (
-            <Button
-                style={{
-                    opacity: 0,
-                    pointerEvents: "none",
-                }}
-                disabled
-            />
-        );
+        return <div style={{ ...baseStyle, visibility: "hidden" }} />;
     }
 
     return (
         <Button
             style={{
+                ...baseStyle,
                 backgroundColor: color,
-                justifyContent: "center",
-                fontSize: "clamp(12px, 2.5vw, 16px)",
+                fontSize: "clamp(10px, 2vw, 16px)",
             }}
             onClick={selectSpot}
+            severity={
+                occupied ? "danger" : isSelected ? "success" : "secondary"
+            }
         >
             {id}
         </Button>
