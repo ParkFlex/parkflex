@@ -1,29 +1,6 @@
-import type { SpotState } from "../../api/spots";
 import { Button } from "primereact/button";
-import type { SpotProps } from "../../api/spots";
-
-
-export function Spot({ id, occupied, selectedId, onSelect }: SpotProps) {
-    const isSelected = selectedId === id;
-    const color = occupied ? "#eb2338" : (isSelected ? "#47d147" : undefined);
-
-    function SelectSpot() {
-        if (!occupied){
-            return onSelect(id);
-        }
-    }
-
-    return (
-        <Button
-            style={{
-                backgroundColor: color,
-                justifyContent: "center",
-            }}
-            onClick={SelectSpot}>
-            {id}
-        </Button>
-    );
-}
+import type { SpotState } from "../../api/spots";
+import { Spot } from "./Spot";
 
 interface ParkingViewProps {
     spots: SpotState[];
@@ -31,30 +8,52 @@ interface ParkingViewProps {
     setSelectedId: (x: number | null) => void;
 }
 
-export const ParkingGrid = ({ spots, selectedId, setSelectedId }: ParkingViewProps) => {
+export const ParkingGrid = ({
+    spots,
+    selectedId,
+    setSelectedId,
+}: ParkingViewProps) => {
     return (
-        <div style={{ margin: '0 auto', width: '80%' }}>
-            <div className="parking-spots" style={{
-                display: 'grid',
-                width: '100%',
-                margin: '0 auto',
-                gridTemplateColumns: 'auto auto auto auto',
-                gridTemplateRows: 'repeat(10, 40px)',    // 4 row
-                gridAutoFlow: 'column',
-                gap: '10px'
-            }}>
-                {spots.length > 0 && spots.map((spot, index) => (
-                    <Spot key={index}
-                        id={spot.id}
-                        role={spot.role}
-                        occupied={spot.occupied}
-                        selectedId={selectedId}
-                        onSelect={setSelectedId}/>
+        <div
+            style={{
+                width: "90%",
+                maxWidth: "600px",
+                margin: "0 auto",
+            }}
+        >
+            <div
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(10, 1fr)",
+                    gap: "4px",
+                    border: "2px solid #000",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    width: "100%",
+                }}
+            >
+                {spots.map((spot, index) => (
+                    <div
+                        key={spot.id || index}
+                        style={{
+                            width: "100%",
+                            aspectRatio: "1 / 1.7",
+                        }}
+                    >
+                        <Spot
+                            state={spot}
+                            selectedId={selectedId}
+                            onSelect={setSelectedId}
+                        />
+                    </div>
                 ))}
             </div>
-            <div>
-                <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
-                <Button label="Zatwierdź"/>
+
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
+                <p>
+                    Wybrane miejsce: <strong>{selectedId ?? "brak"}</strong>
+                </p>
+                <Button label="Zatwierdź" />
             </div>
         </div>
     );
