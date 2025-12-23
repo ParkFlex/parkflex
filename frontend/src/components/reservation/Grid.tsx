@@ -14,41 +14,45 @@ export const ParkingGrid = ({
     setSelectedId,
 }: ParkingViewProps) => {
     return (
-        // TODO: Zmienic na primereact :)
-        <div style={{ margin: "0 auto", maxWidth: "100%" }}>
+        <div
+            style={{
+                width: "90%",
+                maxWidth: "600px",
+                margin: "0 auto",
+            }}
+        >
             <div
                 style={{
-                    overflowX: "auto",
-                    marginBottom: "20px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(10, 1fr)",
+                    gap: "4px",
+                    border: "2px solid #000",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    width: "100%",
                 }}
             >
-                <div
-                    className="parking-spots"
-                    style={{
-                        display: "grid",
-                        gridTemplateRows: "repeat(7, min(120px, 10vh))",
-                        gridAutoFlow: "column",
-                        gridAutoColumns: "min(70px, 12vw)",
-                        gap: "10px",
-                        border: "2px solid #000",
-                        borderRadius: "10px",
-                        padding: "10px",
-                        width: "fit-content",
-                    }}
-                >
-                    {spots.length > 0 &&
-                        spots.map((spot, index) => (
-                            <Spot
-                                key={index}
-                                state={spot}
-                                selectedId={selectedId}
-                                onSelect={setSelectedId}
-                            />
-                        ))}
-                </div>
+                {spots.map((spot, index) => (
+                    <div
+                        key={spot.id || index}
+                        style={{
+                            width: "100%",
+                            aspectRatio: "1 / 1.7",
+                        }}
+                    >
+                        <Spot
+                            state={spot}
+                            selectedId={selectedId}
+                            onSelect={setSelectedId}
+                        />
+                    </div>
+                ))}
             </div>
-            <div>
-                <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
+
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
+                <p>
+                    Wybrane miejsce: <strong>{selectedId ?? "brak"}</strong>
+                </p>
                 <Button label="Zatwierdź" />
             </div>
         </div>
