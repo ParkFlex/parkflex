@@ -1,10 +1,11 @@
 import type {Penalty} from "./Penalty.tsx";
 
 export interface ReportEntry{
+    id: number;
     plate: string;
-    issueTime: Date;
-    comment: string;
-    whoReported: string;
+    timestamp: Date;
+    description: string;
+    submitter: string;
     image: string;
     reviewed: boolean;
     penalty?: Penalty;

@@ -44,8 +44,8 @@ export function AdminReportList(){
     };
 
     const dateTemplate = (rowData: ReportEntry) => {
-        const date = rowData.issueTime.toLocaleDateString('pl-PL');
-        const time = rowData.issueTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        const date = rowData.timestamp.toLocaleDateString('pl-PL');
+        const time = rowData.timestamp.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
         return <><b>{date}</b><br/>{time}</>;
     };
 
@@ -100,7 +100,7 @@ export function AdminReportList(){
     };
 
     const getFilteredReports = (): (ReportEntry & { status: string })[] => {
-        let items = filterByDateRange(report, dateFilter, (e) => new Date(e.issueTime));
+        let items = filterByDateRange(report, dateFilter, (e) => new Date(e.timestamp));
 
         const plateRaw = (filters as any)?.plate?.value;
         if (plateRaw) {
@@ -168,10 +168,10 @@ export function AdminReportList(){
             <Dialog header={dialogHeader(selectedReport)} visible={selectedReport !== null} onHide={() => setSelectedReport(null)} modal style={{width:'95%'}}>
                 {selectedReport && (
                     <div>
-                        <p><strong>{selectedReport.issueTime.toLocaleDateString('pl-PL')}</strong> {selectedReport.issueTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p><strong>{selectedReport.timestamp.toLocaleDateString('pl-PL')}</strong> {selectedReport.timestamp.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
                         <p><strong>Tablica zgłoszonego:</strong> {selectedReport.plate}</p>
-                        <p><strong>Kto zgłosił:</strong> {selectedReport.whoReported}</p>
-                        <p><strong>Komentarz:</strong> {selectedReport.comment}</p>
+                        <p><strong>Kto zgłosił:</strong> {selectedReport.submitter}</p>
+                        <p><strong>Komentarz:</strong> {selectedReport.description}</p>
                         <img src={selectedReport.image} alt="report" style={{ width: '100%', marginBottom: '1rem', display: 'block' }} />
                         {selectedReport.reviewed && !selectedReport.penalty && (
                             <Button severity="secondary" style={{width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center'}}>Zaakceptuj</Button>)}

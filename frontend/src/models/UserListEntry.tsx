@@ -1,9 +1,9 @@
 import type {Penalty} from "./Penalty.tsx";
 
 export interface UserListEntry{
+    id:number;
     plate:string;
     role:string;
-    blocked:boolean;
     name:string;
     mail:string;
     currentPenalty?:Penalty;
@@ -11,5 +11,4 @@ export interface UserListEntry{
     numberOfFutureReservations?:number;
     numberOfPastBans?:number;
     currentReservation:boolean;
-
 }
