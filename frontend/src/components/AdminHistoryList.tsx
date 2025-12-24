@@ -2,7 +2,7 @@ import {useState} from "react";
 import type {AdminHistoryEntry} from "../models/AdminHistoryEntry.tsx";
 import {DataTable, type DataTableFilterMeta} from "primereact/datatable";
 import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column";
-import {mockHistoryList} from "../mocks/historyListMock.ts";
+import {useAdminHistory} from "../hooks/useAdminHistory.ts";
 import {Dialog} from "primereact/dialog";
 import {AdminHistoryCard} from "./AdminHistoryCard.tsx";
 import {FilterMatchMode} from "primereact/api";
@@ -20,7 +20,7 @@ import {
 } from "./DateRangeFilterDialog";
 
 export function AdminHistoryList() {
-     const [entry] = useState<AdminHistoryEntry[]>(mockHistoryList);
+     const entries  = useAdminHistory();
      const [selectedEntry, setSelectedEntry] = useState<AdminHistoryEntry | null>(null);
      const [filters, setFilters] = useState<DataTableFilterMeta>({
         'plate': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -72,7 +72,7 @@ export function AdminHistoryList() {
     };
 
     const getFilteredEntries = (): AdminHistoryEntry[] => {
-        let filtered = filterByDateRange(entry, dateFilter, (e) => new Date(e.startTime));
+        let filtered = filterByDateRange(entries, dateFilter, (e) => new Date(e.startTime));
 
         if (statusFilter) {
             filtered = filtered.filter(e => getEntryStatus(e) === statusFilter);

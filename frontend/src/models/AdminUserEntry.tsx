@@ -1,6 +1,6 @@
 import type {Penalty} from "./Penalty.tsx";
 
-export interface UserListEntry{
+export interface AdminUserEntry {
     id:number;
     plate:string;
     role:string;

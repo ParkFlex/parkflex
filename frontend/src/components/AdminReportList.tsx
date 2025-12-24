@@ -1,8 +1,7 @@
 import {DataTable, type DataTableFilterMeta} from "primereact/datatable";
 import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column";
-import type {ReportEntry} from "../models/ReportEntry.tsx";
+import type {AdminReportEntry} from "../models/AdminReportEntry.tsx";
 import {useState} from "react";
-import { mockReportEntries } from "../mocks/mockReportEntries";
 import {Dialog} from "primereact/dialog";
 import {FilterMatchMode} from "primereact/api";
 import {Button} from "primereact/button";
@@ -15,10 +14,11 @@ import {
     createEmptyDateRangeFilter
 } from "./DateRangeFilterDialog";
 import {classNames} from "primereact/utils";
+import {useAdminReport} from "../hooks/useAdminReport.ts";
 
 export function AdminReportList(){
-    const [report] = useState<ReportEntry[]>(mockReportEntries);
-    const [selectedReport, setSelectedReport] = useState<ReportEntry | null>(null);
+    const {adminReportEntries:report, approveReport, changeReviewed} = useAdminReport();
+    const [selectedReport, setSelectedReport] = useState<AdminReportEntry | null>(null);
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         plate: { value: null, matchMode: FilterMatchMode.CONTAINS },
         status: { value: null, matchMode: FilterMatchMode.EQUALS }
@@ -43,13 +43,13 @@ export function AdminReportList(){
         return <Button label="Wyczyść" onClick={options.filterClearCallback} size="small" outlined />;
     };
 
-    const dateTemplate = (rowData: ReportEntry) => {
+    const dateTemplate = (rowData: AdminReportEntry) => {
         const date = rowData.timestamp.toLocaleDateString('pl-PL');
         const time = rowData.timestamp.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
         return <><b>{date}</b><br/>{time}</>;
     };
 
-    const dialogHeader = (selectedReport: ReportEntry | null) => {
+    const dialogHeader = (selectedReport: AdminReportEntry | null) => {
         return (
             <div>
                     {selectedReport && selectedReport.reviewed && selectedReport.penalty && (
@@ -65,7 +65,7 @@ export function AdminReportList(){
         );
     };
 
-    const getStatus = (entry: ReportEntry): string => {
+    const getStatus = (entry: AdminReportEntry): string => {
          if (!entry.reviewed) return 'pending';
          if ((entry.reviewed) && (entry.penalty)) return 'accepted';
          return 'rejected';
@@ -99,7 +99,7 @@ export function AdminReportList(){
         );
     };
 
-    const getFilteredReports = (): (ReportEntry & { status: string })[] => {
+    const getFilteredReports = (): (AdminReportEntry & { status: string })[] => {
         let items = filterByDateRange(report, dateFilter, (e) => new Date(e.timestamp));
 
         const plateRaw = (filters as any)?.plate?.value;
@@ -139,7 +139,7 @@ export function AdminReportList(){
         );
     };
 
-    const statusBodyTemplate = (rowData: ReportEntry) => {
+    const statusBodyTemplate = (rowData: AdminReportEntry) => {
         const entryStatus = getStatus(rowData);
         if (entryStatus === 'accepted') return <i className={classNames('pi', 'pi-check')} style={{ color: 'green' }} />;
         if (entryStatus === 'rejected') return <i className={classNames('pi', 'pi-times')} style={{ color: 'red' }} />;
@@ -156,7 +156,7 @@ export function AdminReportList(){
                 selectionMode="single"
 
                 selection={selectedReport}
-                onSelectionChange={(e) => setSelectedReport(e.value as ReportEntry | null)}
+                onSelectionChange={(e) => setSelectedReport(e.value as AdminReportEntry | null)}
                 dataKey="plate"
                 emptyMessage="Brak zgłoszeń"
             >
@@ -170,15 +170,15 @@ export function AdminReportList(){
                     <div>
                         <p><strong>{selectedReport.timestamp.toLocaleDateString('pl-PL')}</strong> {selectedReport.timestamp.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
                         <p><strong>Tablica zgłoszonego:</strong> {selectedReport.plate}</p>
-                        <p><strong>Kto zgłosił:</strong> {selectedReport.submitter}</p>
+                        <p><strong>Kto zgłosił:</strong> {selectedReport.submitterPlate}</p>
                         <p><strong>Komentarz:</strong> {selectedReport.description}</p>
                         <img src={selectedReport.image} alt="report" style={{ width: '100%', marginBottom: '1rem', display: 'block' }} />
                         {selectedReport.reviewed && !selectedReport.penalty && (
-                            <Button severity="secondary" style={{width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center'}}>Zaakceptuj</Button>)}
+                            <Button severity="secondary" style={{width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center'}} onClick={()=>{void approveReport(selectedReport.id)}}>Zaakceptuj</Button>)}
                         {!selectedReport.reviewed && (
                             <div style={{display:'flex', flexDirection:'row', gap:'1rem'}}>
-                            <Button severity="secondary" style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}}>Zaakceptuj</Button>
-                            <Button style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}}>Odrzuć</Button>
+                            <Button severity="secondary" style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}} onClick={()=>{void approveReport(selectedReport.id)}}>Zaakceptuj</Button>
+                            <Button style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}} onClick={()=> {void changeReviewed(selectedReport.id)}}>Odrzuć</Button>
                             </div>)}
                     </div>
                 )}
@@ -198,3 +198,4 @@ export function AdminReportList(){
         </div>
     )
 }
+

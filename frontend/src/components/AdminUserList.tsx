@@ -1,32 +1,32 @@
 import {DataTable, type DataTableFilterMeta} from "primereact/datatable";
 import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column";
-import type {UserListEntry} from "../models/UserListEntry.tsx";
+import type {AdminUserEntry} from "../models/AdminUserEntry.tsx";
 import {useState} from "react";
 import {Tag} from "primereact/tag";
 import {classNames} from "primereact/utils";
 import {Dialog} from "primereact/dialog";
 import {AdminUserCard} from "./AdminUserCard.tsx";
 import {Button} from "primereact/button";
-import { useUserListEntry } from "../hooks/useUserListEntry";
+import { useUserList } from "../hooks/useUserList.ts";
 
-export function AdminList(){
-    const { userListEntries: users } = useUserListEntry();
+export function AdminUserList(){
+    const {userListEntries: users} = useUserList();
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         'plate': { value: null, matchMode: 'startsWith' },
         'role': { value: null, matchMode: 'equals' },
         'blocked': { value: null, matchMode: 'equals' }
     })
-    const [selectedUser, setSelectedUser] = useState<UserListEntry | null>(null);
+    const [selectedUser, setSelectedUser] = useState<AdminUserEntry | null>(null);
 
-    const blockedTemplate = (rowData: UserListEntry) => {
+    const blockedTemplate = (rowData: AdminUserEntry) => {
         return <i className={classNames('pi', { 'pi-ban': rowData.currentPenalty, 'pi-check': !rowData.currentPenalty })} style={rowData.currentPenalty ? { color: 'red' } : { color: 'green' }}></i>;
     };
 
-     const roleTemplate = (user: UserListEntry) => {
+     const roleTemplate = (user: AdminUserEntry) => {
          return <Tag value={user.role} severity={getSeverityR(user)} style={tagStyleForRole(user.role)}></Tag>;
      };
 
-    const getSeverityR = (user: UserListEntry) => {
+    const getSeverityR = (user: AdminUserEntry) => {
         switch (user.role) {
             case 'admin':
                 return 'warning';
@@ -37,7 +37,7 @@ export function AdminList(){
         }
     };
 
-    const dialogHeader = (selectedUser: UserListEntry | null) => {
+    const dialogHeader = (selectedUser: AdminUserEntry | null) => {
         if (!selectedUser) return '';
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',marginRight:"0.5rem", marginLeft:"0.5rem" }}>
@@ -93,7 +93,7 @@ export function AdminList(){
                 filterDisplay="menu"
                 selectionMode="single"
                 selection={selectedUser}
-                onSelectionChange={(e) => setSelectedUser(e.value as UserListEntry | null)}
+                onSelectionChange={(e) => setSelectedUser(e.value as AdminUserEntry | null)}
                 dataKey="plate"
                 emptyMessage="Brak użytkowników"
             >

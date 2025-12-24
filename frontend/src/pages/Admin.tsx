@@ -1,6 +1,6 @@
 import {AdminHistoryList} from "../components/AdminHistoryList.tsx";
 import {AdminReportList} from "../components/AdminReportList.tsx";
-import {AdminList} from "../components/AdminList.tsx";
+import {AdminUserList} from "../components/AdminUserList.tsx";
 
 export function Admin(){
   return(

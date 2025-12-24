@@ -1,19 +1,26 @@
 import {Card} from "primereact/card";
 import {Button} from "primereact/button";
-import {useState} from "react";
-import type {UserListEntry} from "../models/UserListEntry.tsx";
+import {type ChangeEvent, useState} from "react";
 import {Dialog} from "primereact/dialog";
 import {InputText} from "primereact/inputtext";
-import {useUserListEntry} from "../hooks/useUserListEntry.ts";
-import {formatDate, formatDateTime} from "../utils/dateUtils.ts";
+import {useUserList} from "../hooks/useUserList.ts";
+import {formatDateTime} from "../utils/dateUtils.ts";
 
 export function AdminUserCard({ plate }: { plate: string }){
 
+    // include changePlate from the hook so we can send plate updates to backend
+    const {userListEntries: users, cancelPenalty, changePlate }= useUserList();
+    const user = users.find(u => u.plate === plate);
     const [visible, setVisible] = useState(false);
     const [newPlate, setNewPlate] = useState<string>('');
+    const canSave = newPlate.trim().length > 0;
     const footerBan = (
         <>
-        <Button severity='secondary' label="Odbanuj"/>
+        <Button severity='secondary' label="Odbanuj" onClick={() => {
+            if (user && user.currentPenalty && user.currentPenalty.id) {
+                void cancelPenalty(user.currentPenalty.id);
+            }
+        }}/>
         </>
     );
 
@@ -25,13 +32,16 @@ export function AdminUserCard({ plate }: { plate: string }){
 
     const footerDialog = (
         <div style={{marginTop:'1rem', display:'flex', justifyContent:'center', gap:'1rem'}}>
-            <Button label="Zapisz" severity="secondary" onClick={()=> {setVisible(false);}}/>
-            <Button label="Anuluj" onClick={()=> setVisible(false)}/>
-        </div>
+            <Button label="Zapisz" severity="secondary" disabled={!canSave} onClick={()=> {
+                if (user && user.id && canSave) {
+                    void changePlate(user.id, newPlate.trim());
+                }
+                setNewPlate('');
+                setVisible(false);
+            }}/>
+            <Button label="Anuluj" onClick={() => setVisible(false)}/>
+         </div>
     );
-
-    const { userListEntries: users } = useUserListEntry();
-    const user = users.find(u => u.plate === plate);
 
     if(!user){
         return (
@@ -63,7 +73,7 @@ export function AdminUserCard({ plate }: { plate: string }){
 
                 <Dialog footer={footerDialog} visible={visible} onHide={() => setVisible(false)} style={{width:'80%'}} showCloseIcon={false}>
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                            <InputText autoFocus={true} placeholder="Nowa rejestracja" value={newPlate} onChange={(e:React.ChangeEvent<HTMLInputElement>)=>setNewPlate(e.target.value)} style={{border: '1px solid #ced4da', borderRadius: '4px', width: '100%', margin:'2px'}}/>
+                            <InputText autoFocus={true} placeholder="Nowa rejestracja" value={newPlate} onChange={(e:ChangeEvent<HTMLInputElement>)=>setNewPlate(e.target.value)} style={{border: '1px solid #ced4da', borderRadius: '4px', width: '100%', margin:'2px'}}/>
                     </div>
                 </Dialog>
         </div>

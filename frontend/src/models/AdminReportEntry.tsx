@@ -1,6 +1,6 @@
 import type {Penalty} from "./Penalty.tsx";
 
-export interface ReportEntry{
+export interface AdminReportEntry {
     id: number;
     plate: string;
     timestamp: Date;

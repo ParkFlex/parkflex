@@ -2,27 +2,27 @@ import { useState, useEffect } from 'react';
 
 import { useAxios } from './useAxios';
 import { isAxiosError } from "axios";
-import type {UserListEntry} from "../models/UserListEntry.tsx";
+import type {AdminHistoryEntry} from "../models/AdminHistoryEntry.tsx";
 
-export const useUserListEntry = () => {
+export const useAdminHistory = () => {
     const axios = useAxios();
-    const [userListEntries, setUserListEntries] = useState<UserListEntry[]>([]);
+    const [adminHistoryEntries, setAdminHistoryEntries] = useState<AdminHistoryEntry[]>([]);
 
     useEffect(() => {
         const fetchUserListEntries = async () => {
 
             try {
-                const resp = await axios.get<UserListEntry[]>(
-                    `/user`,
+                const resp = await axios.get<AdminHistoryEntry[]>(
+                    `/users/history`,
                 );
-                setUserListEntries(resp.data);
+                setAdminHistoryEntries(resp.data);
             } catch (err: unknown) {
                 if (isAxiosError(err)) {
                     if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
                         return;
                     }
                     console.error('Error fetching history entries', err);
-                    setUserListEntries([]);
+                    setAdminHistoryEntries([]);
                 } else {
                     console.error('Unexpected error occurred', err);
                 }
@@ -32,5 +32,5 @@ export const useUserListEntry = () => {
         void fetchUserListEntries();
     }, [axios]);
 
-    return {userListEntries};
+    return  adminHistoryEntries;
 }

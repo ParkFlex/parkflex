@@ -1,12 +1,10 @@
 import {Card} from "primereact/card";
-import {useState} from "react";
-import type {AdminHistoryEntry} from "../models/AdminHistoryEntry.tsx";
-import {mockHistoryList} from "../mocks/historyListMock.ts";
 import {formatTime, addMinutes, formatDate} from "../utils/dateUtils.ts";
+import {useAdminHistory} from "../hooks/useAdminHistory.ts";
 
 export function AdminHistoryCard({ plate, startTime }: { plate: string, startTime: Date }){
 
-    const [entries] = useState<AdminHistoryEntry[]>(mockHistoryList);
+    const entries  = useAdminHistory();
     const entry = entries.find(e => (e.plate === plate && new Date(e.startTime).getTime() === new Date(startTime).getTime()));
 
     if(!entry){
