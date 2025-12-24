@@ -5,7 +5,7 @@ export interface ReportEntry{
     plate: string;
     timestamp: Date;
     description: string;
-    submitter: string;
+    submitterPlate: string;
     image: string;
     reviewed: boolean;
     penalty?: Penalty;
