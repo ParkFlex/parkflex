@@ -1,19 +1,83 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SpotState } from "../api/spots";
 import { getSpots } from "../api/spots";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { ErrorBanned } from "../components/Banned";
+import { Messages } from "primereact/messages";
+import { postReservation } from "../hooks/postReservation";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
     const [isBanned, setIsBanned] = useState(true);
     const [showParking, setShowParking] = useState(true);
     const [banDays, setBanDays] = useState(3);
-    const [banReason, setBanReason] = useState("przekroczenie limitu rezerwacji");
+    const [banReason, setBanReason] = useState(
+        "przekroczenie limitu rezerwacji"
+    );
     const [chargeAmount, setChargeAmount] = useState(150);
 
-    // selected spot id
     const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const msgs = useRef<Messages>(null);
+    const { reserve, error: reservationError } = postReservation();
+
+    const handleReserve = async () => {
+        if (selectedId == null) {
+            msgs.current?.clear();
+            msgs.current?.show([
+                {
+                    sticky: true,
+                    severity: "warn",
+                    summary: "Uwaga",
+                    detail: "Najpierw wybierz miejsce.",
+                    closable: false,
+                },
+            ]);
+            return;
+        }
+
+        try {
+            msgs.current?.clear();
+            const start = new Date();
+            const durationMinutes = 60;
+            const resp = await reserve(selectedId, start, durationMinutes);
+
+            if (!resp) {
+                const msg = reservationError?.message ?? "Nieznany błąd";
+                msgs.current?.show([
+                    {
+                        sticky: true,
+                        severity: "error",
+                        summary: "Error",
+                        detail: msg,
+                        closable: false,
+                    },
+                ]);
+                return;
+            }
+
+            msgs.current?.show([
+                {
+                    sticky: true,
+                    severity: "success",
+                    summary: "Success",
+                    detail: resp.message,
+                    closable: false,
+                },
+            ]);
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : "Nieznany błąd";
+            msgs.current?.show([
+                {
+                    sticky: true,
+                    severity: "error",
+                    summary: "Error",
+                    detail: msg,
+                    closable: false,
+                },
+            ]);
+        }
+    };
 
     useEffect(() => {
         const defaultStartDate = new Date();
@@ -21,7 +85,10 @@ export function ParkingPage() {
 
         const callApi = async () => {
             try {
-                const retrieved = await getSpots(defaultStartDate, defaultEndDate);
+                const retrieved = await getSpots(
+                    defaultStartDate,
+                    defaultEndDate
+                );
                 setData(retrieved);
             } catch {
                 console.log("Failed to fetch data");
@@ -34,15 +101,18 @@ export function ParkingPage() {
     useEffect(() => {
         if (isBanned) setShowParking(false);
     }, [isBanned]);
-
     return (
         <div className="parking-page">
             {showParking ? (
-                <ParkingGrid
-                    spots={data}
-                    selectedId={selectedId}
-                    setSelectedId={setSelectedId}
-                />
+                <>
+                    <ParkingGrid
+                        spots={data}
+                        selectedId={selectedId}
+                        setSelectedId={setSelectedId}
+                        onConfirm={handleReserve}
+                        msgsRef={msgs}
+                    />
+                </>
             ) : (
                 <ErrorBanned
                     days={banDays}
