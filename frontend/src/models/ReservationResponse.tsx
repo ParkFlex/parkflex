@@ -4,3 +4,8 @@ export interface ReservationResponse {
     start: string;
     end: string;
 }
+
+export interface CreateReservationSuccessResponse {
+    message: string;
+    reservation: ReservationResponse;
+}

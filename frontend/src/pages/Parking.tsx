@@ -3,9 +3,8 @@ import type { SpotState } from "../api/spots";
 import { getSpots } from "../api/spots";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { ErrorBanned } from "../components/Banned";
-import { postReservation } from "../api/reservation";
-import { ApiErrorModel } from "../models/ApiErrorModel";
 import { Messages } from "primereact/messages";
+import { postReservation } from "../hooks/postReservation";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -20,6 +19,7 @@ export function ParkingPage() {
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const msgs = useRef<Messages>(null);
+    const { reserve, error: reservationError } = postReservation();
 
     const handleReserve = async () => {
         if (selectedId == null) {
@@ -39,8 +39,23 @@ export function ParkingPage() {
         try {
             msgs.current?.clear();
             const start = new Date();
-            const end = new Date(start.getTime() + 60 * 60 * 1000);
-            const resp = await postReservation(selectedId, start, end);
+            const durationMinutes = 60;
+            const resp = await reserve(selectedId, start, durationMinutes);
+
+            if (!resp) {
+                const msg = reservationError?.message ?? "Nieznany błąd";
+                msgs.current?.show([
+                    {
+                        sticky: true,
+                        severity: "error",
+                        summary: "Error",
+                        detail: msg,
+                        closable: false,
+                    },
+                ]);
+                return;
+            }
+
             msgs.current?.show([
                 {
                     sticky: true,
@@ -51,12 +66,7 @@ export function ParkingPage() {
                 },
             ]);
         } catch (e: unknown) {
-            const msg =
-                e instanceof ApiErrorModel
-                    ? e.message
-                    : e instanceof Error
-                    ? e.message
-                    : "Nieznany błąd";
+            const msg = e instanceof Error ? e.message : "Nieznany błąd";
             msgs.current?.show([
                 {
                     sticky: true,
