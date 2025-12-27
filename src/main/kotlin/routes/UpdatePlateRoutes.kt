@@ -18,7 +18,7 @@ fun Route.updatePlateRoutes() {
             if (id == null) {
                 call.respond(
                     status = HttpStatusCode.UnprocessableEntity,
-                    message = ApiErrorModel("No ID found", "/user/{user_id} PUT")
+                    message = ApiErrorModel("No ID found", "/user/{user_id} PATCH")
 
                 )
                 return@patch
@@ -29,19 +29,16 @@ fun Route.updatePlateRoutes() {
             if (user == null) {
                 call.respond(
                     status = HttpStatusCode.NotFound,
-                    message = ApiErrorModel("User not found", "/user/{user_id} PUT")
+                    message = ApiErrorModel("User not found", "/user/{user_id} PATCH")
                 )
                 return@patch
             }
 
-            /* We use receive<String> instead of receiveText because the latter
-             * does not seem to be recognized by the OpenAPI generation plugin.
-             */
             val newPlate = call.receive<String>()
             if (newPlate.isBlank()) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = ApiErrorModel("Invalid or missing user_id", context = "/user/{user_id} PUT")
+                    message = ApiErrorModel("Invalid or missing user_id", context = "/user/{user_id} PATCH")
                 )
                 return@patch
             }
@@ -52,7 +49,7 @@ fun Route.updatePlateRoutes() {
                     status = HttpStatusCode.BadRequest,
                     message = ApiErrorModel(
                         message = "Invalid plate format. Expected format: XYZ-0000",
-                        context = "/user/{user_id} PUT"
+                        context = "/user/{user_id} PATCH"
                     )
                 )
                 return@patch
@@ -67,7 +64,7 @@ fun Route.updatePlateRoutes() {
                     status = HttpStatusCode.Conflict,
                     message = ApiErrorModel(
                         message = "Plate already in use",
-                        context = "/user/{user_id} PUT"
+                        context = "/user/{user_id} PATCH"
                     )
                 )
                 return@patch

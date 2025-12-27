@@ -14,6 +14,8 @@ fun Route.apiRoutes() {
         updatePlateRoutes()
 
         penaltyRoutes()
+
+        penaltyCancelRoutes()
     }
 
     route("/users") {

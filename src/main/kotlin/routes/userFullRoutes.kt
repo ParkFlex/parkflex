@@ -37,6 +37,7 @@ fun Route.userFullRoutes() {
 
                         if (penaltyEntity != null) {
                             currentPenalty = PenaltyModel(
+                                id = penaltyEntity.id.value,
                                 reservation = reservation.id.value,
                                 reason = penaltyEntity.reason,
                                 paid = penaltyEntity.paid,
