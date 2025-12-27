@@ -6,7 +6,7 @@ import { PrimeReactProvider } from 'primereact/api';
 import '@parkflex/themes/dist/theme.css';
 
 import './index.css';
-import { App } from './pages/App.tsx';
+import { Layout } from './pages/Layout.tsx';
 import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
@@ -16,10 +16,14 @@ createRoot(document.getElementById('root')!).render(
         <PrimeReactProvider value={{ ripple: true }}>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<App/>}/>
-                    <Route path="/demo" element={<Demo/>}/>
-                    <Route path="/history" element={<History/>}/>
-                    <Route path="*" element={<NotFound/>}/>
+
+                    <Route path="/" element={<Layout/>}>
+                        <Route path="/demo" element={<Demo/>}/>
+                        <Route path="/history" element={<History/>}/>
+                        <Route path="/parking" element={<NotFound/>}/>
+                        <Route path="*" element={<NotFound/>}/>
+                    </Route>
+
                 </Routes>
             </BrowserRouter>
         </PrimeReactProvider>
