@@ -45,25 +45,15 @@ fun generateMockData() {
     }
 
     // Create mock parking spots
-    val spot1 = SpotEntity.new {
-        role = "regular"
-    }
+    val spot1 = SpotEntity.findById(1)!!
 
-    val spot2 = SpotEntity.new {
-        role = "regular"
-    }
+    val spot2 = SpotEntity.findById(2)!!
 
-    val spot3 = SpotEntity.new {
-        role = "admin"
-    }
+    val spot3 = SpotEntity.findById(3)!!
 
-    val spot4 = SpotEntity.new {
-        role = "handicapped"
-    }
+    val spot4 = SpotEntity.findById(4)!!
 
-    val spot5 = SpotEntity.new {
-        role = "regular"
-    }
+    val spot5 = SpotEntity.findById(5)!!
 
     // Create mock reservations
     ReservationEntity.new {
