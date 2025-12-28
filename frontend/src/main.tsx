@@ -2,8 +2,8 @@ import {StrictMode} from "react";
 import {createRoot} from "react-dom/client";
 import {BrowserRouter, Route, Routes} from "react-router";
 
-import {PrimeReactProvider} from "primereact/api";
-import '../public/assets/mytheme/theme.scss';
+import { PrimeReactProvider } from 'primereact/api';
+import '@parkflex/themes/dist/theme.css';
 
 import "./index.css";
 import {Demo} from "./pages/Demo.tsx";
