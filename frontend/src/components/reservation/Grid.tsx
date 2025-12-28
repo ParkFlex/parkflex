@@ -1,6 +1,7 @@
 import { Button } from "primereact/button";
 import type { SpotState } from "../../api/spots";
 import { Spot } from "./Spot";
+import { DateTimeDialog } from "../DateTimeDialog";
 
 interface ParkingViewProps {
     spots: SpotState[];
@@ -49,12 +50,6 @@ export const ParkingGrid = ({
                 ))}
             </div>
 
-            <div style={{ marginTop: "20px", textAlign: "center" }}>
-                <p>
-                    Wybrane miejsce: <strong>{selectedId ?? "brak"}</strong>
-                </p>
-                <Button label="Zatwierdź" />
-            </div>
         </div>
     );
 };

@@ -52,3 +52,12 @@ export const isActiveNow = (startTime: Date, durationMin: number): boolean => {
     const endTime = addMinutes(startTime, durationMin);
     return now >= startTime && now <= endTime;
 };
+
+export const compareTime = (lhs: Date, rhs: Date): -1 | 0 | 1 => {
+    const lhsMins = lhs.getMinutes() + lhs.getHours() * 60;
+    const rhsMins = rhs.getMinutes() + rhs.getHours() * 60;
+
+    if (lhsMins < rhsMins) return -1;
+    if (lhsMins === rhsMins) return 0;
+    return 1;
+};

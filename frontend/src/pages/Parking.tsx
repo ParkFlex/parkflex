@@ -3,6 +3,11 @@ import type { SpotState } from "../api/spots";
 import { getSpots } from "../api/spots";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
+import { DateTimeSelection } from "../components/DateTimeDialog/DateTimeSelection.ts";
+import { DateTimeSelector } from "../components/reservation/DateTimeSelector.tsx";
+import { Button } from "primereact/button";
+import { Toolbar } from "primereact/toolbar";
+import { Divider } from "primereact/divider";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -16,6 +21,20 @@ export function ParkingPage() {
 
     // selected spot id
     const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const [dateSelectorVisible, setDateSelectorVisible] = useState(false);
+
+    const [selectedTime, setSelectedTime] = useState<[Date, Date]>(() => {
+        const start = new Date();
+        start.setHours(start.getHours() + 2);
+
+        const end = new Date(start);
+        end.setHours(start.getHours() + 2);
+
+        return [start, end];
+    });
+
+    const [selectedDay, setSelectedDay] = useState<Date>(new Date());
 
     useEffect(() => {
         const defaultStartDate = new Date();
@@ -43,11 +62,40 @@ export function ParkingPage() {
     return (
         <div className="parking-page">
             {showParking ? (
-                <ParkingGrid
-                    spots={data}
-                    selectedId={selectedId}
-                    setSelectedId={setSelectedId}
-                />
+                <>
+                    <ParkingGrid
+                        spots={data}
+                        selectedId={selectedId}
+                        setSelectedId={setSelectedId}
+                    />
+
+                    <Divider/>
+
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center"
+                        }}
+                    >
+                        <DateTimeSelector
+                            visible={dateSelectorVisible}
+                            setVisible={setDateSelectorVisible}
+                            day={selectedDay}
+                            setDay={setSelectedDay}
+                            time={selectedTime}
+                            setTime={setSelectedTime}
+                        />
+
+                        <div style={{ marginTop: "20px", textAlign: "center" }}>
+                            <p>
+                                Wybrane miejsce: <strong>{selectedId ?? "brak"}</strong>
+                            </p>
+                            <Button label="Zatwierdź"/>
+                        </div>
+
+                    </div>
+                </>
             ) : (
                 <ErrorBanned
                     days={banDays}
