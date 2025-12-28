@@ -409,6 +409,9 @@
                                 "role": {
                                     "type": "string"
                                 },
+                                "displayOrder": {
+                                    "type": "integer"
+                                },
                                 "occupied": {
                                     "type": "boolean"
                                 }

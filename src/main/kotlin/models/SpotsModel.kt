@@ -12,5 +12,6 @@ data class SpotsModel(
 data class SpotAvailability(
     val id: Long,
     val role: String,
+    val displayOrder: Int,
     val occupied: Boolean
 )

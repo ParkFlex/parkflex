@@ -38,31 +38,28 @@ fun Route.spotsRoutes() {
                     return@get
                 }
 
-                val spotList: List<SpotEntity> = runDB {
-
-                    SpotEntity.all().filter { true }
-                }
-
+                val spotList: List<SpotEntity> = runDB { SpotEntity.all().toList() }
                 val spotModelList = mutableListOf<SpotAvailability>()
 
                 for (spot in spotList) {
-
-                    var reservationCount: Int = 0;
-                    reservationCount = runDB {
-
-                        ReservationEntity.all().count() {
+                    val reservationCount = runDB {
+                        ReservationEntity.all().count {
                             val reservationEndDate = it.start.plusMinutes(it.duration.toLong())
                             val isTheSame = it.spot.id.value == spot.id.value
-                            val coversStart = it.start >= startDate && it.start <= endDate
+                            val coversStart = it.start in startDate..endDate
                             val coversWhole = it.start <= startDate && reservationEndDate >= endDate
-                            val coversEnd = reservationEndDate >= startDate && reservationEndDate <= endDate
+                            val coversEnd = reservationEndDate in startDate..endDate
 
                             isTheSame && (coversStart || coversWhole || coversEnd)
                         }
                     }
 
-
-                    val spotAvailability = SpotAvailability(spot.id.value, spot.role, reservationCount > 0);
+                    val spotAvailability = SpotAvailability(
+                        spot.id.value,
+                        spot.role,
+                        spot.displayOrder,
+                        reservationCount > 0
+                    );
 
                     spotModelList.add(spotAvailability)
                 }
