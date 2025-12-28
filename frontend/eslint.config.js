@@ -1,22 +1,22 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
-import {defineConfig, globalIgnores} from 'eslint/config';
-import stylistic from '@stylistic/eslint-plugin';
+import js from "@eslint/js";
+import stylistic from "@stylistic/eslint-plugin";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import { defineConfig, globalIgnores } from "eslint/config";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
-    globalIgnores(['dist']),
+    globalIgnores(["dist"]),
     {
-        files: ['**/*.{ts,tsx}'],
+        files: ["**/*.{ts,tsx}"],
         plugins: {
-            '@stylistic': stylistic
+            "@stylistic": stylistic,
         },
         extends: [
             js.configs.recommended,
             tseslint.configs.recommended,
-            reactHooks.configs['recommended-latest'],
+            reactHooks.configs["recommended-latest"],
             reactRefresh.configs.vite,
         ],
         languageOptions: {
@@ -27,12 +27,15 @@ export default defineConfig([
         rules: {
             "no-unused-vars": "off",
             "@typescript-eslint/no-unused-vars": "off",
-            '@stylistic/indent': ["warn", 4],
-            '@stylistic/semi': "warn",
-            '@stylistic/max-len': ["warn", {
-                code: 120
-            }],
-            "@stylistic/object-curly-spacing": ["warn", "always"]
-        }
+            "@stylistic/indent": ["warn", 4],
+            "@stylistic/semi": "warn",
+            "@stylistic/max-len": [
+                "warn",
+                {
+                    code: 120,
+                },
+            ],
+            "@stylistic/object-curly-spacing": ["warn", "always"],
+        },
     },
-])
+]);
