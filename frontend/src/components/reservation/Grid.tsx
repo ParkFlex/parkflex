@@ -54,16 +54,16 @@ export const ParkingGrid = ({
                     </div>
                 ))}
             </div>
-             <div>
-                 <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
-                 <Button
-                     label="Zatwierdź"
-                     onClick={onConfirm}
-                     disabled={selectedId == null}
-                 />
-                 <div style={{ marginTop: "12px" }}>
-                     <Messages ref={msgsRef} />
-                 </div>
+            <div>
+                <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
+                <Button
+                    label="Zatwierdź"
+                    onClick={onConfirm}
+                    disabled={selectedId == null}
+                />
+                <div style={{ marginTop: "12px" }}>
+                    <Messages ref={msgsRef} />
+                </div>
             </div>
         </div>
     );

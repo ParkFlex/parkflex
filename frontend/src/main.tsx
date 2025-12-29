@@ -1,16 +1,16 @@
-import {StrictMode} from "react";
-import {createRoot} from "react-dom/client";
-import {BrowserRouter, Route, Routes} from "react-router";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router";
 
 import { PrimeReactProvider } from 'primereact/api';
 import '@parkflex/themes/dist/theme.css';
 
 import "./index.css";
-import {Demo} from "./pages/Demo.tsx";
-import {NotFound} from "./pages/NotFound.tsx";
-import {History} from "./pages/History.tsx";
-import {ParkingPage} from "./pages/Parking.tsx";
-import {Layout} from "./pages/Layout.tsx";
+import { Demo } from "./pages/Demo.tsx";
+import { NotFound } from "./pages/NotFound.tsx";
+import { History } from "./pages/History.tsx";
+import { ParkingPage } from "./pages/Parking.tsx";
+import { Layout } from "./pages/Layout.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
