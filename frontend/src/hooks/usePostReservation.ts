@@ -16,7 +16,7 @@ const formatLocalDateTime = (date: Date): string => {
     )}`;
 };
 
-export const postReservation = () => {
+export const usePostReservation = () => {
     const axios = useAxios();
     const [reservation, setReservation] = useState<ReservationResponse | null>(
         null
@@ -47,28 +47,14 @@ export const postReservation = () => {
                 return resp.data;
             } catch (e: unknown) {
                 if (isAxiosError(e)) {
-                    const data = e.response?.data as
-                        | { message?: unknown; context?: unknown }
-                        | undefined;
-                    if (
-                        typeof data?.message === "string" &&
-                        typeof data?.context === "string"
-                    ) {
-                        const apiError = new ApiErrorModel(
-                            data.message,
-                            data.context
-                        );
-                        setError(apiError);
-                        console.error("Error response:", apiError.message);
-                        throw new Error(apiError.message);
-                    }
-
-                    console.error("Error response:", e.message);
-                    throw new Error(e.message);
+                    const data = e.response?.data as ApiErrorModel;
+                    setError(data);
+                    console.error("Error response:", data.message);
+                    throw new Error(data.message);
+                } else {
+                    console.error("Unexpected error:", e);
+                    throw e;
                 }
-
-                console.error("Unexpected error:", e);
-                throw e;
             } finally {
                 setLoading(false);
             }

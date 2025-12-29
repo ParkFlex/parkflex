@@ -4,7 +4,7 @@ import { getSpots } from "../api/spots";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { ErrorBanned } from "../components/Banned";
 import { Messages } from "primereact/messages";
-import { postReservation } from "../hooks/postReservation";
+import { usePostReservation } from "../hooks/usePostReservation";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -19,7 +19,7 @@ export function ParkingPage() {
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const msgs = useRef<Messages>(null);
-    const { reserve } = postReservation();
+    const { reserve } = usePostReservation();
 
     const handleReserve = async () => {
         if (selectedId == null) {
