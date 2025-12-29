@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { SpotState } from "../api/spots";
 import { getSpots } from "../api/spots";
-import { ParkingGrid } from "../components/reservation/Grid";
 import { ErrorBanned } from "../components/Banned";
+import { ParkingGrid } from "../components/reservation/Grid";
 import { Messages } from "primereact/messages";
 import { usePostReservation } from "../hooks/usePostReservation";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
-    const [isBanned, setIsBanned] = useState(true);
+    const [isBanned, setIsBanned] = useState(false);
     const [showParking, setShowParking] = useState(true);
     const [banDays, setBanDays] = useState(3);
     const [banReason, setBanReason] = useState(
