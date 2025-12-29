@@ -19,7 +19,7 @@ export function ParkingPage() {
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const msgs = useRef<Messages>(null);
-    const { reserve, error: reservationError } = postReservation();
+    const { reserve } = postReservation();
 
     const handleReserve = async () => {
         if (selectedId == null) {
@@ -42,25 +42,11 @@ export function ParkingPage() {
             const durationMinutes = 60;
             const resp = await reserve(selectedId, start, durationMinutes);
 
-            if (!resp) {
-                const msg = reservationError?.message ?? "Nieznany błąd";
-                msgs.current?.show([
-                    {
-                        sticky: true,
-                        severity: "error",
-                        summary: "Error",
-                        detail: msg,
-                        closable: false,
-                    },
-                ]);
-                return;
-            }
-
             msgs.current?.show([
                 {
                     sticky: true,
                     severity: "success",
-                    summary: "Success",
+                    summary: "Sukces",
                     detail: resp.message,
                     closable: false,
                 },
@@ -71,7 +57,7 @@ export function ParkingPage() {
                 {
                     sticky: true,
                     severity: "error",
-                    summary: "Error",
+                    summary: "Błąd",
                     detail: msg,
                     closable: false,
                 },

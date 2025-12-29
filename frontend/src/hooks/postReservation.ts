@@ -29,7 +29,7 @@ export const postReservation = () => {
             spotId: number,
             start: Date,
             durationMinutes: number
-        ): Promise<CreateReservationSuccessResponse | null> => {
+        ): Promise<CreateReservationSuccessResponse> => {
             setLoading(true);
             setError(null);
 
@@ -60,15 +60,15 @@ export const postReservation = () => {
                         );
                         setError(apiError);
                         console.error("Error response:", apiError.message);
-                        return null;
+                        throw new Error(apiError.message);
                     }
 
                     console.error("Error response:", e.message);
-                    return null;
+                    throw new Error(e.message);
                 }
 
                 console.error("Unexpected error:", e);
-                return null;
+                throw e;
             } finally {
                 setLoading(false);
             }
