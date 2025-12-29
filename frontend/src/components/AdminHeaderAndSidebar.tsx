@@ -38,38 +38,33 @@ export function AdminHeaderAndSidebar () {
                     onClick={open}
                     style={{ background: 'transparent', border: 'none', color: morski }}
                 />
-                <h2 style={{ margin: 0, color: morski, fontSize: '1.2rem' }}>Admin Panel</h2>
+                <h2 style={{ margin: 0, color: morski, fontSize: '1.2rem' }}>Panel Administracyjny</h2>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Button
-                    icon="pi pi-user"
-                    onClick={function() { goTo('/admin/profile'); }}
-                    style={{ background: 'transparent', border: 'none', color: morski }} />
-                <Button
-                    icon="pi pi-sign-out"
-                    onClick={close}
-                    style={{ background: 'transparent', border: 'none', color: morski }} />
-            </div>
-
-            <Sidebar visible={visible} onHide={close} position="left"> // co jest w środku nav to głowne menu strony/ praktyka dla porządku w kodzie podobno
+            <Sidebar visible={visible} onHide={close} position="left">
                 <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
                     <Button
-                        label="List"
-                        icon="pi pi-list" //ikonki reacta
-                        onClick={function() { goTo('/admin/list'); }}
+                        label="Lista Użytkowników"
+                        icon="pi pi-users" //ikonki reacta
+                        onClick={function() { goTo('/admin/users'); }}
                         style={{ background: 'transparent', border: 'none', color: morski, textAlign: 'left', justifyContent: 'flex-start' }}
                     />
                     <Button
-                        label="Parameters"
-                        icon="pi pi-cog"
-                        onClick={function() { goTo('/admin/parameters'); }}
+                        label="Historia Rezerwacji"
+                        icon="pi pi-calendar"
+                        onClick={function() { goTo('/admin/reservation_history'); }}
                         style={{ background: 'transparent', border: 'none', color: morski, textAlign: 'left', justifyContent: 'flex-start' }}
                     />
                     <Button
-                        label="Spots"
-                        icon="pi pi-map"
-                        onClick={function() { goTo('/admin/spots'); }}
+                        label="Historia Zgłoszeń"
+                        icon="pi pi-megaphone"
+                        onClick={function() { goTo('/admin/report_history'); }}
+                        style={{ background: 'transparent', border: 'none', color: morski, textAlign: 'left', justifyContent: 'flex-start' }}
+                    />
+                    <Button
+                        label="Ustawienia Admina"
+                        icon="pi pi-user-edit"
+                        onClick={function() { goTo('/admin/settings'); }}
                         style={{ background: 'transparent', border: 'none', color: morski, textAlign: 'left', justifyContent: 'flex-start' }}
                     />
                 </nav>
