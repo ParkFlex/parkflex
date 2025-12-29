@@ -46,7 +46,7 @@ export const usePostReservation = () => {
                 setReservation(resp.data.reservation);
                 return resp.data;
             } catch (e: unknown) {
-                if (isAxiosError(e)) {
+                if (isAxiosError(e) && e.response) {
                     const data = e.response?.data as ApiErrorModel;
                     setError(data);
                     console.error("Error response:", data.message);
