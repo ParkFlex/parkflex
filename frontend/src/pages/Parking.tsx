@@ -3,7 +3,10 @@ import type { SpotState } from "../api/spots";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { usePostReservation } from "../hooks/usePostReservation";
-import { DateTimeSelector, type DateTimeSpan } from "../components/reservation/DateTimeSelector.tsx";
+import {
+    DateTimeSelector,
+    type DateTimeSpan,
+} from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
@@ -12,6 +15,7 @@ import { useGetSpots } from "../hooks/useGetSpots.tsx";
 import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
 
 export function ParkingPage() {
+    const { user, token } = useAuth();
     const [data, setData] = useState<SpotState[]>([]);
     const [isBanned, setIsBanned] = useState(false);
     const [showParking, setShowParking] = useState(true);
@@ -51,7 +55,8 @@ export function ParkingPage() {
             const start = new Date(selectedDayTime.day);
             start.setHours(startTime.getHours(), startTime.getMinutes(), 0);
 
-            const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
+            const durationMinutes =
+                (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
 
             const resp = await reserve(selectedId, start, durationMinutes);
 
@@ -65,7 +70,11 @@ export function ParkingPage() {
                 },
             ]);
 
-            getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
+            getSpots(
+                selectedDayTime.day,
+                selectedDayTime.startTime,
+                selectedDayTime.endTime
+            );
             setSelectedId(null);
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
@@ -96,12 +105,16 @@ export function ParkingPage() {
         return {
             day: day,
             startTime: start,
-            endTime: end
+            endTime: end,
         };
     });
 
     useEffect(() => {
-        getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
+        getSpots(
+            selectedDayTime.day,
+            selectedDayTime.startTime,
+            selectedDayTime.endTime
+        );
     }, [getSpots, selectedDayTime]);
 
     useEffect(() => {
@@ -110,12 +123,16 @@ export function ParkingPage() {
 
     return (
         <div className="parking-page">
+            {/*dla testu*/}
+            <p>
+                user data{JSON.stringify(user)}, token: {token}
+            </p>
             {showParking ? (
                 <div
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center"
+                        alignItems: "center",
                     }}
                 >
                     <DateTimeSelector
@@ -125,7 +142,7 @@ export function ParkingPage() {
                         setDayTime={setSelectedDayTime}
                     />
 
-                    <Divider/>
+                    <Divider />
 
                     <ParkingGrid
                         spots={data}
@@ -133,29 +150,35 @@ export function ParkingPage() {
                         setSelectedId={setSelectedId}
                     />
 
-                    <Divider/>
+                    <Divider />
 
                     <div
                         style={{
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            width: "100%"
+                            width: "100%",
                         }}
                     >
                         <Toolbar
                             style={{
                                 width: "95%",
-                                marginTop: "1em"
+                                marginTop: "1em",
                             }}
                             start={
                                 <>
                                     <p> Miejsce: {selectedId ?? "brak"}</p>
-                                    <Divider layout={"vertical"}/>
-                                    <p> {formatDateWeek(selectedDayTime.day)} </p>
-                                    <Divider layout={"vertical"}/>
+                                    <Divider layout={"vertical"} />
                                     <p>
-                                        {formatTime(selectedDayTime.startTime)}-{formatTime(selectedDayTime.endTime)}
+                                        {" "}
+                                        {formatDateWeek(
+                                            selectedDayTime.day
+                                        )}{" "}
+                                    </p>
+                                    <Divider layout={"vertical"} />
+                                    <p>
+                                        {formatTime(selectedDayTime.startTime)}-
+                                        {formatTime(selectedDayTime.endTime)}
                                     </p>
                                 </>
                             }
