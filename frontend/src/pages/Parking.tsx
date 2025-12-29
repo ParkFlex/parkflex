@@ -8,6 +8,7 @@ import { usePostReservation } from "../hooks/usePostReservation";
 import { DateTimeSelector } from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
+import {Toolbar} from "primereact/toolbar";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -41,8 +42,14 @@ export function ParkingPage() {
 
         try {
             msgs.current?.clear();
-            const start = new Date();
-            const durationMinutes = 60;
+            const startTime = selectedTime[0];
+            const endTime = selectedTime[1];
+
+            const start = new Date(selectedDay);
+            start.setHours(startTime.getHours(), startTime.getMinutes(), 0);
+
+            const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
+
             const resp = await reserve(selectedId, start, durationMinutes);
 
             msgs.current?.show([
@@ -121,7 +128,8 @@ export function ParkingPage() {
                         style={{
                             display: "flex",
                             flexDirection: "column",
-                            alignItems: "center"
+                            alignItems: "center",
+                            width: "100%"
                         }}
                     >
                         <DateTimeSelector
@@ -133,17 +141,21 @@ export function ParkingPage() {
                             setTime={setSelectedTime}
                         />
 
-                        <div>
-                            <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
-                            <Button
-                                label="Zatwierdź"
-                                onClick={handleReserve}
-                                disabled={selectedId == null}
-                            />
-                            <div style={{ marginTop: "12px" }}>
-                                <Messages ref={msgs} />
-                            </div>
-                        </div>
+                        <Toolbar
+                            style={{
+                                width: "95%",
+                                marginTop: "1em"
+                            }}
+                        start={<p> Wybrane miejsce: {selectedId ?? "brak"}</p>}
+                        end={<Button
+                            label="Zatwierdź"
+                            onClick={handleReserve}
+                            disabled={selectedId == null}
+                        />}
+                        />
+                        <div style={{ marginTop: "12px" }}>
+                        <Messages ref={msgs} />
+                    </div>
                     </div>
                 </>
             ) : (
