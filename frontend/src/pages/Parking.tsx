@@ -3,8 +3,10 @@ import type { SpotState } from "../api/spots";
 import { getSpots } from "../api/spots";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
+import { useAuth } from "../components/auth";
 
 export function ParkingPage() {
+    const { user, token } = useAuth();
     const [data, setData] = useState<SpotState[]>([]);
     const [isBanned, setIsBanned] = useState(false);
     const [showParking, setShowParking] = useState(true);
@@ -42,6 +44,8 @@ export function ParkingPage() {
 
     return (
         <div className="parking-page">
+            {/*dla testu*/}
+            <p>user data{JSON.stringify(user)}, token: {token}</p>
             {showParking ? (
                 <ParkingGrid
                     spots={data}
