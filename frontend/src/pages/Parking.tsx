@@ -9,6 +9,7 @@ import { DateTimeSelector } from "../components/reservation/DateTimeSelector.tsx
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import {Toolbar} from "primereact/toolbar";
+import {Toast, type ToastMessage} from "primereact/toast";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -22,7 +23,7 @@ export function ParkingPage() {
 
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
-    const msgs = useRef<Messages>(null);
+    const msgs = useRef<Toast>(null);
     const { reserve } = usePostReservation();
 
     const handleReserve = async () => {
@@ -30,7 +31,7 @@ export function ParkingPage() {
             msgs.current?.clear();
             msgs.current?.show([
                 {
-                    sticky: true,
+                    sticky: false,
                     severity: "warn",
                     summary: "Uwaga",
                     detail: "Najpierw wybierz miejsce.",
@@ -54,7 +55,7 @@ export function ParkingPage() {
 
             msgs.current?.show([
                 {
-                    sticky: true,
+                    sticky: false,
                     severity: "success",
                     summary: "Sukces",
                     detail: resp.message,
@@ -65,7 +66,7 @@ export function ParkingPage() {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
             msgs.current?.show([
                 {
-                    sticky: true,
+                    sticky: false,
                     severity: "error",
                     summary: "Błąd",
                     detail: msg,
@@ -154,7 +155,7 @@ export function ParkingPage() {
                         />}
                         />
                         <div style={{ marginTop: "12px" }}>
-                        <Messages ref={msgs} />
+                        <Toast position="bottom-center" ref={msgs} />
                     </div>
                     </div>
                 </>
