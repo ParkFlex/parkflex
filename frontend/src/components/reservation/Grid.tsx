@@ -1,23 +1,16 @@
-import { Button } from "primereact/button";
 import type { SpotState } from "../../api/spots";
-import { Messages } from "primereact/messages";
-import type { RefObject } from "react";
 import { Spot } from "./Spot";
 
 interface ParkingViewProps {
     spots: SpotState[];
     selectedId: number | null;
     setSelectedId: (x: number | null) => void;
-    onConfirm: () => void;
-    msgsRef: RefObject<Messages | null>;
 }
 
 export const ParkingGrid = ({
     spots,
     selectedId,
     setSelectedId,
-    onConfirm,
-    msgsRef,
 }: ParkingViewProps) => {
     return (
         <div
@@ -53,17 +46,6 @@ export const ParkingGrid = ({
                         />
                     </div>
                 ))}
-            </div>
-            <div>
-                <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
-                <Button
-                    label="Zatwierdź"
-                    onClick={onConfirm}
-                    disabled={selectedId == null}
-                />
-                <div style={{ marginTop: "12px" }}>
-                    <Messages ref={msgsRef} />
-                </div>
             </div>
         </div>
     );

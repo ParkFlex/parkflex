@@ -5,6 +5,9 @@ import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { Messages } from "primereact/messages";
 import { usePostReservation } from "../hooks/usePostReservation";
+import { DateTimeSelector } from "../components/reservation/DateTimeSelector.tsx";
+import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -65,6 +68,20 @@ export function ParkingPage() {
         }
     };
 
+    const [dateSelectorVisible, setDateSelectorVisible] = useState(false);
+
+    const [selectedTime, setSelectedTime] = useState<[Date, Date]>(() => {
+        const start = new Date();
+        start.setHours(start.getHours() + 2);
+
+        const end = new Date(start);
+        end.setHours(start.getHours() + 2);
+
+        return [start, end];
+    });
+
+    const [selectedDay, setSelectedDay] = useState<Date>(new Date());
+
     useEffect(() => {
         const defaultStartDate = new Date();
         const defaultEndDate = new Date();
@@ -87,6 +104,7 @@ export function ParkingPage() {
     useEffect(() => {
         if (isBanned) setShowParking(false);
     }, [isBanned]);
+
     return (
         <div className="parking-page">
             {showParking ? (
@@ -95,9 +113,38 @@ export function ParkingPage() {
                         spots={data}
                         selectedId={selectedId}
                         setSelectedId={setSelectedId}
-                        onConfirm={handleReserve}
-                        msgsRef={msgs}
                     />
+
+                    <Divider/>
+
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center"
+                        }}
+                    >
+                        <DateTimeSelector
+                            visible={dateSelectorVisible}
+                            setVisible={setDateSelectorVisible}
+                            day={selectedDay}
+                            setDay={setSelectedDay}
+                            time={selectedTime}
+                            setTime={setSelectedTime}
+                        />
+
+                        <div>
+                            <p> Wybrane miejsce: {selectedId ?? "brak"}</p>
+                            <Button
+                                label="Zatwierdź"
+                                onClick={handleReserve}
+                                disabled={selectedId == null}
+                            />
+                            <div style={{ marginTop: "12px" }}>
+                                <Messages ref={msgs} />
+                            </div>
+                        </div>
+                    </div>
                 </>
             ) : (
                 <ErrorBanned
