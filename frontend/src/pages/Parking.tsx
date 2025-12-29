@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { SpotState } from "../api/spots";
-import { getSpots } from "../api/spots";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
-import { Messages } from "primereact/messages";
 import { usePostReservation } from "../hooks/usePostReservation";
 import { DateTimeSelector } from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import {Toolbar} from "primereact/toolbar";
-import {Toast, type ToastMessage} from "primereact/toast";
+import {Toast} from "primereact/toast";
+import {useGetSpots} from "../hooks/useGetSpots.tsx";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -25,6 +24,8 @@ export function ParkingPage() {
 
     const msgs = useRef<Toast>(null);
     const { reserve } = usePostReservation();
+
+    const getSpots = useGetSpots(setData, msgs);
 
     const handleReserve = async () => {
         if (selectedId == null) {
@@ -62,6 +63,9 @@ export function ParkingPage() {
                     closable: false,
                 },
             ]);
+
+            getSpots(selectedDay, selectedTime[0], selectedTime[1]);
+            setSelectedId(null);
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
             msgs.current?.show([
@@ -91,23 +95,8 @@ export function ParkingPage() {
     const [selectedDay, setSelectedDay] = useState<Date>(new Date());
 
     useEffect(() => {
-        const defaultStartDate = new Date();
-        const defaultEndDate = new Date();
-
-        const callApi = async () => {
-            try {
-                const retrieved = await getSpots(
-                    defaultStartDate,
-                    defaultEndDate
-                );
-                setData(retrieved);
-            } catch {
-                console.log("Failed to fetch data");
-            }
-        };
-
-        void callApi();
-    }, []);
+        getSpots(selectedTime[0], selectedTime[1], selectedDay);
+    }, [selectedDay, selectedTime]);
 
     useEffect(() => {
         if (isBanned) setShowParking(false);

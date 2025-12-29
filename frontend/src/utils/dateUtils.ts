@@ -28,6 +28,16 @@ export const formatDate = (date: Date): string => {
     });
 };
 
+export const formatLocalDateTime = (date: Date): string => {
+    const padding2 = (x: number) => String(x).padStart(2, "0");
+    return `${date.getFullYear()}-${padding2(date.getMonth() + 1)}-${padding2(
+        date.getDate()
+    )}T${padding2(date.getHours())}:${padding2(date.getMinutes())}:${padding2(
+        date.getSeconds()
+    )}`;
+};
+
+
 export const isSameDay = (date1: Date, date2: Date): boolean => {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&

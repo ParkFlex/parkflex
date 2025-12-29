@@ -6,15 +6,7 @@ import type {
 import { useCallback, useState } from "react";
 import { isAxiosError } from "axios";
 import { ApiErrorModel } from "../models/ApiErrorModel";
-
-const formatLocalDateTime = (date: Date): string => {
-    const padding2 = (x: number) => String(x).padStart(2, "0");
-    return `${date.getFullYear()}-${padding2(date.getMonth() + 1)}-${padding2(
-        date.getDate()
-    )}T${padding2(date.getHours())}:${padding2(date.getMinutes())}:${padding2(
-        date.getSeconds()
-    )}`;
-};
+import {formatLocalDateTime} from "../utils/dateUtils.ts";
 
 export const usePostReservation = () => {
     const axios = useAxios();
