@@ -6,9 +6,9 @@ import { usePostReservation } from "../hooks/usePostReservation";
 import { DateTimeSelector } from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
-import {Toolbar} from "primereact/toolbar";
-import {Toast} from "primereact/toast";
-import {useGetSpots} from "../hooks/useGetSpots.tsx";
+import { Toolbar } from "primereact/toolbar";
+import { Toast } from "primereact/toast";
+import { useGetSpots } from "../hooks/useGetSpots.tsx";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -96,7 +96,7 @@ export function ParkingPage() {
 
     useEffect(() => {
         getSpots(selectedTime[0], selectedTime[1], selectedDay);
-    }, [selectedDay, selectedTime]);
+    }, [getSpots, selectedDay, selectedTime]);
 
     useEffect(() => {
         if (isBanned) setShowParking(false);
@@ -136,16 +136,16 @@ export function ParkingPage() {
                                 width: "95%",
                                 marginTop: "1em"
                             }}
-                        start={<p> Wybrane miejsce: {selectedId ?? "brak"}</p>}
-                        end={<Button
-                            label="Zatwierdź"
-                            onClick={handleReserve}
-                            disabled={selectedId == null}
-                        />}
+                            start={<p> Wybrane miejsce: {selectedId ?? "brak"}</p>}
+                            end={
+                                <Button
+                                    label="Zatwierdź"
+                                    onClick={handleReserve}
+                                    disabled={selectedId == null}
+                                />
+                            }
                         />
-                        <div style={{ marginTop: "12px" }}>
                         <Toast position="bottom-center" ref={msgs} />
-                    </div>
                     </div>
                 </>
             ) : (
