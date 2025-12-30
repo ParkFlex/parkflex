@@ -4,17 +4,17 @@ import { formatLocalDateTime } from "../utils/dateUtils.ts";
 import { isAxiosError } from "axios";
 import type { ApiErrorModel } from "../models/ApiErrorModel.tsx";
 import { Toast } from "primereact/toast";
-import type { RefObject } from "react";
+import { type RefObject, useCallback } from "react";
 
 export const useGetSpots = (
     setSpots: (xs: SpotState[]) => void,
     toast: RefObject<Toast | null>
 ) => {
     const axios = useAxios();
-    return (
+    return useCallback((
+        day: Date,
         startTime: Date,
         endTime: Date,
-        day: Date,
     ) => {
         const startDate = new Date(day);
         startDate.setHours(startTime.getHours(), startTime.getMinutes(), 0);
@@ -57,5 +57,5 @@ export const useGetSpots = (
                 }
             );
         });
-    };
+    }, [setSpots, toast, axios]);
 };

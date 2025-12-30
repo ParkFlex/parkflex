@@ -64,7 +64,7 @@ export function ParkingPage() {
                 },
             ]);
 
-            getSpots(selectedTime[0], selectedTime[1], selectedDay);
+            getSpots(selectedDay, selectedTime[0], selectedTime[1]);
             setSelectedId(null);
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
@@ -95,8 +95,8 @@ export function ParkingPage() {
     const [selectedDay, setSelectedDay] = useState<Date>(new Date());
 
     useEffect(() => {
-        getSpots(selectedTime[0], selectedTime[1], selectedDay);
-    }, [getSpots, selectedDay, selectedTime]);
+        getSpots(selectedDay, selectedTime[0], selectedTime[1]);
+    }, [getSpots, selectedTime, selectedDay]);
 
     useEffect(() => {
         if (isBanned) setShowParking(false);
