@@ -64,7 +64,7 @@ export function ParkingPage() {
                 },
             ]);
 
-            getSpots(selectedDay, selectedTime[0], selectedTime[1]);
+            getSpots(selectedTime[0], selectedTime[1], selectedDay);
             setSelectedId(null);
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
