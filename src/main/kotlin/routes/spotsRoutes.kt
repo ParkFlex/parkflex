@@ -3,7 +3,10 @@ package parkflex.routes
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import parkflex.db.ParameterEntity
+import parkflex.db.ParameterTable
 import parkflex.db.ReservationEntity
+import parkflex.db.ReservationTable
 import parkflex.db.SpotEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.SpotAvailability
@@ -42,24 +45,29 @@ fun Route.spotsRoutes() {
                 val spotModelList = mutableListOf<SpotAvailability>()
 
                 for (spot in spotList) {
-                    val reservationCount = runDB {
-                        ReservationEntity.all().count {
-                            val reservationEndDate = it.start.plusMinutes(it.duration.toLong())
-                            val isTheSame = it.spot.id.value == spot.id.value
-                            val coversStart = it.start in startDate..endDate
-                            val coversWhole = it.start <= startDate && reservationEndDate >= endDate
-                            val coversEnd = reservationEndDate in startDate..endDate
 
-                            isTheSame && (coversStart || coversWhole || coversEnd)
-                        }
+                    val breakDurationMinutes: Long = runDB {
+                        val param = ParameterEntity.find {
+                            ParameterTable.key eq "reservation/break/duration"
+                        }.firstOrNull()
+
+                        param?.value?.toLongOrNull() ?: 0L
+                    }
+
+                    val doesCollide: Boolean = runDB {
+                        ReservationEntity
+                            .find { ReservationTable.spot eq  spot.id.value }
+                            .any { it.timeCollidesWith(breakDurationMinutes, startDate, endDate) }
                     }
 
                     val spotAvailability = SpotAvailability(
                         spot.id.value,
                         spot.role,
                         spot.displayOrder,
-                        reservationCount > 0
-                    );
+                        doesCollide
+                    )
+
+                    println(spotAvailability)
 
                     spotModelList.add(spotAvailability)
                 }

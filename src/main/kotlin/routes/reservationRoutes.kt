@@ -10,7 +10,6 @@ import parkflex.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.time.temporal.ChronoUnit
 
 
 fun Route.reservationRoutes() {
@@ -92,19 +91,7 @@ fun Route.reservationRoutes() {
         val hasConflict: Boolean = runDB {
             ReservationEntity
                 .find { ReservationTable.spot eq request.spot_id }
-                .any { existingReservation ->
-                    val existingStart = existingReservation.start
-                    val existingEnd = existingStart.plusMinutes(existingReservation.duration.toLong())
-                    
-                    // Add break duration to prevent
-                    // <reservation>---break (0minutes)---<reservation> conflicts
-                    // 08:00-09:00 and 09:00-10:00 is a conflict because driver won't have time to leave
-                    // adjusted by parameter "default_break_between_reservations_duration"
-                    val adjustedExistingEnd = existingEnd.plusMinutes(breakDurationMinutes)
-                    val adjustedExistingStart = existingStart.minusMinutes(breakDurationMinutes)
-
-                    return@any adjustedExistingStart <= endTime && startTime <= adjustedExistingEnd
-                }
+                .any { it.timeCollidesWith(breakDurationMinutes, startTime, endTime) }
         }
 
         if (hasConflict) {

@@ -3,6 +3,7 @@ package parkflex.db
 import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.dao.id.*
 import org.jetbrains.exposed.sql.javatime.*
+import java.time.LocalDateTime
 
 
 object ReservationTable : LongIdTable("reservation") {
@@ -38,6 +39,19 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
 
     val hasPenalty: Boolean
         get() = !this.penalties.empty()
+
+    fun timeCollidesWith(breakDurationMinutes: Long, startTime: LocalDateTime, endTime: LocalDateTime): Boolean {
+        val existingEnd = this.start.plusMinutes(this.duration.toLong())
+
+        // Add break duration to prevent
+        // <reservation>---break (0minutes)---<reservation> conflicts
+        // 08:00-09:00 and 09:00-10:00 is a conflict because driver won't have time to leave
+        // adjusted by parameter "default_break_between_reservations_duration"
+        val adjustedExistingEnd = existingEnd.plusMinutes(breakDurationMinutes)
+        val adjustedExistingStart = this.start.minusMinutes(breakDurationMinutes)
+
+        return adjustedExistingStart <= endTime && startTime <= adjustedExistingEnd
+    }
 
     companion object : LongEntityClass<ReservationEntity>(ReservationTable)
 }
