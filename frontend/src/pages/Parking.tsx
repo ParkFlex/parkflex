@@ -3,7 +3,7 @@ import type { SpotState } from "../api/spots";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { usePostReservation } from "../hooks/usePostReservation";
-import { DateTimeSelector } from "../components/reservation/DateTimeSelector.tsx";
+import { DateTimeSelector, type DateTimeSpan } from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
@@ -44,10 +44,10 @@ export function ParkingPage() {
 
         try {
             msgs.current?.clear();
-            const startTime = selectedTime[0];
-            const endTime = selectedTime[1];
+            const startTime = selectedDayTime.startTime;
+            const endTime = selectedDayTime.endTime;
 
-            const start = new Date(selectedDay);
+            const start = new Date(selectedDayTime.day);
             start.setHours(startTime.getHours(), startTime.getMinutes(), 0);
 
             const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
@@ -64,7 +64,7 @@ export function ParkingPage() {
                 },
             ]);
 
-            getSpots(selectedDay, selectedTime[0], selectedTime[1]);
+            getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
             setSelectedId(null);
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
@@ -82,21 +82,23 @@ export function ParkingPage() {
 
     const [dateSelectorVisible, setDateSelectorVisible] = useState(false);
 
-    const [selectedTime, setSelectedTime] = useState<[Date, Date]>(() => {
+    const [selectedDayTime, setSelectedDayTime] = useState<DateTimeSpan>(() => {
         const start = new Date();
         start.setHours(start.getHours() + 2);
 
         const end = new Date(start);
         end.setHours(start.getHours() + 2);
 
-        return [start, end];
+        return {
+            day: new Date(),
+            startTime: start,
+            endTime: end
+        };
     });
 
-    const [selectedDay, setSelectedDay] = useState<Date>(new Date());
-
     useEffect(() => {
-        getSpots(selectedDay, selectedTime[0], selectedTime[1]);
-    }, [getSpots, selectedTime, selectedDay]);
+        getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
+    }, [getSpots, selectedDayTime]);
 
     useEffect(() => {
         if (isBanned) setShowParking(false);
@@ -125,10 +127,8 @@ export function ParkingPage() {
                         <DateTimeSelector
                             visible={dateSelectorVisible}
                             setVisible={setDateSelectorVisible}
-                            day={selectedDay}
-                            setDay={setSelectedDay}
-                            time={selectedTime}
-                            setTime={setSelectedTime}
+                            dayTime={selectedDayTime}
+                            setDayTime={setSelectedDayTime}
                         />
 
                         <Toolbar

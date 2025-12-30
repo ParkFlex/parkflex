@@ -6,23 +6,25 @@ import { compareTime, formatDate, formatDateWeek, formatTime, isSameDay } from "
 import { Toolbar } from "primereact/toolbar";
 import type { DateTimeSelection } from "../DateTimeDialog/DateTimeSelection.ts";
 
+export type DateTimeSpan = {
+    day: Date,
+    startTime: Date,
+    endTime: Date
+};
+
 interface DateSelectionProps {
     visible: boolean;
     setVisible: (x: boolean) => void;
-    day: Date;
-    setDay: (x: Date) => void;
-    time: [Date, Date];
-    setTime: (xs: [Date, Date]) => void;
+    dayTime: DateTimeSpan;
+    setDayTime: (dateTimeSpan: DateTimeSpan) => void;
 }
 
 export function DateTimeSelector(
     {
         visible,
         setVisible,
-        day,
-        setDay,
-        time,
-        setTime
+        dayTime,
+        setDayTime,
     }: DateSelectionProps
 ) {
 
@@ -42,13 +44,13 @@ export function DateTimeSelector(
                 className="p-inputgroup-addon"
                 style={ { flexGrow: "2" } }
             >
-                {formatDateWeek(day)}
+                {formatDateWeek(dayTime.day)}
             </span>
             <span
                 className="p-inputgroup-addon"
                 style={ { flexGrow: "1" } }
             >
-                {`${formatTime(time[0])} – ${formatTime(time[1])}`}
+                {`${formatTime(dayTime.startTime!)} – ${formatTime(dayTime.endTime!)}`}
             </span>
             <Button
                 style={{ width: "3em" }}
@@ -87,22 +89,23 @@ export function DateTimeSelector(
                 selectionMode="single"
                 header="Wybierz czas i datę rezerwacji"
 
-                initialSelection={
-                    {
-                        days: day,
-                        startTime: time[0],
-                        endTime: time[1]
-                    }
-                }
+                initialSelection={{
+                    days: dayTime.day,
+                    startTime: dayTime.startTime,
+                    endTime: dayTime.endTime
+                }}
 
                 onHide={() => {
                     setVisible(false);
                 }}
 
-                onApply={({ days, startTime, endTime }) => {
+                onApply={newDayTime => {
                     setVisible(false);
-                    setDay(days);
-                    setTime([startTime!, endTime!]); // we assert the non-nullability in `isValid`
+                    setDayTime({
+                        day: newDayTime.days,
+                        startTime: newDayTime.startTime!,
+                        endTime: newDayTime.endTime!
+                    });
                 }}
 
                 isValid={({ days, startTime, endTime }) => validator(days, startTime, endTime) }
