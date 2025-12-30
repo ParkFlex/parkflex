@@ -45,6 +45,11 @@ export function Layout(){
          }
         
         .menu{
+        position: sticky;
+        z-index: 1000;
+        background-color: white;
+        top: 0;
+        width: 100%;
         border-bottom: 2px solid #4b807b;
         border-radius: 20px ;
         padding-bottom: 10px;
