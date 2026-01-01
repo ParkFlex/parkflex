@@ -15,8 +15,8 @@ export const ParkingGrid = ({
     return (
         <div
             style={{
-                width: "90%",
-                maxWidth: "600px",
+                width: "100%",
+                //maxWidth: "600px",
                 margin: "0 auto",
             }}
         >
@@ -24,8 +24,8 @@ export const ParkingGrid = ({
                 style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(10, 1fr)",
-                    gap: "4px",
-                    border: "2px solid #000",
+                    gap: "0.25rem",
+                    border: "1px solid #b5ccbf",
                     borderRadius: "8px",
                     padding: "8px",
                     width: "100%",

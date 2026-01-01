@@ -10,7 +10,8 @@ export interface SpotProps {
 export function Spot({ state, selectedId, onSelect }: SpotProps) {
     const { id, occupied, role } = state;
     const isSelected = selectedId === id;
-    const color = occupied ? "#eb2338" : isSelected ? "#47d147" : undefined;
+    const color = occupied ? "#b5ccbf" : isSelected ? "#4d7975" : "#f8f9fa";
+    const fgColor = isSelected ? "#fff" : "#4b807b";
 
     const baseStyle = {
         width: "100%",
@@ -18,6 +19,8 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
         justifyContent: "center",
         fontWeight: "bold",
         padding: "2px",
+        border: "1px solid #aac4bd",
+        color: fgColor
     };
 
     function selectSpot() {
