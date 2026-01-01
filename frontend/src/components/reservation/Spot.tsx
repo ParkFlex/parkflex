@@ -59,6 +59,7 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
             severity={
                 occupied ? "danger" : isSelected ? "success" : "secondary"
             }
+            disabled={occupied}
         >
             {id}
         </Button>
