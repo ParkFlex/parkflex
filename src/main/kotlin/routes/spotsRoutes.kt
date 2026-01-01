@@ -67,8 +67,6 @@ fun Route.spotsRoutes() {
                         doesCollide
                     )
 
-                    println(spotAvailability)
-
                     spotModelList.add(spotAvailability)
                 }
 
