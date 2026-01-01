@@ -53,7 +53,9 @@ export function Layout(){
         border-bottom: 2px solid #4b807b;
         border-radius: 20px ;
         padding-bottom: 10px;
+        padding-top: 10px;
         margin-bottom:2rem;
+        
         }
         
         #logout .p-menuitem-link{
@@ -68,6 +70,10 @@ export function Layout(){
         #logout .p-menuitem-link:hover{
         background-color: #ff3333;
         
+        }
+        
+        #content{
+        margin: 1rem;
         }
     `;
 
@@ -105,7 +111,10 @@ export function Layout(){
                 <TabMenu model={items} activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}/>
 
             </div>
-            <Outlet/>
+            <div id="content">
+                <Outlet/>
+            </div>
+
         </>
     );
 }
