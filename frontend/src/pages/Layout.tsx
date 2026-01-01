@@ -2,7 +2,7 @@ import { Outlet } from "react-router";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import React from 'react';
- import { TabMenu } from 'primereact/tabmenu';
+import { TabMenu } from 'primereact/tabmenu';
 // import {Button} from "primereact/button";
 
 
@@ -76,12 +76,12 @@ export function Layout(){
         }
     `;
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const logout = () => {
         localStorage.removeItem('authToken');
         navigate('/Login');
-    }
+    };
 
     const [activeIndex, setActiveIndex] = useState(() => {
         const path = window.location.pathname;
@@ -93,11 +93,11 @@ export function Layout(){
 
 
     const items = [
-        { label: '', icon: 'pi pi-sign-out', command: () => { logout()}, id: 'logout' },
-        { label: 'Parking', icon: 'pi pi-car' , command: () => { navigate('/Parking'); setActiveIndex(0)}, },
-        { label: 'Historia', icon: 'pi pi-history', command: () => { navigate('/History');setActiveIndex(1) } },
-        { label: 'Zgłoszenia', icon: 'pi pi-ban', command: () => { navigate('/Report'); setActiveIndex(2)} },
-        { label: 'Konto',  icon: 'pi pi-user', command: () => { navigate('/Account');setActiveIndex(3) } },
+        { label: '', icon: 'pi pi-sign-out', command: () => { logout();}, id: 'logout' },
+        { label: 'Parking', icon: 'pi pi-car' , command: () => { navigate('/Parking'); setActiveIndex(0);}, },
+        { label: 'Historia', icon: 'pi pi-history', command: () => { navigate('/History');setActiveIndex(1); } },
+        { label: 'Zgłoszenia', icon: 'pi pi-ban', command: () => { navigate('/Report'); setActiveIndex(2);} },
+        { label: 'Konto',  icon: 'pi pi-user', command: () => { navigate('/Account');setActiveIndex(3); } },
         // { label: 'Admin',  icon: 'pi pi-cog', command: () => { navigate('/Admin');setActiveIndex(3) } },
 
 

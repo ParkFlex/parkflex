@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Route, Routes, BrowserRouter } from "react-router";
 
 import { PrimeReactProvider } from 'primereact/api';
-import '../public/assets/mytheme/theme.scss';
+import '@parkflex/themes/dist/theme.css';
 
 import './index.css';
 import { Layout } from './pages/Layout.tsx';

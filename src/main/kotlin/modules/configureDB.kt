@@ -7,17 +7,28 @@ import org.jetbrains.exposed.sql.selectAll
 import parkflex.config.Config
 import parkflex.data.generateMockData
 import parkflex.db.*
+import parkflex.repository.SpotRepository
 import parkflex.repository.UserRepository
 import parkflex.runDB
 
 private val defaultParameters =
     mapOf(
-        "penalty/fine/wrongSpot" to 500, // one time fee
-        "penalty/fine/overtime" to 150,  // fee per 15mins of overtime
-        "penalty/block/duration" to 7 * 24, // duration in hours
-        "reservation/duration/min" to 30, // minutes
-        "reservation/duration/max" to 720, // minutes
-        "reservation/break/duration" to 15 // minutes
+        "penalty/fine/wrongSpot" to "500", // one time fee
+        "penalty/fine/overtime" to "150",  // fee per 15mins of overtime
+        "penalty/block/duration" to (7 * 24).toString(), // duration in hours
+        "reservation/duration/min" to "30", // minutes
+        "reservation/duration/max" to "720", // minutes
+        "reservation/break/duration" to "15", // minutes
+
+        "parking/layout" to
+                """ 
+                G    1   2   3   4   .   5   6   7   8
+                .    .   .   .   .   .   .   .   .   .
+                9    .   10  11  12  .   13  14  15  16
+                17   .   18  19  20  .   21  22  23  24
+                .    .   .   .   .   .   .   .   .   .
+                25   26  27  28  29  .   30  31  32  33
+                """.trimIndent()
     )
 
 /**
@@ -31,7 +42,7 @@ suspend fun Application.configureDB(config: Config) {
             defaultParameters.forEach {
                 ParameterEntity.new {
                     key = it.key
-                    value = it.value.toString()
+                    value = it.value
                 }
             }
     }
@@ -75,9 +86,10 @@ suspend fun Application.configureDB(config: Config) {
         )
 
 
+        // Populate the parameter table if empty
         ensureParameters()
 
-        if (UserTable.selectAll().count() == 0L) {
+        if (UserEntity.count() == 0L) {
             log.info("User table empty, creating admin user")
             UserRepository.unsafeCreateUser(
                 mail = config.adminData.first,
@@ -86,6 +98,20 @@ suspend fun Application.configureDB(config: Config) {
                 role = "admin",
                 plate = ""
             )
+        }
+
+        if (SpotEntity.count() == 0L) {
+            log.info("Spots table empty, creating parking layout")
+
+            val layout = ParameterEntity
+                .find { ParameterTable.key eq "parking/layout" }
+                .single()
+                .value
+
+            SpotRepository
+                .populate(layout)
+                .map { log.info("Successfully populated the spots table with layout") }
+                .getOrElse { log.error("Could not populate the spots table: ${it.toString()}") }
         }
 
         if (config.ENABLE_MOCK_DATA) generateMockData()
