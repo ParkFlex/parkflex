@@ -15,7 +15,7 @@ export function Layout(){
     .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
         border-bottom: none;
         background-color: lightgrey;
-        border-radius: 20px ;
+        border-radius: 1.0rem ;
     }
     
      .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link:hover {
@@ -36,10 +36,10 @@ export function Layout(){
          .p-tabmenu .p-tabmenu-nav {
         display: flex;
         flex-wrap: wrap;
-        gap: 5px;
+        gap: 0.3rem;
         justify-content: center;
        border-bottom: none;
-        margin: 5px 0;
+        margin: 0.3rem 0;
         padding: 0;
         
          }
@@ -50,11 +50,10 @@ export function Layout(){
         background-color: white;
         top: 0;
         width: 100%;
-        border-bottom: 2px solid #4b807b;
-        border-radius: 20px ;
-        padding-bottom: 10px;
-        padding-top: 10px;
-        margin-bottom:2rem;
+        border-bottom: 0.1rem solid #4b807b;
+        border-radius: 0 0 2rem 2rem;
+        padding: 1rem;
+        margin-bottom: 2rem;
         
         }
         
