@@ -84,13 +84,16 @@ export function ParkingPage() {
 
     const [selectedDayTime, setSelectedDayTime] = useState<DateTimeSpan>(() => {
         const start = new Date();
-        start.setHours(start.getHours() + 2);
+        start.setHours(8);
 
         const end = new Date(start);
-        end.setHours(start.getHours() + 2);
+        end.setHours(16);
+
+        const day = new Date();
+        day.setDate(day.getDate() + 1);
 
         return {
-            day: new Date(),
+            day: day,
             startTime: start,
             endTime: end
         };
