@@ -121,6 +121,71 @@
                     }
                 }
             }
+        },
+        "/api/parameter/all": {
+            "get": {
+                "summary": "Return a list of system parameters.",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ParameterModel"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/parameter/{key...}": {
+            "get": {
+                "summary": "Returns a specified parameter.",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ParameterModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Updates the value of the specified parameter.",
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ParameterUpdateModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -162,6 +227,36 @@
                     },
                     "spot": {
                         "type": "integer"
+                    }
+                }
+            },
+            "ParameterModel": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "ordinal": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ParameterUpdateModel": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
                     }
                 }
             }

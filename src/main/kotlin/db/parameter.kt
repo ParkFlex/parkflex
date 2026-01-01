@@ -1,10 +1,12 @@
 package parkflex.db
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.dao.id.*
 
+@Serializable
 enum class ParameterType {
-    Number, String
+    Number,String
 }
 
 object ParameterTable : LongIdTable("parameter") {
