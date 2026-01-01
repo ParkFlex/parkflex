@@ -10,7 +10,7 @@ import { App } from './pages/App.tsx';
 import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
-import {Admin} from "./pages/Admin.tsx"
+import { Admin } from "./pages/Admin.tsx"
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
