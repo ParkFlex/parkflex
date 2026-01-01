@@ -28,7 +28,7 @@ fun Route.reservationRoutes() {
             return@post
         }
 
-        val userId: Long = 1 // TODO: Add middleware for auth and get user ID
+        val userId: Long = 2 // TODO: Add middleware for auth and get user ID
         val user: UserEntity? = runDB {
             UserEntity.findById(userId)
         }
