@@ -90,6 +90,16 @@ fun Route.reservationRoutes() {
             return@post
         }
 
+        if (spot.role != "normal") {
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = ApiErrorModel(
+                    "Rezerwacje można tworzyć tylko na miejsce typu 'normal' (otrzymano ${spot.role}",
+                    context
+                )
+            )
+        }
+
         // Parse start time
         val startTime: LocalDateTime
         try {
