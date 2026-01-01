@@ -53,5 +53,12 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
         return adjustedExistingStart <= endTime && startTime <= adjustedExistingEnd
     }
 
+    fun isPast(): Boolean {
+        val now = LocalDateTime.now();
+        val end = start.plusMinutes(duration.toLong());
+
+        return start.isBefore(now) && end.isBefore(now)
+    }
+
     companion object : LongEntityClass<ReservationEntity>(ReservationTable)
 }

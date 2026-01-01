@@ -51,6 +51,31 @@ fun Route.reservationRoutes() {
             return@post
         }
 
+        val currentReservation = runDB {
+            ReservationEntity.find { ReservationTable.user eq user.id }.firstOrNull { !it.isPast() }
+        }
+
+        if (currentReservation != null) {
+            val day = currentReservation.start.format(DateTimeFormatter.ISO_DATE)
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:MM")
+            val startTime = currentReservation.start.format(timeFormatter)
+            val endTime =
+                currentReservation
+                    .start
+                    .plusMinutes(currentReservation.duration.toLong())
+                    .format(timeFormatter)
+
+            call.respond(
+                status = HttpStatusCode.Conflict,
+                message = ApiErrorModel(
+                    "Użytkownik ma już aktywną rezerwację ($day: $startTime-$endTime)",
+                    context
+                )
+            )
+
+            return@post
+        }
+
 
         val spot: SpotEntity? = runDB {
             SpotEntity.findById(request.spot_id)
