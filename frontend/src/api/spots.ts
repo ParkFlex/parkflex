@@ -1,6 +1,6 @@
 // mocki, pozniej fetch
 
-export type SpotRole = "normal" | "blank" | "gate";
+export type SpotRole = "normal" | "blank" | "gate" | "arrow-RD" | "arrow-UR" | "arrow-LU" | "arrow-DL";
 
 export interface Spot {
     id: number;

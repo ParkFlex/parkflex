@@ -23,6 +23,22 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
         color: fgColor
     };
 
+    const SymbolTile = (p: {glyph: String, rotation?: string}) =>
+        <div
+            style={{
+                ...baseStyle,
+                fontSize: "1rem",
+                backgroundColor: "transparent",
+                border: "none",
+                display: "flex",
+                alignItems: "center",
+                rotate: p.rotation
+            }}
+        >
+            <span>{p.glyph}</span>
+        </div>;
+
+
     function selectSpot() {
         if (occupied) {
             return;
@@ -31,40 +47,72 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
     }
 
     if (role === "gate") {
-        return (
-            <div
-                style={{
-                    ...baseStyle,
-                    fontSize: "1rem",
-                    backgroundColor: "transparent",
-                    border: "none",
-                    display: "flex",
-                    alignItems: "center"
-                }}
-            >
-                <span>↓↑</span>
-            </div>
-        );
+        return <SymbolTile glyph="↓↑"/>
     }
 
     if (role === "blank") {
         return <div style={{ ...baseStyle, visibility: "hidden" }} />;
     }
 
-    return (
-        <Button
-            style={{
-                ...baseStyle,
-                backgroundColor: color,
-                fontSize: "1rem",
-            }}
-            onClick={selectSpot}
-            severity={
-                occupied ? "danger" : isSelected ? "success" : "secondary"
-            }
-            disabled={occupied}
-        >
-            {id}
-        </Button>
-    );
+    const splited = role.split("arrow-")
+    const isArrow = splited.length === 2;
+    if (isArrow) {
+        const direction = splited[1];
+
+        let glyph: string | null = null;
+        let rotation = undefined;
+        switch (direction) {
+            // Angled
+            case "RD":
+                glyph = "↰"
+                rotation = "-90deg"
+                break;
+            case "UR":
+                glyph = "↳"
+                break;
+            case "LU":
+                glyph = "↳"
+                rotation = "-90deg"
+                break;
+            case "DL":
+                glyph = "↰"
+                break;
+
+            // Straight
+            case "UP":
+                glyph = "↑"
+                break;
+            case "DOWN":
+                glyph = "↓"
+                break;
+            case "LEFT":
+                glyph = "←"
+                break;
+            case "RIGHT":
+                glyph = "→"
+                break;
+            default:
+                return <div style={{ ...baseStyle, visibility: "hidden" }} />;
+        }
+
+        return <SymbolTile glyph={glyph} rotation={rotation}/>;
+    }
+
+    if (role == "normal")
+        return (
+            <Button
+                style={{
+                    ...baseStyle,
+                    backgroundColor: color,
+                    fontSize: "1rem",
+                }}
+                onClick={selectSpot}
+                severity={
+                    occupied ? "danger" : isSelected ? "success" : "secondary"
+                }
+                disabled={occupied}
+            >
+                {id}
+            </Button>
+        );
 }

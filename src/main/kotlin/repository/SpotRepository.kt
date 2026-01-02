@@ -3,6 +3,10 @@ package parkflex.repository
 import parkflex.db.SpotEntity
 
 object SpotRepository {
+    private enum class ArrowDirection {
+        UP, DOWN, LEFT, RIGHT, RD, UR, LU, DL
+    }
+
     /**
      * ADT representing type of spot during layout parsing.
      */
@@ -10,12 +14,14 @@ object SpotRepository {
         object Gate : LayoutToken
         object Empty : LayoutToken
         data class Numbered(val x: Long) : LayoutToken
+        data class Arrow(val direction: ArrowDirection) : LayoutToken
 
         override fun compareTo(other: LayoutToken): Int {
             val getWeight = { token: LayoutToken ->
                 when (token) {
                     Empty -> Int.MAX_VALUE
                     Gate -> Int.MAX_VALUE
+                    is Arrow -> Int.MAX_VALUE
                     is Numbered -> token.x.toInt() // bite me
                 }
             }
@@ -35,6 +41,14 @@ object SpotRepository {
                 when (it) {
                     "G" -> LayoutToken.Gate
                     "." -> LayoutToken.Empty
+                    "RD" -> LayoutToken.Arrow(ArrowDirection.RD)
+                    "UR" -> LayoutToken.Arrow(ArrowDirection.UR)
+                    "LU" -> LayoutToken.Arrow(ArrowDirection.LU)
+                    "DL" -> LayoutToken.Arrow(ArrowDirection.DL)
+                    "^" -> LayoutToken.Arrow(ArrowDirection.UP)
+                    "v" -> LayoutToken.Arrow(ArrowDirection.DOWN)
+                    "<" -> LayoutToken.Arrow(ArrowDirection.LEFT)
+                    ">" -> LayoutToken.Arrow(ArrowDirection.RIGHT)
                     else -> LayoutToken.Numbered(it.toLong())
                 }
             }
@@ -49,6 +63,11 @@ object SpotRepository {
 
                     LayoutToken.Empty -> SpotEntity.new(lastId + 1) {
                         role = "blank"
+                        displayOrder = token.index
+                    }
+
+                    is LayoutToken.Arrow -> SpotEntity.new(lastId + 1) {
+                        role = "arrow-" + (token.value as LayoutToken.Arrow).direction.toString()
                         displayOrder = token.index
                     }
 
