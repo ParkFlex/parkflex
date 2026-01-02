@@ -23,7 +23,7 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
         color: fgColor
     };
 
-    const SymbolTile = (p: {glyph: String, rotation?: string}) =>
+    const SymbolTile = (p: { glyph: string, rotation?: string }) =>
         <div
             style={{
                 ...baseStyle,
@@ -47,14 +47,14 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
     }
 
     if (role === "gate") {
-        return <SymbolTile glyph="↓↑"/>
+        return <SymbolTile glyph="↓↑"/>;
     }
 
     if (role === "blank") {
         return <div style={{ ...baseStyle, visibility: "hidden" }} />;
     }
 
-    const splited = role.split("arrow-")
+    const splited = role.split("arrow-");
     const isArrow = splited.length === 2;
     if (isArrow) {
         const direction = splited[1];
@@ -64,32 +64,32 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
         switch (direction) {
             // Angled
             case "RD":
-                glyph = "↰"
-                rotation = "-90deg"
+                glyph = "↰";
+                rotation = "-90deg";
                 break;
             case "UR":
-                glyph = "↳"
+                glyph = "↳";
                 break;
             case "LU":
-                glyph = "↳"
-                rotation = "-90deg"
+                glyph = "↳";
+                rotation = "-90deg";
                 break;
             case "DL":
-                glyph = "↰"
+                glyph = "↰";
                 break;
 
             // Straight
             case "UP":
-                glyph = "↑"
+                glyph = "↑";
                 break;
             case "DOWN":
-                glyph = "↓"
+                glyph = "↓";
                 break;
             case "LEFT":
-                glyph = "←"
+                glyph = "←";
                 break;
             case "RIGHT":
-                glyph = "→"
+                glyph = "→";
                 break;
             default:
                 return <div style={{ ...baseStyle, visibility: "hidden" }} />;

@@ -9,7 +9,7 @@ import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
 import { Toast } from "primereact/toast";
 import { useGetSpots } from "../hooks/useGetSpots.tsx";
-import {formatDateWeek, formatTime} from "../utils/dateUtils.ts";
+import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
