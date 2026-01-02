@@ -9,6 +9,7 @@ import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
 import { Toast } from "primereact/toast";
 import { useGetSpots } from "../hooks/useGetSpots.tsx";
+import {formatDateWeek, formatTime} from "../utils/dateUtils.ts";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
@@ -110,7 +111,22 @@ export function ParkingPage() {
     return (
         <div className="parking-page">
             {showParking ? (
-                <>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center"
+                    }}
+                >
+                    <DateTimeSelector
+                        visible={dateSelectorVisible}
+                        setVisible={setDateSelectorVisible}
+                        dayTime={selectedDayTime}
+                        setDayTime={setSelectedDayTime}
+                    />
+
+                    <Divider/>
+
                     <ParkingGrid
                         spots={data}
                         selectedId={selectedId}
@@ -127,19 +143,22 @@ export function ParkingPage() {
                             width: "100%"
                         }}
                     >
-                        <DateTimeSelector
-                            visible={dateSelectorVisible}
-                            setVisible={setDateSelectorVisible}
-                            dayTime={selectedDayTime}
-                            setDayTime={setSelectedDayTime}
-                        />
-
                         <Toolbar
                             style={{
                                 width: "95%",
                                 marginTop: "1em"
                             }}
-                            start={<p> Wybrane miejsce: {selectedId ?? "brak"}</p>}
+                            start={
+                                <>
+                                    <p> Miejsce: {selectedId ?? "brak"}</p>
+                                    <Divider layout={"vertical"}/>
+                                    <p> {formatDateWeek(selectedDayTime.day)} </p>
+                                    <Divider layout={"vertical"}/>
+                                    <p>
+                                        {formatTime(selectedDayTime.startTime)}-{formatTime(selectedDayTime.endTime)}
+                                    </p>
+                                </>
+                            }
                             end={
                                 <Button
                                     label="Zatwierdź"
@@ -150,7 +169,7 @@ export function ParkingPage() {
                         />
                         <Toast position="bottom-center" ref={msgs} />
                     </div>
-                </>
+                </div>
             ) : (
                 <ErrorBanned
                     days={banDays}
