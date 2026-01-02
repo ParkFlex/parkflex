@@ -1,0 +1,28 @@
+name: Notify Deployment Repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-deployment-sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Trigger deployment repo sync
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.DEPLOYMENT_TRIGGER_TOKEN }}" \
+            https://api.github.com/repos/ParkFlex/parkflex-deployment/dispatches \
+            -d '{"event_type":"main-updated"}'
+      
+      - name: Summary
+        run: |
+          echo "## 🚀 Deployment Triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Notified parkflex-deployment to sync and rebuild" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
