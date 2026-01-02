@@ -56,7 +56,7 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
             style={{
                 ...baseStyle,
                 backgroundColor: color,
-                fontSize: "clamp(10px, 2vw, 16px)",
+                fontSize: "1rem",
             }}
             onClick={selectSpot}
             severity={
