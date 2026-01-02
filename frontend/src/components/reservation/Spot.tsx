@@ -32,18 +32,18 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
 
     if (role === "gate") {
         return (
-            <Button
+            <div
                 style={{
                     ...baseStyle,
-                    color: "black",
-                    fontSize: "clamp(1px, 1.5vw, 12px)",
+                    fontSize: "1rem",
                     backgroundColor: "transparent",
                     border: "none",
+                    display: "flex",
+                    alignItems: "center"
                 }}
-                disabled
             >
-                Brama
-            </Button>
+                <span>↓↑</span>
+            </div>
         );
     }
 
