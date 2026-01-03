@@ -15,7 +15,6 @@ import { useGetSpots } from "../hooks/useGetSpots.tsx";
 import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
 
 export function ParkingPage() {
-    const { user, token } = useAuth();
     const [data, setData] = useState<SpotState[]>([]);
     const [isBanned, setIsBanned] = useState(false);
     const [showParking, setShowParking] = useState(true);
@@ -123,10 +122,6 @@ export function ParkingPage() {
 
     return (
         <div className="parking-page">
-            {/*dla testu*/}
-            <p>
-                user data{JSON.stringify(user)}, token: {token}
-            </p>
             {showParking ? (
                 <div
                     style={{

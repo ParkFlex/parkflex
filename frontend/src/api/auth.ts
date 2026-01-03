@@ -1,6 +1,6 @@
+import axios from "axios";
 import type { User } from "../components/auth";
-import { useAxios } from "../hooks/useAxios";
-import { isAxiosError } from "axios";
+import { createAxiosInstance } from "../hooks/useAxios";
 
 interface RegisterRequest {
     name: string;
@@ -14,7 +14,11 @@ interface RegisterResponse {
 }
 
 const MOCK_REGISTER_RESPONSE = true;
-export const register = async ({ name, email, password }: RegisterRequest): Promise<RegisterResponse> => {
+export const register = async ({
+    name,
+    email,
+    password,
+}: RegisterRequest): Promise<RegisterResponse> => {
     if (MOCK_REGISTER_RESPONSE) {
         return new Promise<RegisterResponse>((resolve) => {
             setTimeout(() => {
@@ -30,19 +34,21 @@ export const register = async ({ name, email, password }: RegisterRequest): Prom
         });
     }
 
-    const url = "/api/register";
-    const axios = useAxios();
+    const axiosInstance = createAxiosInstance();
 
     try {
-        const response = await axios.post<RegisterResponse>(url, {
-            name,
-            email,
-            password,
-        });
+        const response = await axiosInstance.post<RegisterResponse>(
+            "/register",
+            {
+                name,
+                email,
+                password,
+            }
+        );
 
         return response.data;
     } catch (err) {
-        if (isAxiosError(err)) {
+        if (axios.isAxiosError(err)) {
             throw new Error(err.response?.data?.message || "Błąd rejestracji");
         }
 
@@ -62,4 +68,3 @@ export const getJwtToken = (): string | null => {
 export const setJwtToken = (token: string): void => {
     localStorage.setItem("jwt", token);
 };
-

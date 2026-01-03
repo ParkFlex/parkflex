@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    type ReactNode,
+} from "react";
 import { clearJwt, getJwtToken, setJwtToken } from "../../api/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,7 +24,6 @@ export interface AuthContextType {
     logout: () => void;
 }
 
-
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
@@ -37,7 +42,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 clearJwt();
             }
         }
-
     }, []);
 
     const login = (newToken: string, newUser: User) => {
@@ -64,9 +68,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
     };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth(): AuthContextType {
     const context = useContext(AuthContext);
     if (context === undefined) {
@@ -74,4 +81,3 @@ export function useAuth(): AuthContextType {
     }
     return context;
 }
-
