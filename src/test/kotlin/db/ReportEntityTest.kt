@@ -1,8 +1,6 @@
 package db
 
 import io.ktor.server.testing.*
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Test
 import parkflex.db.*
@@ -11,16 +9,14 @@ import kotlin.test.*
 
 class ReportEntityTest {
 
-    private fun setupTestDB() {
-        Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;", driver = "org.h2.Driver")
-        transaction {
-            SchemaUtils.create(UserTable, ReservationTable, PenaltyTable, ReportTable)
-        }
+    @org.junit.jupiter.api.BeforeEach
+    fun setup() {
+        configDataBase.setupTestDB(UserTable, ReservationTable, PenaltyTable, ReportTable)
     }
 
     @Test
     fun `test creating a report with a valid user`() = testApplication {
-        setupTestDB()
+        setup()
 
         transaction {
 

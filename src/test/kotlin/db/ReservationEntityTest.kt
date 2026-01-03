@@ -1,8 +1,6 @@
 package db
 
 import io.ktor.server.testing.*
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Test
 import parkflex.db.*
@@ -11,16 +9,14 @@ import kotlin.test.*
 
 class ReservationEntityTest {
 
-    private fun setupTestDB() {
-        Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;", driver = "org.h2.Driver")
-        transaction {
-            SchemaUtils.create(UserTable, SpotTable, ReservationTable)
-        }
+    @org.junit.jupiter.api.BeforeEach
+    fun setup() {
+        configDataBase.setupTestDB(UserTable, SpotTable, ReservationTable)
     }
 
     @Test
     fun `test time collision logic`() = testApplication {
-        setupTestDB()
+        setup()
         transaction {
             val user = UserEntity.new { fullName="A"; mail="a@a.com"; hash="h"; plate="P"; role="U" }
             val spot = SpotEntity.new { role="S"; displayOrder=1 }
