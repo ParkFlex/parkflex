@@ -1,2 +1,2 @@
-export * from './AuthContext';
-export * from './RegisterForm';
+export * from "./AuthProvider";
+export * from "./RegisterForm";

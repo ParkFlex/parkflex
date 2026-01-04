@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useAuth } from "../components/auth/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 export function Account() {
     const { user, token, isAuthenticated } = useAuth();

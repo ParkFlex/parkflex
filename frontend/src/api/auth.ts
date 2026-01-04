@@ -1,6 +1,6 @@
 import axios from "axios";
-import type { User } from "../components/auth";
 import { createAxiosInstance } from "../hooks/useAxios";
+import type { User } from "../hooks/useAuth";
 
 interface RegisterRequest {
     name: string;
@@ -28,6 +28,7 @@ export const register = async ({
                         id: 1,
                         name,
                         email,
+                        role: "user",
                     },
                 });
             }, 1000);

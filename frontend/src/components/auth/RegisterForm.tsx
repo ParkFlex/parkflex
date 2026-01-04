@@ -3,132 +3,178 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { Card } from "primereact/card";
+import { FormField } from "./FormField";
+import { FormError } from "./FormError";
 
 interface RegisterFormProps {
     errorMessage?: string;
     onRegister: (name: string, email: string, password: string) => void;
 }
 
+type FormErrors = {
+    name?: string;
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+};
+
+function validateForm(
+    name: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+): FormErrors {
+    const errors: FormErrors = {};
+
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+        errors.name = "Imię i nazwisko jest wymagane";
+    } else if (!/^\S+ \S+$/.test(trimmedName)) {
+        errors.name = "Podaj imię i nazwisko (oddzielone spacją)";
+    }
+
+    if (!email.trim()) {
+        errors.email = "Email jest wymagany";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.email = "Nieprawidłowy email";
+    }
+
+    if (!password) {
+        errors.password = "Hasło jest wymagane";
+    }
+
+    if (!confirmPassword) {
+        errors.confirmPassword = "Potwierdź hasło";
+    } else if (password !== confirmPassword) {
+        errors.confirmPassword = "Hasła nie są identyczne";
+    }
+
+    return errors;
+}
+
 export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
+    const [errors, setErrors] = useState<FormErrors>({});
+
+    const handleInputChange = (field: keyof typeof formData, value: string) => {
+        setFormData((prev) => ({ ...prev, [field]: value }));
+
+        if (errors[field]) {
+            setErrors((prev) => ({ ...prev, [field]: undefined }));
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (password !== confirmPassword) {
+        const validationErrors = validateForm(
+            formData.name,
+            formData.email,
+            formData.password,
+            formData.confirmPassword
+        );
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) {
             return;
         }
 
-        onRegister(name, email, password);
+        onRegister(formData.name, formData.email, formData.password);
     };
 
-    const isFormValid =
-        name.trim() !== "" &&
-        email.trim() !== "" &&
-        password.trim() !== "" &&
-        confirmPassword.trim() !== "" &&
-        password === confirmPassword;
-
-    const passwordsMatch = password === confirmPassword || confirmPassword === "";
-
     return (
-        <Card className="register-form-card">
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: "1.5rem" }}>
-                    <label htmlFor="name" style={{ display: "block", marginBottom: "0.5rem" }}>
-                        Imię i nazwisko
-                    </label>
+        <Card
+            className="register-form-card"
+            style={{ maxWidth: "450px", margin: "auto" }}
+        >
+            <form onSubmit={handleSubmit} noValidate>
+                {/* Imie i nazwisko */}
+                <FormField
+                    label="Imię i nazwisko"
+                    id="name"
+                    error={errors.name}
+                >
                     <InputText
                         id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={formData.name}
+                        onChange={(e) =>
+                            handleInputChange("name", e.target.value)
+                        }
                         placeholder="Wpisz swoje imię i nazwisko"
                         style={{ width: "100%" }}
-                        autoComplete="name"
+                        // Highlight the input red if there is an error
+                        className={errors.name ? "p-invalid" : ""}
                     />
-                </div>
+                </FormField>
 
-                <div style={{ marginBottom: "1.5rem" }}>
-                    <label htmlFor="email" style={{ display: "block", marginBottom: "0.5rem" }}>
-                        Email
-                    </label>
+                {/* Email */}
+                <FormField label="Email" id="email" error={errors.email}>
                     <InputText
                         id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={formData.email}
+                        onChange={(e) =>
+                            handleInputChange("email", e.target.value)
+                        }
                         placeholder="Wpisz swój email"
                         style={{ width: "100%" }}
-                        autoComplete="email"
+                        className={errors.email ? "p-invalid" : ""}
                     />
-                </div>
+                </FormField>
 
-                <div style={{ marginBottom: "1.5rem" }}>
-                    <label htmlFor="password" style={{ display: "block", marginBottom: "0.5rem" }}>
-                        Hasło
-                    </label>
+                {/* Haslo */}
+                <FormField label="Hasło" id="password" error={errors.password}>
                     <Password
                         id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={formData.password}
+                        onChange={(e) =>
+                            handleInputChange("password", e.target.value)
+                        }
                         placeholder="Wpisz swoje hasło"
                         style={{ width: "100%" }}
                         inputStyle={{ width: "100%" }}
                         toggleMask
-                        autoComplete="new-password"
+                        className={errors.password ? "p-invalid" : ""}
                     />
-                </div>
+                </FormField>
 
-                <div style={{ marginBottom: "1.5rem" }}>
-                    <label htmlFor="confirmPassword" style={{ display: "block", marginBottom: "0.5rem" }}>
-                        Potwierdź hasło
-                    </label>
+                {/* Potwierdzenie hasla */}
+                <FormField
+                    label="Potwierdź hasło"
+                    id="confirmPassword"
+                    error={errors.confirmPassword}
+                >
                     <Password
                         id="confirmPassword"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        value={formData.confirmPassword}
+                        onChange={(e) =>
+                            handleInputChange("confirmPassword", e.target.value)
+                        }
                         placeholder="Wpisz ponownie hasło"
                         style={{ width: "100%" }}
                         inputStyle={{ width: "100%" }}
                         feedback={false}
                         toggleMask
-                        autoComplete="new-password"
+                        className={errors.confirmPassword ? "p-invalid" : ""}
                     />
-                    {!passwordsMatch && (
-                        <small style={{ color: "#e24c4c", marginTop: "0.25rem", display: "block" }}>
-                            Hasła nie są identyczne
-                        </small>
-                    )}
+                </FormField>
+
+                {/* Submit */}
+                <div style={{ marginTop: "2rem" }}>
+                    <Button
+                        type="submit"
+                        label="Zarejestruj się"
+                        icon="pi pi-user-plus"
+                        style={{ width: "100%" }}
+                    />
+
+                    <FormError message={errorMessage} />
                 </div>
-
-                {errorMessage && (
-                    <div
-                        style={{
-                            color: "#e24c4c",
-                            marginBottom: "1rem",
-                            padding: "0.5rem",
-                            backgroundColor: "#ffe6e6",
-                            borderRadius: "4px",
-                            textAlign: "center"
-                        }}
-                    >
-                        {errorMessage}
-                    </div>
-                )}
-
-                <Button
-                    type="submit"
-                    label="Zarejestruj się"
-                    icon="pi pi-user-plus"
-                    style={{ width: "100%" }}
-                    disabled={!isFormValid}
-                />
             </form>
         </Card>
     );
 }
-

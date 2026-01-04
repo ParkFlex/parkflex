@@ -1,28 +1,10 @@
-import {
-    createContext,
-    useContext,
-    useState,
-    useEffect,
-    type ReactNode,
-} from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { clearJwt, getJwtToken, setJwtToken } from "../../api/auth";
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export interface User {
-    id: number;
-    email: string;
-    name: string;
-}
-
-// mozna dodac jakis isloading aby sprawdzic czy trwa logowanie itp
-export interface AuthContextType {
-    user: User | null;
-    token: string | null;
-    isAuthenticated: boolean;
-    login: (token: string, user: User) => void;
-    logout: () => void;
-}
+import {
+    AuthContext,
+    type AuthContextType,
+    type User,
+} from "../../hooks/useAuth";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
@@ -71,13 +53,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return (
         <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
     );
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useAuth(): AuthContextType {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
 }

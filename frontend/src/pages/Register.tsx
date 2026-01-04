@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { RegisterForm } from "../components/auth/RegisterForm";
 import { register } from "../api/auth";
-import { useAuth } from "../components/auth/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 export function Register() {
     const [errorMessage, setErrorMessage] = useState<string | undefined>(

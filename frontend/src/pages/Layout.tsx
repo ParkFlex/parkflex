@@ -2,7 +2,7 @@ import { Outlet } from "react-router";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { TabMenu } from "primereact/tabmenu";
-import { useAuth } from "../components/auth";
+import { useAuth } from "../hooks/useAuth";
 
 export function Layout() {
     const mobileStyles = `
@@ -145,4 +145,3 @@ export function Layout() {
         </>
     );
 }
-
