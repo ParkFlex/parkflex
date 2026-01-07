@@ -10,6 +10,7 @@ import {App} from './pages/App.tsx';
 import {Demo} from "./pages/Demo.tsx";
 import {NotFound} from "./pages/NotFound.tsx";
 import {Admin} from './pages/Admin.tsx';
+import {AdminParameters} from './pages/AdminParameters.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
                     <Route path="/" element={<App/>}/>
                     <Route path="/demo" element={<Demo/>}/>
                     <Route path="/admin" element={<Admin/>}/>
+                    <Route path="/admin/parameters" element={<AdminParameters />} />
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </BrowserRouter>
