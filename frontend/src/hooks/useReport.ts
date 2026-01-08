@@ -6,7 +6,6 @@ import type {ReportEntry} from "../models/ReportEntry.tsx";
 export const useReport = () => {
     const axios=useAxios();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<Error | null>(null);
 
     const submitReport = useCallback (async (report: ReportEntry) => {
         if (!axios) {
@@ -14,27 +13,26 @@ export const useReport = () => {
         }
 
         setLoading(true);
-        setError(null);
 
-        const form = new FormData();
-        if (report.plate) form.append('plate', report.plate);
-        if (report.issueTime) form.append('issueTime', report.issueTime.toISOString());
-        if (report.comment) form.append('comment', report.comment);
-        if (report.photo) form.append('base64data', report.photo);
-        if (report.whoReported) form.append('whoReported', report.whoReported.toString());
+        const body = {
+            plate: report.plate,
+            comment: report.description,
+            base64data: report.image,
+        };
 
         try {
-            await axios.post('/reports', form, {
+            await axios.post('/reports', body, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
                 },
             });
         } catch (err) {
             if (isAxiosError(err)) {
-                setError(new Error(err.response?.data?.message || 'Failed to submit report'));
+                console.error(err.response?.data?.message || 'Błąd podczas wysyłania zgłoszenia', err);
             } else {
-                setError(new Error('An unexpected error occurred'));
+                console.error('Nieoczekiwany błąd podczas wysyłania zgłoszenia', err);
             }
+            throw err;
         } finally {
             setLoading(false);
         }
@@ -43,7 +41,6 @@ export const useReport = () => {
     return {
         submitReport,
         loading,
-        error,
     };
 
 };
