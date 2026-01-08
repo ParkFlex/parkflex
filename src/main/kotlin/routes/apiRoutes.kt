@@ -34,4 +34,8 @@ fun Route.apiRoutes() {
     route("/parameter") {
         parameterRoutes()
     }
+
+    route("/penalty") {
+        penaltyCreationRoutes()
+    }
 }

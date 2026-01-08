@@ -229,6 +229,42 @@
                 }
             }
         },
+        "/api/penalty": {
+            "post": {
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReportIDWrapper"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/reservation": {
             "post": {
                 "requestBody": {
@@ -465,6 +501,14 @@
                 "properties": {
                     "value": {
                         "type": "string"
+                    }
+                }
+            },
+            "ReportIDWrapper": {
+                "type": "object",
+                "properties": {
+                    "reportID": {
+                        "type": "integer"
                     }
                 }
             },

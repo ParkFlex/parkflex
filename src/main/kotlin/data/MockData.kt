@@ -92,6 +92,34 @@ fun generateMockData() {
         user = user2
     }
 
+    val pastReservation2 = ReservationEntity.new {
+        start = LocalDateTime.parse("2026-01-09T08:00")
+        duration = 600
+        spot = spot1
+        user = user2
+    }
+
+    val pastReservation3 = ReservationEntity.new {
+        start = LocalDateTime.parse("2026-01-08T08:00")
+        duration = 600
+        spot = spot1
+        user = user2
+    }
+
+    val pastReservation4 = ReservationEntity.new {
+        start = LocalDateTime.parse("2026-01-07T08:00")
+        duration = 600
+        spot = spot1
+        user = user2
+    }
+
+    val pastReservation5 = ReservationEntity.new {
+        start = LocalDateTime.parse("2026-01-06T08:00")
+        duration = 600
+        spot = spot1
+        user = user2
+    }
+
     // Create mock penalties
     PenaltyEntity.new {
         reservation = pastReservation
@@ -125,7 +153,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-19T08:43")
         image = placeholderImg
         reviewed = false
-        plate = "BLK-0000"
+        plate = user2.plate
     }
 
     // Reviewed, penalty assigned
@@ -136,7 +164,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-16T08:20")
         image = placeholderImg
         reviewed = true
-        plate = "BLK-0000"
+        plate = user1.plate
     }
 
     // Reviewed, penalty not assigned
@@ -147,7 +175,29 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-18T08:17")
         image = placeholderImg
         reviewed = true
-        plate = "BLK-0000"
+        plate = user2.plate
+    }
+
+    // Should be WrongSpot
+    ReportEntity.new {
+        penalty = null
+        description = "should be wrongspot"
+        submitter = user1
+        timestamp = LocalDateTime.parse("2026-01-09T12:00")
+        image = placeholderImg
+        reviewed = false
+        plate = user2.plate
+    }
+
+    // Should be Overtime
+    ReportEntity.new {
+        penalty = null
+        description = "should be overtime"
+        submitter = user1
+        timestamp = LocalDateTime.parse("2026-01-07T22:00")
+        image = placeholderImg
+        reviewed = false
+        plate = user2.plate
     }
 
     logger.info("✅ Mock data generated successfully!")

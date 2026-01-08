@@ -54,6 +54,7 @@ dependencies {
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test)
+    testImplementation("io.ktor:ktor-server-test-host-jvm:3.3.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
