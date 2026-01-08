@@ -122,6 +122,113 @@
                 }
             }
         },
+        "/api/ip": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "CF-Connecting-IP",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Forwarded-For",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Real-IP",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/parameter/all": {
+            "get": {
+                "summary": "Return a list of system parameters.",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ParameterModel"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/parameter/{key...}": {
+            "get": {
+                "summary": "Returns a specified parameter.",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ParameterModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Updates the value of the specified parameter.",
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ParameterUpdateModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/reservation": {
             "post": {
                 "requestBody": {
@@ -165,7 +272,7 @@
                             }
                         }
                     },
-                    "404": {
+                    "409": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -175,7 +282,7 @@
                             }
                         }
                     },
-                    "409": {
+                    "404": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -328,6 +435,36 @@
                     },
                     "spot": {
                         "type": "integer"
+                    }
+                }
+            },
+            "ParameterModel": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "ordinal": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ParameterUpdateModel": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
                     }
                 }
             },
