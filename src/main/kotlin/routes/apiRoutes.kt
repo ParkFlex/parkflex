@@ -38,4 +38,8 @@ fun Route.apiRoutes() {
     route("/arrive") {
         arrivalRoutes()
     }
+
+    route("/leave") {
+        leaveRoutes()
+    }
 }

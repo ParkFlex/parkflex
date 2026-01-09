@@ -34,7 +34,7 @@ fun Route.arrivalRoutes() {
         if (!TermService.entry.isCurrent(token)) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("Invalid reservation token token: $token", "POST /entry/{token}")
+                message = ApiErrorModel("Invalid entry token token: $token", "POST /entry/{token}")
             )
 
             return@post
