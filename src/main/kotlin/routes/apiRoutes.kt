@@ -35,7 +35,7 @@ fun Route.apiRoutes() {
         ipRoutes()
     }
 
-    route("/enter") {
-        enterRoutes()
+    route("/arrive") {
+        arrivalRoutes()
     }
 }

@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
-fun Route.enterRoutes() {
+fun Route.arrivalRoutes() {
     post("{token}") {
         val uid = 2L // TODO: use principal after auth is ready
 
