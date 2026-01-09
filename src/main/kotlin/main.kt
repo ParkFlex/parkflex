@@ -7,6 +7,7 @@ import parkflex.config.AppConfig
 import parkflex.config.TestConfig
 
 import parkflex.modules.*
+import parkflex.service.TermService
 
 /**
  * This is the entrypoint of our program. Here we create the HTTP server and start it.
@@ -31,6 +32,9 @@ suspend fun Application.root() {
     configureSSE()
     configureRouting()
     configureStatusPages()
+
+    TermService.entry.generate()
+    TermService.exit.generate()
 }
 
 /**

@@ -7,6 +7,7 @@ import io.ktor.server.sse.*
 import io.ktor.sse.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import parkflex.service.TermService
 
 fun Route.termRoutes() {
@@ -17,7 +18,7 @@ fun Route.termRoutes() {
                 event = TermService.heartbeat.event
             }
 
-            TermService.entryChannel.consumeEach {
+            TermService.entry.consumeEach {
                 send(ServerSentEvent(it))
             }
         }
@@ -25,8 +26,16 @@ fun Route.termRoutes() {
     }
 
     route("/exit") {
-        //TODO()
+        sse {
+            heartbeat {
+                period = TermService.heartbeat.period
+                event = TermService.heartbeat.event
+            }
+
+            TermService.exit.consumeEach {
+                send(ServerSentEvent(it))
+            }
+        }
+
     }
-
-
 }

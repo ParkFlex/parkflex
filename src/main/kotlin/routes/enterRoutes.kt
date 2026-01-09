@@ -1,8 +1,8 @@
 package parkflex.routes
 
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.routing.*
+import io.ktor.http.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import parkflex.db.ParameterEntity
 import parkflex.db.ParameterTable
 import parkflex.db.ReservationEntity
@@ -13,17 +13,32 @@ import parkflex.models.TimeSpan
 import parkflex.repository.ReservationRepository
 import parkflex.runDB
 import parkflex.service.TermService
-import java.time.LocalDateTime
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 import kotlin.math.abs
 
 fun Route.enterRoutes() {
     post("{token}") {
         val uid = 2L // TODO: use principal after auth is ready
 
-        // TODO: token approval
+        val token = call.parameters["token"] ?: run {
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = ApiErrorModel("No token provided", "POST /entry/{token}")
+            )
+
+            return@post
+        }
+
+        if (!TermService.entry.isCurrent(token)) {
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = ApiErrorModel("Invalid reservation token token: $token", "POST /entry/{token}")
+            )
+
+            return@post
+        }
 
         val now = LocalDateTime.now()
 
@@ -86,7 +101,7 @@ fun Route.enterRoutes() {
 
             runDB { reservation.arrived = now }
 
-            TermService.entryChannel.send(UUID.randomUUID().toString())
+            TermService.entry.generate()
 
             val spot = runDB { reservation.spot.id.value }
 
