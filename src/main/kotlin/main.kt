@@ -28,6 +28,7 @@ suspend fun Application.root() {
     configureCORS(config)
     configureDB(config)
     configureJSON()
+    configureSSE()
     configureRouting()
     configureStatusPages()
 }
@@ -38,5 +39,6 @@ suspend fun Application.root() {
 suspend fun Application.configureTest() {
     configureDB(TestConfig)
     configureJSON()
+    configureSSE()
     configureRouting()
 }
