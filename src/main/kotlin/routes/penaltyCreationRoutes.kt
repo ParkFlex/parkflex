@@ -36,7 +36,7 @@ private fun fineFromRelation(timestamp: LocalDateTime, reservation: ReservationE
                 ?: throw Exception("Could not find parameter 'penalty/fine/overtime'.")
 
             val expectedEnd = reservation.start.plusMinutes(reservation.duration.toLong())
-            val minutes = Duration.between(timestamp, expectedEnd).toMinutes()
+            val minutes = Duration.between(expectedEnd, timestamp).toMinutes()
             val count = minutes / 15
 
             per15min * count

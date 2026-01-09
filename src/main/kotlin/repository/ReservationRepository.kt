@@ -24,8 +24,9 @@ object ReservationRepository {
             ?.let { user ->
                 ReservationEntity
                     .find { ReservationTable.user eq user.id }
+                    .filter { it.start.isBefore(timestamp) }
                     .sortedBy { it.start }
-                    .firstOrNull { it.start.isBefore(timestamp) }
+                    .lastOrNull { it.start.isBefore(timestamp) }
             }?.let { reservation ->
                 val end = reservation.start.plusMinutes(reservation.duration.toLong())
 
