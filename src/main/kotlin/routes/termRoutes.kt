@@ -25,7 +25,7 @@ fun Route.termRoutes() {
     }
 
     route("/exit") {
-        TODO()
+        //TODO()
     }
 
 

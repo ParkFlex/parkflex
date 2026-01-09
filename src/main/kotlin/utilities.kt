@@ -12,6 +12,7 @@ import kotlinx.serialization.encoding.Encoder
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 /**
@@ -61,5 +62,17 @@ object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
 
     override fun deserialize(decoder: Decoder): LocalDateTime =
         LocalDateTime.parse(decoder.decodeString(), DateTimeFormatter.ISO_DATE_TIME)
+
+
+}
+object LocalTimeSerializer : KSerializer<LocalTime> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalTime", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: LocalTime) {
+        encoder.encodeString(value.format(DateTimeFormatter.ofPattern("HH:mm")))
+    }
+
+    override fun deserialize(decoder: Decoder): LocalTime =
+        LocalTime.parse(decoder.decodeString(), DateTimeFormatter.ofPattern("HH:mm"))
 
 }

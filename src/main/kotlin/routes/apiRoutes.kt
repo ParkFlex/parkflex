@@ -15,7 +15,7 @@ fun Route.apiRoutes() {
         demoRoutes()
     }
 
-    route("/historyEntry"){
+    route("/historyEntry") {
         historyRoutes()
     }
 
@@ -27,7 +27,7 @@ fun Route.apiRoutes() {
         spotRoutes()
     }
 
-    route("/spots"){
+    route("/spots") {
         spotsRoutes()
     }
 
@@ -35,4 +35,7 @@ fun Route.apiRoutes() {
         ipRoutes()
     }
 
+    route("/enter") {
+        enterRoutes()
+    }
 }
