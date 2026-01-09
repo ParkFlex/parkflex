@@ -24,8 +24,8 @@ createRoot(document.getElementById("root")!).render(
                         <Route path="/demo" element={<Demo/>}/>
                         <Route path="/history" element={<History/>}/>
                         <Route path="/parking" element={<ParkingPage/>}/>
-                                            <Route path="/admin" element={<Admin/>}/>
-                                            <Route path="/admin/parameters" element={<AdminParameters />} />
+                        <Route path="/admin" element={<Admin/>}/>
+                        <Route path="/admin/parameters" element={<AdminParameters />} />
                         <Route path="*" element={<NotFound/>}/>
                     </Route>
                 </Routes>

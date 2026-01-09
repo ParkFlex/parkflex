@@ -1,6 +1,6 @@
-import {Sidebar} from "primereact/sidebar"; // Dostarcza gotowy komponent wysuwanego panelu bocznego
-import {Button} from "primereact/button"; // tu buttona z prime reacta
-import {useState} from "react"; // Hook - pozwala stronie "pamiętać" rzeczy
+import { Sidebar } from "primereact/sidebar"; // Dostarcza gotowy komponent wysuwanego panelu bocznego
+import { Button } from "primereact/button"; // tu buttona z prime reacta
+import { useState } from "react"; // Hook - pozwala stronie "pamiętać" rzeczy
 import { useNavigate } from "react-router"; // pozwala funkcji goTo na zmiane adresu na /admin/list i pokaż tamtą stronę bez odświeżania całego okna przeglądarki
 
 export function AdminHeaderAndSidebar () {
