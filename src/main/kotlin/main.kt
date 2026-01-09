@@ -25,7 +25,7 @@ suspend fun Application.root() {
     val config = AppConfig()
 
     configureCallLogging(config)
-    configureCORS()
+    configureCORS(config)
     configureDB(config)
     configureJSON()
     configureRouting()
