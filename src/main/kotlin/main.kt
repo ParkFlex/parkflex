@@ -28,6 +28,7 @@ suspend fun Application.root() {
     configureCORS(config)
     configureDB(config)
     configureJSON()
+    configureAuth()
     configureRouting()
     configureStatusPages()
 }

@@ -1,21 +1,27 @@
 package parkflex.routes
 
 import io.ktor.server.routing.*
-
+import io.ktor.server.auth.*
 
 /**
  * Routes for the REST API.
  */
 fun Route.apiRoutes() {
-    route("/user") {
-        // some routes here
+    route("/register") {
+        registerRoute()
+    }
+
+    route("/whoami") {
+        authenticate {
+            whoAmIRoute()
+        }
     }
 
     route("/demo") {
         demoRoutes()
     }
 
-    route("/historyEntry"){
+    route("/historyEntry") {
         historyRoutes()
     }
 
@@ -27,12 +33,11 @@ fun Route.apiRoutes() {
         spotRoutes()
     }
 
-    route("/spots"){
+    route("/spots") {
         spotsRoutes()
     }
 
     route("/ip") {
         ipRoutes()
     }
-
 }

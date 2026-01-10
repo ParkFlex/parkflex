@@ -2,8 +2,8 @@ import io.ktor.plugin.OpenApiPreview
 import org.apache.tools.ant.taskdefs.condition.Os
 
 group = "parkflex"
-version = "1.0-SNAPSHOT"
 
+version = "1.0-SNAPSHOT"
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -12,25 +12,15 @@ plugins {
     id("org.jetbrains.dokka") version "2.1.0"
 }
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
-dependencies {
-    testImplementation(kotlin("test"))
-}
+dependencies { testImplementation(kotlin("test")) }
 
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
-}
+tasks.test { useJUnitPlatform() }
 
+kotlin { jvmToolchain(21) }
 
-application {
-    mainClass = "parkflex.MainKt"
-}
+application { mainClass = "parkflex.MainKt" }
 
 dependencies {
     implementation(libs.ktor.server.core)
@@ -45,6 +35,8 @@ dependencies {
     implementation(libs.h2)
     implementation(libs.mariadb)
     implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.auth.jwt)
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.swagger)
@@ -57,9 +49,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-tasks.named<Test>("test") {
-    useJUnitPlatform()
-}
+tasks.named<Test>("test") { useJUnitPlatform() }
 
 ktor {
     @OptIn(OpenApiPreview::class)
@@ -76,10 +66,7 @@ tasks.register("runDebug") {
 
     doFirst {
         tasks.run.configure {
-            environment(
-                "ENABLE_MOCK_DATA" to "true",
-                "ENABLE_H2_SOCKETS" to "true"
-            )
+            environment("ENABLE_MOCK_DATA" to "true", "ENABLE_H2_SOCKETS" to "true")
         }
     }
 
@@ -93,39 +80,38 @@ tasks.register("apiDoc") {
     dependsOn("build")
     dependsOn("buildOpenApi")
 
-    doLast {
-        println("API Documentation generated")
-    }
+    doLast { println("API Documentation generated") }
 }
 
-val npmBin =
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd"
-    else "npm"
+val npmBin = if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm"
 
-val npmCi = tasks.register<Exec>("npmCi") {
-    group = "npm"
+val npmCi =
+        tasks.register<Exec>("npmCi") {
+            group = "npm"
 
-    workingDir("frontend")
+            workingDir("frontend")
 
-    commandLine(npmBin, "ci")
-}
+            commandLine(npmBin, "ci")
+        }
 
-val npmBuild = tasks.register<Exec>("npmBuild") {
-    group = "npm"
+val npmBuild =
+        tasks.register<Exec>("npmBuild") {
+            group = "npm"
 
-    dependsOn(npmCi)
+            dependsOn(npmCi)
 
-    workingDir("frontend")
+            workingDir("frontend")
 
-    commandLine(npmBin, "run", "build")
-}
+            commandLine(npmBin, "run", "build")
+        }
 
-val fullBuild = tasks.register("fullBuild") {
-    group = "build"
+val fullBuild =
+        tasks.register("fullBuild") {
+            group = "build"
 
-    dependsOn(npmBuild)
-    dependsOn("build")
-}
+            dependsOn(npmBuild)
+            dependsOn("build")
+        }
 
 tasks.register("fullRun") {
     group = "application"
