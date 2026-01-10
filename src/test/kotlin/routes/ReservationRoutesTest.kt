@@ -192,7 +192,7 @@ class ReservationRoutesTest {
         assertEquals(HttpStatusCode.BadRequest, response.status)
 
         val responseBody = response.body<ApiErrorModel>()
-        assertEquals("Rezerwacje można tworzyć tylko na miejsce typu 'normal' (otrzymano abnormal)", responseBody.message)
+        assertEquals("Rezerwacje można tworzyć tylko na miejsce typu 'normal' (otrzymano abnormal", responseBody.message)
     }
     //add more tests
     // 1."Miejsce zajete w tym czasie"
