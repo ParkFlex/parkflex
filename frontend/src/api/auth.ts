@@ -13,28 +13,11 @@ interface RegisterResponse {
     user: User;
 }
 
-const MOCK_REGISTER_RESPONSE = true;
 export const register = async ({
     name,
     email,
     password,
 }: RegisterRequest): Promise<RegisterResponse> => {
-    if (MOCK_REGISTER_RESPONSE) {
-        return new Promise<RegisterResponse>((resolve) => {
-            setTimeout(() => {
-                resolve({
-                    token: "mock-jwt",
-                    user: {
-                        id: 1,
-                        name,
-                        email,
-                        role: "user",
-                    },
-                });
-            }, 1000);
-        });
-    }
-
     const axiosInstance = createAxiosInstance();
 
     try {
