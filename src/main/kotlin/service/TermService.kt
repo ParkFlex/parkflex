@@ -14,6 +14,7 @@ object TermService {
     }
 
     sealed class RichChannel(val chan: Channel<String>) {
+        @Volatile
         private var current: String? = null
 
         fun isCurrent(token: String) = current == token
