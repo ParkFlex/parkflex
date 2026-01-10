@@ -13,7 +13,62 @@ interface RegisterResponse {
     user: User;
 }
 
+interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+interface LoginResponse {
+    token: string;
+    user: User;
+}
+
 const MOCK_REGISTER_RESPONSE = true;
+
+const MOCK_LOGIN_RESPONSE = true;
+
+export const login = async ({
+    email,
+    password,
+}: LoginRequest): Promise<LoginResponse> => {
+    if (MOCK_LOGIN_RESPONSE) {
+        return new Promise<LoginResponse>((resolve, reject) => {
+            setTimeout(() => {
+                if (!email || !password) {
+                    reject(new Error("Email i hasło są wymagane"));
+                    return;
+                }
+
+                resolve({
+                    token: "mock-jwt",
+                    user: {
+                        id: 1,
+                        name: "Mock User",
+                        email,
+                        role: "user",
+                    },
+                });
+            }, 600);
+        });
+    }
+
+    const axiosInstance = createAxiosInstance();
+
+    try {
+        const response = await axiosInstance.post<LoginResponse>("/login", {
+            email,
+            password,
+        });
+
+        return response.data;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            throw new Error(err.response?.data?.message || "Błąd logowania");
+        }
+
+        throw new Error("Wystąpił nieoczekiwany błąd");
+    }
+};
 export const register = async ({
     name,
     email,

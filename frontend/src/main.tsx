@@ -14,6 +14,7 @@ import { ParkingPage } from "./pages/Parking.tsx";
 import { Register } from "./pages/Register.tsx";
 import { AuthProvider } from "./components/auth";
 import { Account } from "./pages/Account.tsx";
+import { Login } from "./pages/Login.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -29,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
                             <Route path="/parking" element={<ParkingPage />} />
                             <Route path="/demo" element={<Demo />} />
                             <Route path="/history" element={<History />} />
+                            <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/account" element={<Account />} />
                             <Route path="*" element={<NotFound />} />
