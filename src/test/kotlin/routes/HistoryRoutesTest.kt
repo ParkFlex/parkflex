@@ -1,11 +1,15 @@
 package parkflex.routes
 
+import db.configDataBase.setupTestDB
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.junit.jupiter.api.Test
 import kotlin.test.*
@@ -14,6 +18,7 @@ import parkflex.db.*
 import parkflex.models.HistoryEntry
 import parkflex.runDB
 import java.time.LocalDateTime
+import parkflex.LocalDateTimeSerializer
 
 class HistoryRoutesTest {
 
@@ -43,10 +48,22 @@ class HistoryRoutesTest {
 
     @Test
     fun `test history returns data when user exists`() = testApplication {
+        val db = setupTestDB()
+
         application {
-            configureTest()
+            configureTest(db)
         }
-        val client = createClient { install(ContentNegotiation) { json() } }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json(
+                    Json {
+                        serializersModule = SerializersModule {
+                            contextual(LocalDateTimeSerializer)
+                        }
+                    }
+                )
+            }
+        }
 
         val (generatedUserId, generatedSpotId) = runDB {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable)

@@ -34,7 +34,7 @@ private val defaultParameters =
 /**
  * Connects to the database server.
  */
-suspend fun Application.configureDB(config: Config) {
+suspend fun Application.configureDB(config: Config, db: Database? = null) {
     val mdb = config.mariaDB
 
     fun ensureParameters() {
@@ -47,30 +47,32 @@ suspend fun Application.configureDB(config: Config) {
             }
     }
 
-    if (mdb == null) {
-        log.info("No MariaDB config found. Connecting to in-memory H2 database")
+    if (db == null) {
+        if (mdb == null) {
+            log.info("No MariaDB config found. Connecting to in-memory H2 database")
 
-        Database.connect(
-            url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-            driver = "org.h2.Driver",
-            user = "root",
-            password = ""
-        )
+            Database.connect(
+                url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
+                driver = "org.h2.Driver",
+                user = "root",
+                password = ""
+            )
 
-        if (config.ENABLE_H2_SOCKETS) {
-            org.h2.tools.Server.createTcpServer("-tcpPort", "9091", "-tcpAllowOthers").start()
-            org.h2.tools.Server.createWebServer("-webPort", "8081", "-webAllowOthers").start()
+            if (config.ENABLE_H2_SOCKETS) {
+                org.h2.tools.Server.createTcpServer("-tcpPort", "9091", "-tcpAllowOthers").start()
+                org.h2.tools.Server.createWebServer("-webPort", "8081", "-webAllowOthers").start()
+            }
+        } else {
+            log.info("MariaDB config found. Connecting to jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}")
+
+            Database.connect(
+                url = "jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}",
+                driver = "org.mariadb.jdbc.Driver",
+                user = mdb.user,
+                password = mdb.password
+            )
+
         }
-    } else {
-        log.info("MariaDB config found. Connecting to jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}")
-
-        Database.connect(
-            url = "jdbc:mariadb://${mdb.host}:${mdb.port}/${mdb.database}",
-            driver = "org.mariadb.jdbc.Driver",
-            user = mdb.user,
-            password = mdb.password
-        )
-
     }
 
     /* Create database tables */
