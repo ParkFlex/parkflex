@@ -2,8 +2,19 @@ package parkflex.models
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import parkflex.db.PenaltyEntity
+import parkflex.db.PenaltyReason
 import java.time.LocalDateTime
+
+@Serializable
+data class AdminReportEntryPenalty(
+    val id: Long,
+    val reservation: Long,
+    val reason: PenaltyReason,
+    val paid: Boolean,
+    @Contextual
+    val due: LocalDateTime,
+    val fine: Long
+)
 
 @Serializable
 data class AdminReportEntry(
@@ -15,5 +26,5 @@ data class AdminReportEntry(
     val submitterPlate: String,
     val image: String,
     val reviewed: Boolean,
-    val penalty : PenaltyEntity?
+    val penalty : AdminReportEntryPenalty?
 )

@@ -1,34 +1,36 @@
 package parkflex.routes
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import io.ktor.server.routing.route
 import parkflex.db.ReportEntity
 import parkflex.models.AdminReportEntry
-import parkflex.models.PenaltyModel
-import parkflex.models.ReportEntry
+import parkflex.models.AdminReportEntryPenalty
 import parkflex.runDB
 
 fun Route.reportsRoutes() {
     get {
-        var AdminreportList: List<AdminReportEntry> = listOf()
+        val adminReportList: MutableList<AdminReportEntry> = mutableListOf()
+
         runDB {
             for (report in ReportEntity.all()) {
-                var penalty = report.penalty
-                var reservation = penalty?.reservation
-                var user = reservation?.user
+                val penalty = report.penalty
+                val reservation = penalty?.reservation
+                val user = reservation?.user
                 val plate = user?.plate ?: "UNKNOWN"
-                var Penalty = report.penalty
 
-                if (report.penalty != null) {
-                    penalty = report.penalty
-
-                } else {
-                    penalty = null
+                val penaltyEntry = penalty?.let {
+                    AdminReportEntryPenalty(
+                        id = penalty.id.value,
+                        reservation = penalty.reservation.id.value,
+                        reason = penalty.reason,
+                        paid = penalty.paid,
+                        due = penalty.due,
+                        fine = penalty.fine
+                    )
                 }
-                var Entry = AdminReportEntry(
+
+                val entry = AdminReportEntry(
                     id = report.id.value,
                     plate = plate,
                     timestamp = report.timestamp,
@@ -36,14 +38,14 @@ fun Route.reportsRoutes() {
                     submitterPlate = report.submitter.plate,
                     image = report.image,
                     reviewed = report.reviewed,
-                    penalty = penalty
-
-
+                    penalty = penaltyEntry
                 )
-                AdminreportList += Entry
+
+                adminReportList += entry
             }
         }
-        val sortedReports = AdminreportList.sortedByDescending { it.timestamp }
+
+        val sortedReports = adminReportList.sortedByDescending { it.timestamp }
 
         call.respond(sortedReports)
     }
