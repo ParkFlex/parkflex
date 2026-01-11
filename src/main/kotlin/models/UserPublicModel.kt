@@ -9,4 +9,5 @@ data class UserPublicModel(
     val name: String,
     val email: String,
     val role: String,
+    val plate: String,
 )

@@ -8,7 +8,12 @@ import { FormError } from "./FormError";
 
 interface RegisterFormProps {
     errorMessage?: string;
-    onRegister: (name: string, email: string, password: string) => void;
+    onRegister: (
+        name: string,
+        email: string,
+        password: string,
+        plate: string
+    ) => Promise<void>;
 }
 
 type FormErrors = {
@@ -16,13 +21,15 @@ type FormErrors = {
     email?: string;
     password?: string;
     confirmPassword?: string;
+    plate?: string;
 };
 
 function validateForm(
     name: string,
     email: string,
     password: string,
-    confirmPassword: string
+    confirmPassword: string,
+    plate: string
 ): FormErrors {
     const errors: FormErrors = {};
 
@@ -49,6 +56,13 @@ function validateForm(
         errors.confirmPassword = "Hasła nie są identyczne";
     }
 
+    const normalizedPlate = plate.trim().toUpperCase();
+    if (!normalizedPlate) {
+        errors.plate = "Tablica rejestracyjna jest wymagana";
+    } else if (!/^[A-Z]{1,3}[A-Z0-9]{2,5}$/.test(normalizedPlate)) {
+        errors.plate = "Nieprawidłowy format tablicy rejestracyjnej";
+    }
+
     return errors;
 }
 
@@ -58,10 +72,18 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
         email: "",
         password: "",
         confirmPassword: "",
+        plate: "",
     });
     const [errors, setErrors] = useState<FormErrors>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleInputChange = (field: keyof typeof formData, value: string) => {
+        if (field === "plate") {
+            value = value
+                .trim()
+                .toUpperCase()
+                .replace(/[^A-Z0-9]/g, "");
+        }
         setFormData((prev) => ({ ...prev, [field]: value }));
 
         if (errors[field]) {
@@ -69,14 +91,15 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const validationErrors = validateForm(
             formData.name,
             formData.email,
             formData.password,
-            formData.confirmPassword
+            formData.confirmPassword,
+            formData.plate
         );
         setErrors(validationErrors);
 
@@ -84,16 +107,26 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
             return;
         }
 
-        onRegister(formData.name, formData.email, formData.password);
+        try {
+            setIsSubmitting(true);
+            await onRegister(
+                formData.name.trim(),
+                formData.email.trim(),
+                formData.password,
+                formData.plate.trim().toUpperCase()
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
-        <Card
-            className="register-form-card"
-            style={{ maxWidth: "450px", margin: "auto" }}
-        >
+        <Card style={{ maxWidth: 540, margin: "auto", padding: "1rem" }}>
             <form onSubmit={handleSubmit} noValidate>
-                {/* Imie i nazwisko */}
+                <h3 style={{ marginTop: 0, marginBottom: "1rem" }}>
+                    Utwórz konto
+                </h3>
+
                 <FormField
                     label="Imię i nazwisko"
                     id="name"
@@ -105,14 +138,12 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
                         onChange={(e) =>
                             handleInputChange("name", e.target.value)
                         }
-                        placeholder="Wpisz swoje imię i nazwisko"
+                        placeholder="Imię i nazwisko"
                         style={{ width: "100%" }}
-                        // Highlight the input red if there is an error
                         className={errors.name ? "p-invalid" : ""}
                     />
                 </FormField>
 
-                {/* Email */}
                 <FormField label="Email" id="email" error={errors.email}>
                     <InputText
                         id="email"
@@ -120,13 +151,12 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
                         onChange={(e) =>
                             handleInputChange("email", e.target.value)
                         }
-                        placeholder="Wpisz swój email"
+                        placeholder="email@parkflex.pl"
                         style={{ width: "100%" }}
                         className={errors.email ? "p-invalid" : ""}
                     />
                 </FormField>
 
-                {/* Haslo */}
                 <FormField label="Hasło" id="password" error={errors.password}>
                     <Password
                         id="password"
@@ -134,15 +164,21 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
                         onChange={(e) =>
                             handleInputChange("password", e.target.value)
                         }
-                        placeholder="Wpisz swoje hasło"
-                        style={{ width: "100%" }}
-                        inputStyle={{ width: "100%" }}
+                        placeholder="Hasło"
+                        style={{
+                            width: "100%",
+                            boxSizing: "border-box",
+                            display: "grid",
+                            gridTemplateColumns: "1fr auto",
+                            alignItems: "center",
+                        }}
+                        inputStyle={{ width: "100%", boxSizing: "border-box" }}
+                        feedback
                         toggleMask
                         className={errors.password ? "p-invalid" : ""}
                     />
                 </FormField>
 
-                {/* Potwierdzenie hasla */}
                 <FormField
                     label="Potwierdź hasło"
                     id="confirmPassword"
@@ -154,25 +190,58 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
                         onChange={(e) =>
                             handleInputChange("confirmPassword", e.target.value)
                         }
-                        placeholder="Wpisz ponownie hasło"
-                        style={{ width: "100%" }}
-                        inputStyle={{ width: "100%" }}
+                        placeholder="Powtórz hasło"
+                        style={{
+                            width: "100%",
+                            boxSizing: "border-box",
+                            display: "grid",
+                            gridTemplateColumns: "1fr auto",
+                            alignItems: "center",
+                        }}
+                        inputStyle={{ width: "100%", boxSizing: "border-box" }}
                         feedback={false}
                         toggleMask
                         className={errors.confirmPassword ? "p-invalid" : ""}
                     />
                 </FormField>
 
-                {/* Submit */}
-                <div style={{ marginTop: "2rem" }}>
+                <FormField
+                    label="Tablica rejestracyjna"
+                    id="plate"
+                    error={errors.plate}
+                >
+                    <InputText
+                        id="plate"
+                        value={formData.plate}
+                        onChange={(e) =>
+                            handleInputChange("plate", e.target.value)
+                        }
+                        placeholder="np. WPR-1234 lub WPR1234"
+                        style={{ width: "100%" }}
+                        className={errors.plate ? "p-invalid" : ""}
+                    />
+                    <small style={{ color: "#666" }}>
+                        Spacje i myślniki są usuwane automatycznie.
+                    </small>
+                </FormField>
+
+                {errorMessage && <FormError message={errorMessage} />}
+
+                <div
+                    style={{
+                        marginTop: "1rem",
+                        display: "flex",
+                        gap: "0.5rem",
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                    }}
+                >
                     <Button
                         type="submit"
-                        label="Zarejestruj się"
-                        icon="pi pi-user-plus"
-                        style={{ width: "100%" }}
+                        label={"Zarejestruj się"}
+                        icon={"pi pi-user-plus"}
+                        disabled={isSubmitting}
                     />
-
-                    <FormError message={errorMessage} />
                 </div>
             </form>
         </Card>

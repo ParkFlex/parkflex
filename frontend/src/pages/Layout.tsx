@@ -48,8 +48,6 @@ export function Layout() {
         border-bottom: 0.1rem solid #4b807b;
         border-radius: 0 0 2rem 2rem;
         padding: 1rem;
-        margin-bottom: 2rem;
-        
         }
         
         #logout .p-menuitem-link{
@@ -64,10 +62,6 @@ export function Layout() {
         #logout .p-menuitem-link:hover{
         background-color: #ff3333;
         
-        }
-        
-        #content{
-        margin: 1rem;
         }
     `;
 

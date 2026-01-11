@@ -31,6 +31,7 @@ fun Route.whoAmIRoute() {
                 name = user.fullName,
                 email = user.mail,
                 role = user.role,
+                plate = user.plate,
             )
 
         call.respond(HttpStatusCode.OK, userModel)
@@ -39,24 +40,30 @@ fun Route.whoAmIRoute() {
 
 fun Route.registerRoute() {
     post {
-        val body = call.receiveText()
-        val json = Json { ignoreUnknownKeys = true }
-
-        val elem =
+        val req =
             try {
-                json.parseToJsonElement(body)
+                call.receive<parkflex.models.RegisterRequest>()
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Nie poprawnie stworzony request", "/api/register"))
+                call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawny JSON", "/api/register"))
                 return@post
             }
 
-        val obj = elem.jsonObject
-        val name = obj["name"]?.jsonPrimitive?.content ?: ""
-        val email = obj["email"]?.jsonPrimitive?.content ?: ""
-        val password = obj["password"]?.jsonPrimitive?.content ?: ""
+        val name = req.name
+        val email = req.email
+        val password = req.password
+        val plateRaw = req.plate
+        var plate = plateRaw.trim().uppercase()
+        // Remove all non-alphanumeric characters
+        plate = plate.replace(Regex("[^A-Z0-9]"), "")
 
-        if (name.isBlank() || email.isBlank() || password.isBlank()) {
-            call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Nie poprawne dane w request", "/api/register"))
+        if (name.isBlank() || email.isBlank() || password.isBlank() || plate.isBlank()) {
+            call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawne dane w request: brakujace pola", "/api/register"))
+            return@post
+        }
+
+        val plateRegex = Regex("^[A-Z]{1,3}[A-Z0-9]{2,5}$")
+        if (!plateRegex.matches(plate)) {
+            call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawny format tablicy rejestracyjnej", "/api/register"))
             return@post
         }
 
@@ -71,7 +78,7 @@ fun Route.registerRoute() {
         }
 
         runDB {
-            UserRepository.unsafeCreateUser(email, name, password, "user", "")
+            UserRepository.unsafeCreateUser(email, name, password, "user", plate)
         }
 
         val created =
@@ -95,6 +102,7 @@ fun Route.registerRoute() {
                 name = created.fullName,
                 email = created.mail,
                 role = created.role,
+                plate = created.plate,
             )
 
         call.respond(HttpStatusCode.Created, RegisterResponse(token, userModel))

@@ -6,6 +6,7 @@ interface RegisterRequest {
     name: string;
     email: string;
     password: string;
+    plate: string;
 }
 
 interface RegisterResponse {
@@ -17,6 +18,7 @@ export const register = async ({
     name,
     email,
     password,
+    plate,
 }: RegisterRequest): Promise<RegisterResponse> => {
     const axiosInstance = createAxiosInstance();
 
@@ -27,6 +29,7 @@ export const register = async ({
                 name,
                 email,
                 password,
+                plate,
             }
         );
 
