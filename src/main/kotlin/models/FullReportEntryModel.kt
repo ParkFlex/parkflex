@@ -14,5 +14,5 @@ data class FullReportEntryModel (
     @Contextual
     val timestamp: LocalDateTime,
     val penalty : PenaltyEntity?,
-    val subbmiter: Int
+    val submitter: Long
     )

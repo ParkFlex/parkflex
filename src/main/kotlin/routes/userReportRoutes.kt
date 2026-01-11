@@ -42,18 +42,19 @@ fun Route.userReportRoutes() {
             )
             return@post
         }
-        runDB {
-            val report = FullReportEntryModel(
+
+        val reportEnt = runDB {
+             FullReportEntryModel(
                 plate = plate,
                 description = description,
                 image = image,
                 timestamp = java.time.LocalDateTime.now(),
                 penalty = null,
-                subbmiter = 1
+                submitter = 1
             )
         }
 
-        call.respond(HttpStatusCode.Created)
+        call.respond(HttpStatusCode.Created, reportEnt)
 
 
     }
