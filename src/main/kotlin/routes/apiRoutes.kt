@@ -14,6 +14,9 @@ fun Route.apiRoutes() {
     route("/demo") {
         demoRoutes()
     }
+    route("report"){
+        userReportRoutes()
+    }
 
     route("/historyEntry"){
         historyRoutes()
