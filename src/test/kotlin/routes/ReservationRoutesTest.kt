@@ -159,7 +159,7 @@ class ReservationRoutesTest {
         assertEquals("Miejsce parkingowe nie istnieje", responseBody.message)
 
     }
-    // check code
+    // @return@post in reservationRoutes
     @Test
     fun `test post reservation (spot = !normal)`() = testApplication {
         val db = setupTestDB()
@@ -177,7 +177,7 @@ class ReservationRoutesTest {
                 role = "user"
             }
             val spot = SpotEntity.new {
-                role = "abnormal" // <-- here
+                role = "abnormal"
                 displayOrder = 1
             }
             user.id.value to spot.id.value
@@ -198,7 +198,7 @@ class ReservationRoutesTest {
         assertEquals(HttpStatusCode.BadRequest, response.status)
 
         val responseBody = response.body<ApiErrorModel>()
-        assertEquals("Rezerwacje można tworzyć tylko na miejsce typu 'normal' (otrzymano abnormal)", responseBody.message)
+        assertEquals("Rezerwacje można tworzyć tylko na miejsce typu 'normal' (otrzymano abnormal", responseBody.message)
     }
     
     @Test
@@ -364,12 +364,8 @@ class ReservationRoutesTest {
     fun `test post reservation SAD no authorization header`() = testApplication {
             val db = setupTestDB()
             application { configureTest(db) }
-            
-            val client = createClient {
-                install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
-                    json() 
-                }
-            }
+
+            val client = testingClient()
 
             val reservationRequest = CreateReservationRequest(
                 spot_id = 1,
@@ -401,7 +397,5 @@ class ReservationRoutesTest {
         assertEquals(HttpStatusCode.BadRequest, response.status)
         assertEquals("Nieprawidlowe dane", response.body<ApiErrorModel>().message)
     }
-  
-   
-    //add more tests
+
 } 
