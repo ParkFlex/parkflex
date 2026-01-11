@@ -30,18 +30,31 @@ suspend fun <T> runDB(block: Transaction.() -> T): T =
     newSuspendedTransaction(Dispatchers.IO, statement = block)
 
 /**
- * Gets the real client IP address from reverse proxy headers.
+ * Pobiera rzeczywisty adres IP klienta z nagłówków reverse proxy.
  * 
- * When the application is behind a reverse proxy (like Cloudflare, nginx),
- * use this function instead of call.request.local.remoteHost to get the actual client IP.
+ * Gdy aplikacja działa za reverse proxy (np. Cloudflare, nginx),
+ * użyj tej funkcji zamiast `call.request.local.remoteHost`, aby uzyskać
+ * prawdziwy adres IP klienta końcowego.
  * 
- * Priority order:
- * 1. CF-Connecting-IP (Cloudflare's real client IP)
- * 2. X-Real-IP (nginx and other proxies)
- * 3. X-Forwarded-For (standard proxy header, takes first IP)
- * 4. Direct connection IP (fallback)
+ * Funkcja sprawdza nagłówki HTTP w następującej kolejności priorytetów:
+ * 1. `CF-Connecting-IP` - rzeczywisty IP klienta od Cloudflare
+ * 2. `X-Real-IP` - używany przez nginx i inne proxy
+ * 3. `X-Forwarded-For` - standardowy nagłówek proxy (pobiera pierwszy IP z listy)
+ * 4. `request.local.remoteHost` - bezpośrednie połączenie (fallback)
  * 
- * @return The real client IP address
+ * @receiver ApplicationCall Kontekst wywołania aplikacji Ktor
+ * @return Adres IP klienta jako String
+ * 
+ * @since 1.0
+ * @author ParkFlex Team
+ * 
+ * Przykład użycia:
+ * ```kotlin
+ * get("/api/endpoint") {
+ *     val clientIp = call.getRealIp()
+ *     logger.info("Request from IP: $clientIp")
+ * }
+ * ```
  */
 fun ApplicationCall.getRealIp(): String {
     val headers = request.headers
@@ -50,7 +63,6 @@ fun ApplicationCall.getRealIp(): String {
         ?: headers["X-Forwarded-For"]?.split(",")?.firstOrNull()?.trim()
         ?: request.local.remoteHost
 }
-
 
 object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)

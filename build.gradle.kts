@@ -98,6 +98,22 @@ tasks.register("apiDoc") {
     }
 }
 
+tasks.register("dokkaDoc") {
+    group = "documentation"
+    description = "Generuje dokumentację Dokka w formacie HTML"
+    
+    dependsOn("dokkaGeneratePublicationHtml")
+    
+    doLast {
+        val dokkaOutputDir = project.layout.buildDirectory.dir("dokka/html").get().asFile
+        println("=".repeat(60))
+        println("Dokumentacja Dokka wygenerowana pomyślnie!")
+        println("Lokalizacja: ${dokkaOutputDir.absolutePath}")
+        println("Otwórz plik: ${dokkaOutputDir.absolutePath}/index.html")
+        println("=".repeat(60))
+    }
+}
+
 val npmBin =
     if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd"
     else "npm"
