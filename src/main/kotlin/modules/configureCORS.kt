@@ -15,6 +15,10 @@ fun Application.configureCORS(config: Config) = install(CORS) {
     allowHost("127.0.0.1:8080", schemes = listOf("http", "https"))
     allowHost("127.0.0.1:5173", schemes = listOf("http", "https"))
 
+    // Temporary: allow any host for testing behind Cloudflare
+    anyHost()
+
     anyMethod()
     allowHeaders({ true })
+    allowNonSimpleContentTypes = true
 }
