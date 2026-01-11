@@ -44,8 +44,8 @@ export function AdminReportList(){
     };
 
     const dateTemplate = (rowData: AdminReportEntry) => {
-        const date = rowData.timestamp.toLocaleDateString('pl-PL');
-        const time = rowData.timestamp.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        const date = new Date(rowData.timestamp).toLocaleDateString('pl-PL');
+        const time = new Date(rowData.timestamp).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
         return <><b>{date}</b><br/>{time}</>;
     };
 
@@ -168,7 +168,7 @@ export function AdminReportList(){
             <Dialog header={dialogHeader(selectedReport)} visible={selectedReport !== null} onHide={() => setSelectedReport(null)} modal style={{width:'95%'}}>
                 {selectedReport && (
                     <div>
-                        <p><strong>{selectedReport.timestamp.toLocaleDateString('pl-PL')}</strong> {selectedReport.timestamp.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p><strong>{new Date(selectedReport.timestamp).toLocaleDateString('pl-PL')}</strong> {new Date(selectedReport.timestamp).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
                         <p><strong>Tablica zgłoszonego:</strong> {selectedReport.plate}</p>
                         <p><strong>Kto zgłosił:</strong> {selectedReport.submitterPlate}</p>
                         <p><strong>Komentarz:</strong> {selectedReport.description}</p>

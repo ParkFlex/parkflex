@@ -15,6 +15,7 @@ export const useAdminHistory = () => {
                 const resp = await axios.get<AdminHistoryEntry[]>(
                     `/users/history`,
                 );
+
                 setAdminHistoryEntries(resp.data);
             } catch (err: unknown) {
                 if (isAxiosError(err)) {

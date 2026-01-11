@@ -3,6 +3,6 @@ export interface Penalty{
     reservation: number;
     reason: string;
     paid: boolean;
-    due: Date;
+    due: string;
     fine: number;
 }

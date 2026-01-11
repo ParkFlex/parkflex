@@ -3,7 +3,7 @@ import type {Penalty} from "./Penalty.tsx";
 export interface AdminReportEntry {
     id: number;
     plate: string;
-    timestamp: Date;
+    timestamp: string;
     description: string;
     submitterPlate: string;
     image: string;
