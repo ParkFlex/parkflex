@@ -15,9 +15,6 @@ fun Route.reportsRoutes() {
         runDB {
             for (report in ReportEntity.all()) {
                 val penalty = report.penalty
-                val reservation = penalty?.reservation
-                val user = reservation?.user
-                val plate = user?.plate ?: "UNKNOWN"
 
                 val penaltyEntry = penalty?.let {
                     AdminReportEntryPenalty(
@@ -32,7 +29,7 @@ fun Route.reportsRoutes() {
 
                 val entry = AdminReportEntry(
                     id = report.id.value,
-                    plate = plate,
+                    plate = report.plate,
                     timestamp = report.timestamp,
                     description = report.description,
                     submitterPlate = report.submitter.plate,
