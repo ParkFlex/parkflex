@@ -34,6 +34,7 @@ export function ParkingPage() {
             msgs.current?.show([
                 {
                     sticky: false,
+                    life: 3000,
                     severity: "warn",
                     summary: "Uwaga",
                     detail: "Najpierw wybierz miejsce.",
@@ -58,6 +59,7 @@ export function ParkingPage() {
             msgs.current?.show([
                 {
                     sticky: false,
+                    life: 3000,
                     severity: "success",
                     summary: "Sukces",
                     detail: resp.message,
@@ -72,6 +74,7 @@ export function ParkingPage() {
             msgs.current?.show([
                 {
                     sticky: false,
+                    life: 3000,
                     severity: "error",
                     summary: "Błąd",
                     detail: msg,
