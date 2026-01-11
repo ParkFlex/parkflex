@@ -29,8 +29,6 @@ import kotlin.test.assertEquals
 import parkflex.db.ReservationEntity
 import parkflex.db.PenaltyEntity
 import parkflex.db.PenaltyReason
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.client.statement.bodyAsText
 
 
 class ReservationRoutesTest {
