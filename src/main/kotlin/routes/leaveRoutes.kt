@@ -8,7 +8,9 @@ import parkflex.db.ParameterEntity
 import parkflex.db.ParameterTable
 import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
+import parkflex.repository.ParameterRepository
 import parkflex.runDB
+import parkflex.service.PenaltyService
 import parkflex.service.TermService
 import java.time.LocalDateTime
 
@@ -37,22 +39,6 @@ fun Route.leaveRoutes() {
 
         val now = LocalDateTime.now()
 
-        // TODO Switch to ParameterRepository after `admin-view` is merged
-        val padding =
-            runDB { ParameterEntity.find { ParameterTable.key eq "reservation/break/duration" }.firstOrNull() }
-                ?.value?.toLong()
-                ?: run {
-                    call.respond(
-                        status = HttpStatusCode.InternalServerError,
-                        message = ApiErrorModel(
-                            "The \"reservation/break/duration\" parameter is malformed or does not exist",
-                            "POST /api/exit/{token}"
-                        )
-                    )
-
-                    return@post
-                }
-
         val reservation = runDB {
             ReservationEntity
                 .all()
@@ -72,11 +58,11 @@ fun Route.leaveRoutes() {
         }
 
 
-        // TODO penalty calculation
-
         runDB {
             reservation.left = now
         }
+
+        PenaltyService.processOvertime(reservation, now)
 
         TermService.exit.generate()
 
