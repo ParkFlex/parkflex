@@ -10,6 +10,7 @@ import parkflex.models.ApiErrorModel
 import parkflex.models.NoPresentReservationModel
 import parkflex.models.SuccessfulArrivalModel
 import parkflex.models.TimeSpan
+import parkflex.repository.ParameterRepository
 import parkflex.repository.ReservationRepository
 import parkflex.runDB
 import parkflex.service.TermService
@@ -17,6 +18,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+import kotlin.text.toLong
 
 fun Route.arrivalRoutes() {
     post("{token}") {
@@ -42,21 +44,18 @@ fun Route.arrivalRoutes() {
 
         val now = LocalDateTime.now()
 
-        // TODO Switch to ParameterRepository after `admin-view` is merged
         val padding =
-            runDB { ParameterEntity.find { ParameterTable.key eq "reservation/break/duration" }.firstOrNull() }
-                ?.value?.toLong()
-                ?: run {
-                    call.respond(
-                        status = HttpStatusCode.InternalServerError,
-                        message = ApiErrorModel(
-                            "The \"reservation/break/duration\" parameter is malformed or does not exist",
-                            "POST /api/enter/{token}"
-                        )
+            runDB { ParameterRepository.get("reservation/break/duration") }?.toLong() ?: run {
+                call.respond(
+                    status = HttpStatusCode.InternalServerError,
+                    message = ApiErrorModel(
+                        "The \"reservation/break/duration\" parameter is malformed or does not exist",
+                        "POST /api/enter/{token}"
                     )
+                )
 
-                    return@post
-                }
+                return@post
+            }
 
         // We allow an arrival during the reservation and a few minutes before
         // (the latter is controlled by a parameter)
@@ -81,10 +80,9 @@ fun Route.arrivalRoutes() {
 
         if (reservation == null) {
             val today = now.toLocalDate()
-            val reservationsForToday = runDB { ReservationRepository.forDate(today) }
-
             val timeTable = runDB {
-                reservationsForToday
+                ReservationRepository
+                    .forDate(today)
                     .groupBy { it.spot.id.value }
                     .mapValues { it.value.map { TimeSpan.fromReservation(it) } }
             }

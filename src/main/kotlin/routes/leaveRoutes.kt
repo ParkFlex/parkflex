@@ -15,7 +15,6 @@ import parkflex.service.TermService
 import java.time.LocalDateTime
 
 fun Route.leaveRoutes() {
-    // TODO: DRY with `arrivalRoutes`
     post("{token}") {
         val uid = 2L // TODO: use principal after auth is ready
 
