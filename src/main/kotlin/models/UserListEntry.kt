@@ -1,15 +1,16 @@
 package parkflex.models
-import kotlinx.serialization.*
 
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserListEntry(
-    val plate: String, val role: String,
-    val blocked: Boolean,
+    val plate: String,
+    val role: String,
     val name: String,
     val mail: String,
-    val currentPenalty: Penalty?,
-    val numberOfPastReservations : Int?,
-    val numberOfFutureReservations : Int?,
-    val numberOfPastBans :Int?,
-    val currentReservation: Boolean)
+    val currentPenaltyModel: PenaltyModel?,
+    val numberOfPastReservations: Long,
+    val numberOfFutureReservations: Long,
+    val numberOfPastBans: Long,
+    val currentReservation: Boolean
+)

@@ -1,38 +1,40 @@
 package parkflex.routes
 
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import parkflex.db.UserEntity
-import parkflex.models.Penalty
+import parkflex.models.PenaltyModel
 import parkflex.models.UserListEntry
 import parkflex.runDB
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.Date
 
 
 fun Route.userFullRoutes() {
-    get{
+    get {
         val userList = mutableListOf<UserListEntry>()
-        runDB{
+
+        runDB {
             for (entry in UserEntity.all()) {
                 val today = LocalDateTime.now()
-                var numberOfPastReservations = 0
-                var numberOfFutureReservations = 0
-                var numberOfPastBans = 0
+                var numberOfPastReservations: Long = 0
+                var numberOfFutureReservations: Long = 0
+                var numberOfPastBans: Long = 0
                 var currentReservation = false
-                var currentPenalty: Penalty? = null
+                var currentPenalty: PenaltyModel? = null
                 val reservations = entry.reservations.toList()
+
                 for (reservation in reservations) {
                     val endTime = reservation.start.plusMinutes(reservation.duration.toLong())
                     val isFuture = today.isBefore(reservation.start)
                     val isPast = today.isAfter(endTime)
                     val isActive = !today.isBefore(reservation.start) && !today.isAfter(endTime)
-                    if(currentPenalty == null ) {
-                        val penaltyEntity = reservation.penalties.find { !it.paid}
+
+                    if (currentPenalty == null) {
+                        val penaltyEntity = reservation.penalties.find { !it.paid && it.due.isAfter(today) }
+
                         if (penaltyEntity != null) {
-                            currentPenalty = Penalty(
+                            currentPenalty = PenaltyModel(
+                                id = penaltyEntity.id.value,
                                 reservation = reservation.id.value,
                                 reason = penaltyEntity.reason,
                                 paid = penaltyEntity.paid,
@@ -41,10 +43,10 @@ fun Route.userFullRoutes() {
                             )
                         }
                     }
+
                     if (isActive) {
                         currentReservation = true
-                    }
-                    else if (isFuture) {
+                    } else if (isFuture) {
                         numberOfFutureReservations += 1
                     } else if (isPast) {
                         numberOfPastReservations += 1
@@ -53,13 +55,13 @@ fun Route.userFullRoutes() {
                         }
                     }
                 }
+
                 val thisUser = UserListEntry(
                     plate = entry.plate,
                     role = entry.role,
-                    blocked = entry.blocked,
                     name = entry.fullName,
                     mail = entry.mail,
-                    currentPenalty = currentPenalty,
+                    currentPenaltyModel = currentPenalty,
                     numberOfPastReservations = numberOfPastReservations,
                     numberOfFutureReservations = numberOfFutureReservations,
                     numberOfPastBans = numberOfPastBans,
@@ -69,8 +71,7 @@ fun Route.userFullRoutes() {
                 userList.add(thisUser)
             }
         }
+
         call.respond(userList)
-
     }
-
 }
