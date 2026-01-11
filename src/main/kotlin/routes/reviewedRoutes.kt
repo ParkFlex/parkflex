@@ -11,8 +11,8 @@ import parkflex.models.ApiErrorModel
 import parkflex.runDB
 
 fun Route.reviewedRoutes() {
-    route("/{report_id}/reviewed"){
-        patch{
+    route("/{report_id}/reviewed") {
+        patch {
             val id = call.parameters["report_id"]
             if (id == null) {
                 call.respond(
@@ -31,8 +31,10 @@ fun Route.reviewedRoutes() {
                 )
                 return@patch
             }
-            if(report.reviewed == false){
-                report.reviewed = true
+            if (report.reviewed == false) {
+                runDB {
+                    report.reviewed = true
+                }
                 call.respond(
                     status = HttpStatusCode.OK,
                     message = "Report with ID $idLong has been successfully reviewed."
@@ -40,7 +42,10 @@ fun Route.reviewedRoutes() {
             } else {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = ApiErrorModel("Report with ID $idLong is already reviewed.", "/report/{report_id}/reviewed PATCH")
+                    message = ApiErrorModel(
+                        "Report with ID $idLong is already reviewed.",
+                        "/report/{report_id}/reviewed PATCH"
+                    )
                 )
             }
         }
