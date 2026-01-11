@@ -5,16 +5,25 @@ import { register } from "../api/auth";
 import { useAuth } from "../hooks/useAuth";
 
 export function Register() {
-    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(
+        undefined
+    );
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    const handleRegister = async (name: string, email: string, password: string, plate: string) => {
+    const handleRegister = async (
+        name: string,
+        email: string,
+        password: string,
+        plate: string
+    ) => {
         setErrorMessage(undefined);
         try {
             const response = await register({ name, email, password, plate });
             login(response.token, response.user);
-            navigate("/parking", { state: { successMessage: "Zarejestrowano pomyślnie. Witamy!" } });
+            navigate("/parking", {
+                state: { successMessage: "Zarejestrowano pomyślnie." },
+            });
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -25,9 +34,18 @@ export function Register() {
     };
 
     return (
-        <div style={{ display: "flex", justifyContent: "center", padding: "0.75rem" }}>
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "0.75rem",
+            }}
+        >
             <div style={{ width: "100%", maxWidth: "600px" }}>
-                <RegisterForm onRegister={handleRegister} errorMessage={errorMessage} />
+                <RegisterForm
+                    onRegister={handleRegister}
+                    errorMessage={errorMessage}
+                />
             </div>
         </div>
     );

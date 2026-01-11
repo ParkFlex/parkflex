@@ -80,10 +80,7 @@ export function RegisterForm({ onRegister, errorMessage }: RegisterFormProps) {
 
     const handleInputChange = (field: keyof typeof formData, value: string) => {
         if (field === "plate") {
-            value = value
-                .trim()
-                .toUpperCase()
-                .replace(/[^A-Z0-9]/g, "");
+            value = normalizePlate(value);
         }
         setFormData((prev) => ({ ...prev, [field]: value }));
 

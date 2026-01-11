@@ -135,7 +135,8 @@ export function ParkingPage() {
                     severity: "success",
                     summary: "Sukces",
                     detail: msg,
-                    closable: false,
+                    life: 3000,
+                    closable: true,
                 },
             ]);
             navigate(location.pathname, { replace: true, state: {} });
