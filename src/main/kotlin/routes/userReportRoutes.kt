@@ -43,18 +43,18 @@ fun Route.userReportRoutes() {
             return@post
         }
 
-        val reportEnt = runDB {
-             FullReportEntryModel(
-                plate = plate,
-                description = description,
-                image = image,
-                timestamp = java.time.LocalDateTime.now(),
-                penalty = null,
-                submitter = 1
-            )
+        val report = runDB {
+             ReportEntity.new {
+                this.plate = plate
+                this.description = description
+                this.image = image
+                this.reviewed = false
+                this.submitter = parkflex.db.UserEntity.findById(1)!!
+                this.timestamp = java.time.LocalDateTime.now()
+             }
         }
 
-        call.respond(HttpStatusCode.Created, reportEnt)
+        call.respond(HttpStatusCode.Created, report)
 
 
     }
