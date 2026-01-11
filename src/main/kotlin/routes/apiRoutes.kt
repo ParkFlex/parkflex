@@ -2,7 +2,6 @@ package parkflex.routes
 
 import io.ktor.server.routing.*
 
-
 /**
  * Routes for the REST API.
  */
