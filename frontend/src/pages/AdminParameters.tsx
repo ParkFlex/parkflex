@@ -1,22 +1,43 @@
-import { useState } from "react"; // żeby strona pamiętała co wpisaliśmy
+import { useState, useEffect } from "react";
 import { SingleParameterCard } from "../components/SingleParameterCard";
+import { useAxios } from "../hooks/useAxios"; // komponent do obsługi axios z tokenem
 
-export function AdminParameters() { // główna funkcja strony
+export function AdminParameters() {
     const morski = '#5c7e7b';
     const jasnaZielen = '#d9e2db';
 
-    const [overtimePenalty, setOvertimePenalty] = useState(150); // kara za każde 15 min
-    const [wrongSpotPenalty, setWrongSpotPenalty] = useState(500); // kara za złe miejsce
-    const [minTime, setMinTime] = useState(30); // minimalny czas
-    const [maxTime, setMaxTime] = useState(720); // maksymalny czas
-    const [banDuration, setBanDuration] = useState(7); // długość bana w dniach
-    const [gapBetweenReservations, setGapBetweenReservations] = useState(15); // długość bana w dniach
+    const axios = useAxios(); // uzycie hooka do uzyskania instancji axios z tokenem
 
-    function save(name: string, value: any) { // funkcja zapisu -alert
-        alert("Zapisano: " + name + " na " + value);
+    const [overtimePenalty, setOvertimePenalty] = useState(0); // Inicjalizacja stanu dla kary za przekroczenie czasu
+    const [wrongSpotPenalty, setWrongSpotPenalty] = useState(0); // Inicjalizacja stanu dla kary za niewłaściwe miejsce
+    const [minTime, setMinTime] = useState(0); // Inicjalizacja stanu dla minimalnego czasu rezerwacji
+    const [maxTime, setMaxTime] = useState(0); // Inicjalizacja stanu dla maksymalnego czasu rezerwacji
+    const [banDuration, setBanDuration] = useState(0); // Inicjalizacja stanu dla długości trwania bana
+    const [gap, setGap] = useState(0); // Inicjalizacja stanu dla czasu pomiędzy rezerwacjami
+
+    useEffect(() => {
+        axios.get("/all") // Pobieranie wszystkich parametrów z serwera
+            .then((response: any) => {
+                const data = response.data; // Obsługa odpowiedzi
+                data.forEach((p: any) => {
+                    if (p.key === "penalty/fine/overtime") setOvertimePenalty(Number(p.value)); // Ustawianie stanow na podstawie pobranych danych
+                    if (p.key === "penalty/fine/wrongSpot") setWrongSpotPenalty(Number(p.value));
+                    if (p.key === "penalty/block/duration") setBanDuration(Number(p.value));
+                    if (p.key === "reservation/time/min") setMinTime(Number(p.value));
+                    if (p.key === "reservation/time/max") setMaxTime(Number(p.value));
+                    if (p.key === "reservation/gap") setGap(Number(p.value));
+                });
+            })
+            .catch((err: any) => console.error("Błąd pobierania danych:", err)); // Obsługa błędów jak cos
+    }, [axios]);
+
+    function save(key: string, value: any) { // Funkcja do zapisywania zmienionych parametrów
+        axios.patch(`/${key}`, { value: String(value) }) // Wysyłanie żądania PATCH do serwera
+            .then(() => alert(`Zapisano parametr: ${key}`)) // Powiadomienie o sukcesie
+            .catch((err: any) => alert(`Błąd zapisu ${key}: ${err.message}`)); // brak sukcesow niesteyy
     }
 
-    return(
+    return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
             <h2 style={{ color: morski, borderBottom: '2px solid ' + jasnaZielen }}>Ustawienia Systemowe</h2>
 
@@ -26,16 +47,16 @@ export function AdminParameters() { // główna funkcja strony
                     description="Wysokość kary naliczana co 15 min"
                     value={overtimePenalty}
                     onChange={setOvertimePenalty}
-                    onSave={function() { save("Kara 15min", overtimePenalty); }}
+                    onSave={() => save("penalty/fine/overtime", overtimePenalty)} // Zapisanie zmienionego parametru, inny zapis niz ostatnio  przez wlasnie ten server
                     mode="currency"
                 />
 
                 <SingleParameterCard
                     label="Kara za niewłaściwe miejsce parkingowe"
-                    description="Wysokość kary za zajęcie niewłaściwego miejsca parkingowego"
+                    description="Wysokość kary za zajęcie niewłaściwego miejsca"
                     value={wrongSpotPenalty}
                     onChange={setWrongSpotPenalty}
-                    onSave={function() { save("Kara miejsce", wrongSpotPenalty); }}
+                    onSave={() => save("penalty/fine/wrongSpot", wrongSpotPenalty)}
                     mode="currency"
                 />
 
@@ -44,7 +65,7 @@ export function AdminParameters() { // główna funkcja strony
                     description="Najkrótszy możliwy czas rezerwacji"
                     value={minTime}
                     onChange={setMinTime}
-                    onSave={function() { save("Min czas", minTime); }}
+                    onSave={() => save("reservation/time/min", minTime)}
                     suffix=" min"
                 />
 
@@ -53,25 +74,25 @@ export function AdminParameters() { // główna funkcja strony
                     description="Najdłuższy możliwy czas rezerwacji"
                     value={maxTime}
                     onChange={setMaxTime}
-                    onSave={function() { save("Max czas", maxTime); }}
+                    onSave={() => save("reservation/time/max", maxTime)}
                     suffix=" min"
                 />
 
                 <SingleParameterCard
-                    label="Długość trwania banu"
+                    label="Długość trwania bana"
                     description="Czas trwania blokady użytkownika"
                     value={banDuration}
                     onChange={setBanDuration}
-                    onSave={function() { save("Ban", banDuration); }}
+                    onSave={() => save("penalty/block/duration", banDuration)}
                     suffix=" dni"
                 />
 
                 <SingleParameterCard
-                    label="Czas pomiedzy ponową możliwością rezerwacji"
-                    description="Odstęp czasowy po jakim użytkownik może dokonać nowej rezerwacji miejsca uprzednio zajętego"
-                    value={gapBetweenReservations}
-                    onChange={setGapBetweenReservations}
-                    onSave={function() { save("Cancelling", gapBetweenReservations); }}
+                    label="Czas pomiędzy rezerwacjami"
+                    description="Odstęp po jakim można znowu zarezerwować to samo miejsce"
+                    value={gap}
+                    onChange={setGap}
+                    onSave={() => save("reservation/gap", gap)}
                     suffix=" min"
                 />
             </div>
