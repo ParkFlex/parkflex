@@ -1,8 +1,8 @@
-import {useState, useEffect, useCallback} from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { useAxios } from './useAxios';
 import { isAxiosError } from "axios";
-import type {AdminUserEntry} from "../models/AdminUserEntry.tsx";
+import type { AdminUserEntry } from "../models/AdminUserEntry.tsx";
 
 export const useUserList = () => {
     const axios = useAxios();
@@ -35,7 +35,7 @@ export const useUserList = () => {
     const cancelPenalty = useCallback(async (penaltyId: number) => {
         if (!penaltyId) return;
         try {
-            await axios.patch(`/penalty/${penaltyId}/cancel`, null, { headers: {'Content-Type': 'application/json'} });
+            await axios.patch(`/penalty/${penaltyId}/cancel`, null, { headers: { 'Content-Type': 'application/json' } });
             try {
                 const resp = await axios.get<AdminUserEntry[]>(`/user`);
                 setUserListEntries(resp.data);
@@ -57,7 +57,7 @@ export const useUserList = () => {
     const changePlate = useCallback(async (userId: number, newPlate: string) => {
         if (!userId || !newPlate) return;
         try {
-            await axios.patch(`/user/${userId}`, { plate: newPlate }, { headers: {'Content-Type': 'application/json'} });
+            await axios.patch(`/user/${userId}`, { plate: newPlate }, { headers: { 'Content-Type': 'application/json' } });
             try {
                 const resp = await axios.get<AdminUserEntry[]>(`/user`);
                 setUserListEntries(resp.data);
@@ -76,5 +76,5 @@ export const useUserList = () => {
         }
     }, [axios]);
 
-    return {userListEntries, cancelPenalty, changePlate};
-}
+    return { userListEntries, cancelPenalty, changePlate };
+};

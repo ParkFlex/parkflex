@@ -1,16 +1,16 @@
-import {useState} from "react";
-import type {AdminHistoryEntry} from "../models/AdminHistoryEntry.tsx";
-import {DataTable, type DataTableFilterMeta} from "primereact/datatable";
-import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column";
-import {useAdminHistory} from "../hooks/useAdminHistory.ts";
-import {Dialog} from "primereact/dialog";
-import {AdminHistoryCard} from "./AdminHistoryCard.tsx";
-import {FilterMatchMode} from "primereact/api";
-import {InputText} from "primereact/inputtext";
-import {formatTime, addMinutes, formatDate, isActiveNow} from "../utils/dateUtils.ts";
-import {Button} from "primereact/button";
-import {OverlayPanel} from "primereact/overlaypanel";
-import {useRef} from "react";
+import { useState } from "react";
+import type { AdminHistoryEntry } from "../models/AdminHistoryEntry.tsx";
+import { DataTable, type DataTableFilterMeta } from "primereact/datatable";
+import { Column, type ColumnFilterElementTemplateOptions } from "primereact/column";
+import { useAdminHistory } from "../hooks/useAdminHistory.ts";
+import { Dialog } from "primereact/dialog";
+import { AdminHistoryCard } from "./AdminHistoryCard.tsx";
+import { FilterMatchMode } from "primereact/api";
+import { InputText } from "primereact/inputtext";
+import { formatTime, addMinutes, formatDate, isActiveNow } from "../utils/dateUtils.ts";
+import { Button } from "primereact/button";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { useRef } from "react";
 import {
     DateRangeFilterDialog,
     type DateRangeFilter,
@@ -24,9 +24,9 @@ export function AdminHistoryList() {
     const entries = useAdminHistory();
     const [selectedEntry, setSelectedEntry] = useState<AdminHistoryEntry | null>(null);
     const [filters, setFilters] = useState<DataTableFilterMeta>({
-        'plate': {value: null, matchMode: FilterMatchMode.STARTS_WITH},
-        'startTime': {value: null, matchMode: FilterMatchMode.DATE_IS}
-    })
+        'plate': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        'startTime': { value: null, matchMode: FilterMatchMode.DATE_IS }
+    });
     const [dateFilter, setDateFilter] = useState<DateRangeFilter>(createEmptyDateRangeFilter());
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
@@ -35,14 +35,14 @@ export function AdminHistoryList() {
 
     const endTime = (rowData: AdminHistoryEntry): Date => {
         return addMinutes(new Date(rowData.startTime), rowData.durationMin);
-    }
+    };
 
     const timeTemplate = (rowData: AdminHistoryEntry) => {
         const date = formatDate(new Date(rowData.startTime));
         const start = formatTime(new Date(rowData.startTime));
         const end = formatTime(endTime(rowData));
         return <><b>{date}</b><br/>{start} - {end}</>;
-    }
+    };
 
     const plateFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
         return <InputText
@@ -84,7 +84,7 @@ export function AdminHistoryList() {
 
     const dateHeaderTemplate = () => {
         return (
-            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span>Data i czas</span>
                 <Button
                     icon="pi pi-calendar"
@@ -114,7 +114,7 @@ export function AdminHistoryList() {
                     }}
                 />
                 <OverlayPanel ref={statusOverlayRef}>
-                    <div style={{display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '0.5rem'}}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '0.5rem' }}>
                         <div
                             style={{
                                 display: 'flex',
@@ -130,7 +130,7 @@ export function AdminHistoryList() {
                                 statusOverlayRef.current?.hide();
                             }}
                         >
-                            <i className="pi pi-exclamation-triangle" style={{color: '#ef4444', fontSize: '1.25rem'}}/>
+                            <i className="pi pi-exclamation-triangle" style={{ color: '#ef4444', fontSize: '1.25rem' }}/>
                             <span>Kara</span>
                         </div>
                         <div
@@ -148,7 +148,7 @@ export function AdminHistoryList() {
                                 statusOverlayRef.current?.hide();
                             }}
                         >
-                            <i className="pi pi-spin pi-spinner" style={{color: 'green', fontSize: '1.25rem'}}/>
+                            <i className="pi pi-spin pi-spinner" style={{ color: 'green', fontSize: '1.25rem' }}/>
                             <span>Aktywna</span>
                         </div>
                         <div
@@ -166,7 +166,7 @@ export function AdminHistoryList() {
                                 statusOverlayRef.current?.hide();
                             }}
                         >
-                            <i className="pi pi-clock" style={{color: 'var(--primary-color)', fontSize: '1.25rem'}}/>
+                            <i className="pi pi-clock" style={{ color: 'var(--primary-color)', fontSize: '1.25rem' }}/>
                             <span>Zaplanowana</span>
                         </div>
                         <div
@@ -184,7 +184,7 @@ export function AdminHistoryList() {
                                 statusOverlayRef.current?.hide();
                             }}
                         >
-                            <i className="pi pi-check" style={{color: 'gray', fontSize: '1.25rem'}}/>
+                            <i className="pi pi-check" style={{ color: 'gray', fontSize: '1.25rem' }}/>
                             <span>Zakończona</span>
                         </div>
                     </div>
@@ -196,17 +196,17 @@ export function AdminHistoryList() {
     const statusTemplate = (rowData: AdminHistoryEntry) => {
         const status = getEntryStatus(rowData);
         if (status === 'penalty') {
-            return <i className="pi pi-exclamation-triangle" style={{color: '#ef4444', fontSize: '1.25rem'}}
-                      title="Kara"/>;
+            return <i className="pi pi-exclamation-triangle" style={{ color: '#ef4444', fontSize: '1.25rem' }}
+                title="Kara"/>;
         }
         if (status === 'active') {
-            return <i className="pi pi-spin pi-spinner" style={{color: 'green', fontSize: '1.25rem'}} title="Aktywna"/>;
+            return <i className="pi pi-spin pi-spinner" style={{ color: 'green', fontSize: '1.25rem' }} title="Aktywna"/>;
         }
         if (status === 'planned') {
-            return <i className="pi pi-clock" style={{fontSize: '1.25rem'}} title="Zaplanowana"/>;
+            return <i className="pi pi-clock" style={{ fontSize: '1.25rem' }} title="Zaplanowana"/>;
         }
         if (status === 'completed') {
-            return <i className="pi pi-check" style={{color: 'gray', fontSize: '1.25rem'}} title="Zakończona"/>;
+            return <i className="pi pi-check" style={{ color: 'gray', fontSize: '1.25rem' }} title="Zakończona"/>;
         }
 
         return null;
@@ -214,12 +214,12 @@ export function AdminHistoryList() {
 
     const dialogHeaderTemplate = () => {
         return (
-            <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', gap: '1rem'}}>
+            <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row', gap: '1rem' }}>
                 <div>{selectedEntry ? statusTemplate(selectedEntry) : null}</div>
-                <div style={{marginRight: '1rem'}}>Rezerwacja</div>
+                <div style={{ marginRight: '1rem' }}>Rezerwacja</div>
             </div>
         );
-    }
+    };
 
     return (
         <div>
@@ -231,18 +231,18 @@ export function AdminHistoryList() {
                 selectionMode="single"
                 selection={selectedEntry}
                 onSelectionChange={(e) => {
-                    setSelectedEntry(e.value ? e.value as AdminHistoryEntry : null )
+                    setSelectedEntry(e.value ? e.value as AdminHistoryEntry : null );
                 }}
                 dataKey="plate"
                 emptyMessage="Brak historii"
             >
                 <Column field="status" header={statusHeaderTemplate} body={statusTemplate}
-                        style={{width: '10%', textAlign: 'center'}} alignHeader="center"></Column>
+                    style={{ width: '10%', textAlign: 'center' }} alignHeader="center"></Column>
                 <Column field="plate" header="Tablica" filter filterElement={plateFilterTemplate}
-                        filterApply={filterApplyTemplate} filterClear={filterClearTemplate} showFilterMatchModes={false}
-                        style={{width: '10%'}} bodyStyle={{fontWeight: "bold"}}></Column>
+                    filterApply={filterApplyTemplate} filterClear={filterClearTemplate} showFilterMatchModes={false}
+                    style={{ width: '10%' }} bodyStyle={{ fontWeight: "bold" }}></Column>
                 <Column field="startTime" header={dateHeaderTemplate} body={timeTemplate}
-                        style={{width: '40%'}}></Column>
+                    style={{ width: '40%' }}></Column>
                 {/*<Column field="spot" header="Miejsce" dataType="numeric" filter style={{ width: '15%', textAlign:"center" }}></Column>*/}
             </DataTable>
 
@@ -259,11 +259,11 @@ export function AdminHistoryList() {
             />
 
             <Dialog header={dialogHeaderTemplate()} visible={selectedEntry !== null}
-                    onHide={() => setSelectedEntry(null)} modal style={{width: '95%'}}>
+                onHide={() => setSelectedEntry(null)} modal style={{ width: '95%' }}>
                 {selectedEntry ?
                     <AdminHistoryCard plate={selectedEntry.plate} startTime={new Date(selectedEntry.startTime)}/> : null}
             </Dialog>
         </div>
-    )
+    );
 }
 

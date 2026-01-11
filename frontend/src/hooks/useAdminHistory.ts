@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { useAxios } from './useAxios';
 import { isAxiosError } from "axios";
-import type {AdminHistoryEntry} from "../models/AdminHistoryEntry.tsx";
+import type { AdminHistoryEntry } from "../models/AdminHistoryEntry.tsx";
 
 export const useAdminHistory = () => {
     const axios = useAxios();
@@ -34,4 +34,4 @@ export const useAdminHistory = () => {
     }, [axios]);
 
     return  adminHistoryEntries;
-}
+};

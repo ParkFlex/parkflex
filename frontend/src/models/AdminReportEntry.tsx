@@ -1,4 +1,4 @@
-import type {Penalty} from "./Penalty.tsx";
+import type { Penalty } from "./Penalty.tsx";
 
 export interface AdminReportEntry {
     id: number;

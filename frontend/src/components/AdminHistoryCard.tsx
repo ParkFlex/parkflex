@@ -1,6 +1,6 @@
-import {Card} from "primereact/card";
-import {formatTime, addMinutes, formatDate} from "../utils/dateUtils.ts";
-import {useAdminHistory} from "../hooks/useAdminHistory.ts";
+import { Card } from "primereact/card";
+import { formatTime, addMinutes, formatDate } from "../utils/dateUtils.ts";
+import { useAdminHistory } from "../hooks/useAdminHistory.ts";
 
 export function AdminHistoryCard({ plate, startTime }: { plate: string, startTime: Date }){
 
@@ -9,11 +9,11 @@ export function AdminHistoryCard({ plate, startTime }: { plate: string, startTim
 
     if(!entry){
         return (
-            <div style={{textAlign:"left"}}>
+            <div style={{ textAlign:"left" }}>
                 <Card title={`Rezerwacja nie znaleziona`}>
                 </Card>
             </div>
-        )
+        );
     }
 
 
@@ -22,11 +22,11 @@ export function AdminHistoryCard({ plate, startTime }: { plate: string, startTim
     const start = new Date(entry.startTime);
 
     return (
-        <div style={{textAlign:"left"}}>
-            <Card title={`${formatDate(start)}`} subTitle={`${formatTime(start)}-${formatTime(endTime)}`} style={{marginBottom:'1.5rem', fontSize:"20px"}}>
+        <div style={{ textAlign:"left" }}>
+            <Card title={`${formatDate(start)}`} subTitle={`${formatTime(start)}-${formatTime(endTime)}`} style={{ marginBottom:'1.5rem', fontSize:"20px" }}>
                 <div> Rejestracja użytkownika: {entry.plate} </div>
                 <div> Miejsce parkingowe: {entry.spot} </div>
             </Card>
         </div>
-    )
+    );
 }

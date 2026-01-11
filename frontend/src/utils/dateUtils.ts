@@ -47,7 +47,7 @@ export const formatDateTime = (date: Date): string => {
         minute: '2-digit',
         hour12: false
     });
-}
+};
 
 export const isSameDay = (date1: Date, date2: Date): boolean => {
     return date1.getFullYear() === date2.getFullYear() &&

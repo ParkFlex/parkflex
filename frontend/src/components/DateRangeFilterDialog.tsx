@@ -1,6 +1,6 @@
-import {Dialog} from "primereact/dialog";
-import {Calendar} from "primereact/calendar";
-import {Button} from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { Calendar } from "primereact/calendar";
+import { Button } from "primereact/button";
 
 export interface DateRangeFilter {
     dates: (Date | null)[] | null;

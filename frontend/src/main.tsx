@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import {Route, Routes, BrowserRouter, Navigate} from "react-router";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router";
 
 import { PrimeReactProvider } from 'primereact/api';
 import '@parkflex/themes/dist/theme.css';
@@ -10,11 +10,11 @@ import { Layout } from './pages/Layout.tsx';
 import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
-import { Admin } from "./pages/Admin.tsx"
-import {AdminHeaderAndSidebar} from "./components/AdminHeaderAndSidebar.tsx";
-import {AdminUserList} from "./components/AdminUserList.tsx";
-import {AdminHistoryList} from "./components/AdminHistoryList.tsx";
-import {AdminReportList} from "./components/AdminReportList.tsx";
+import { Admin } from "./pages/Admin.tsx";
+import { AdminHeaderAndSidebar } from "./components/AdminHeaderAndSidebar.tsx";
+import { AdminUserList } from "./components/AdminUserList.tsx";
+import { AdminHistoryList } from "./components/AdminHistoryList.tsx";
+import { AdminReportList } from "./components/AdminReportList.tsx";
 import { ParkingPage } from "./pages/Parking.tsx";
 
 createRoot(document.getElementById("root")!).render(

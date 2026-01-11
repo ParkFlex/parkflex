@@ -1,8 +1,8 @@
-import {useState, useEffect, useCallback} from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { useAxios } from './useAxios';
 import { isAxiosError } from "axios";
-import type {AdminReportEntry} from "../models/AdminReportEntry.tsx";
+import type { AdminReportEntry } from "../models/AdminReportEntry.tsx";
 
 export const useAdminReport = () => {
     const axios = useAxios();
@@ -34,7 +34,7 @@ export const useAdminReport = () => {
 
     const approveReport = useCallback( async (reportId: number) => {
         try {
-            await axios.post(`/penalty`, {reportId: reportId}, { headers: {'Content-Type': 'application/json'} });
+            await axios.post(`/penalty`, { reportId: reportId }, { headers: { 'Content-Type': 'application/json' } });
             try {
                 const resp = await axios.get<AdminReportEntry[]>(`/reports`);
                 setAdminReportEntries(resp.data);
@@ -55,7 +55,7 @@ export const useAdminReport = () => {
 
     const changeReviewed = useCallback( async (reportId: number) => {
         try {
-            await axios.patch(`/report/${reportId}/reviewed`, null, { headers: {'Content-Type': 'application/json'} });
+            await axios.patch(`/report/${reportId}/reviewed`, null, { headers: { 'Content-Type': 'application/json' } });
         } catch (err: unknown) {
             if (isAxiosError(err)) {
                 if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
@@ -68,5 +68,5 @@ export const useAdminReport = () => {
         }
     }, [axios]);
 
-    return  {adminReportEntries, approveReport, changeReviewed};
-}
+    return  { adminReportEntries, approveReport, changeReviewed };
+};

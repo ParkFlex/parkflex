@@ -1,11 +1,11 @@
-import {DataTable, type DataTableFilterMeta} from "primereact/datatable";
-import {Column, type ColumnFilterElementTemplateOptions} from "primereact/column";
-import type {AdminReportEntry} from "../models/AdminReportEntry.tsx";
-import {useState} from "react";
-import {Dialog} from "primereact/dialog";
-import {FilterMatchMode} from "primereact/api";
-import {Button} from "primereact/button";
-import {InputText} from "primereact/inputtext";
+import { DataTable, type DataTableFilterMeta } from "primereact/datatable";
+import { Column, type ColumnFilterElementTemplateOptions } from "primereact/column";
+import type { AdminReportEntry } from "../models/AdminReportEntry.tsx";
+import { useState } from "react";
+import { Dialog } from "primereact/dialog";
+import { FilterMatchMode } from "primereact/api";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 import {
     DateRangeFilterDialog,
     type DateRangeFilter,
@@ -13,11 +13,11 @@ import {
     filterByDateRange,
     createEmptyDateRangeFilter
 } from "./DateRangeFilterDialog";
-import {classNames} from "primereact/utils";
-import {useAdminReport} from "../hooks/useAdminReport.ts";
+import { classNames } from "primereact/utils";
+import { useAdminReport } from "../hooks/useAdminReport.ts";
 
 export function AdminReportList(){
-    const {adminReportEntries:report, approveReport, changeReviewed} = useAdminReport();
+    const { adminReportEntries:report, approveReport, changeReviewed } = useAdminReport();
     const [selectedReport, setSelectedReport] = useState<AdminReportEntry | null>(null);
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         plate: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -52,24 +52,24 @@ export function AdminReportList(){
     const dialogHeader = (selectedReport: AdminReportEntry | null) => {
         return (
             <div>
-                    {selectedReport && selectedReport.reviewed && selectedReport.penalty && (
-                        <strong>Zgłoszenie zaakceptowne</strong>
-                    )}
-                    {selectedReport && selectedReport.reviewed && !selectedReport.penalty && (
-                        <strong>Zgłoszenie odrzucone</strong>
-                    )}
-                    {selectedReport && !selectedReport.reviewed && (
-                        <strong>Zgłoszenie oczekujące na weryfikację</strong>
-                    )}
+                {selectedReport && selectedReport.reviewed && selectedReport.penalty && (
+                    <strong>Zgłoszenie zaakceptowne</strong>
+                )}
+                {selectedReport && selectedReport.reviewed && !selectedReport.penalty && (
+                    <strong>Zgłoszenie odrzucone</strong>
+                )}
+                {selectedReport && !selectedReport.reviewed && (
+                    <strong>Zgłoszenie oczekujące na weryfikację</strong>
+                )}
             </div>
         );
     };
 
     const getStatus = (entry: AdminReportEntry): string => {
-         if (!entry.reviewed) return 'pending';
-         if ((entry.reviewed) && (entry.penalty)) return 'accepted';
-         return 'rejected';
-    }
+        if (!entry.reviewed) return 'pending';
+        if ((entry.reviewed) && (entry.penalty)) return 'accepted';
+        return 'rejected';
+    };
 
     const statusRowFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
         const current = options.value as string | null;
@@ -144,10 +144,10 @@ export function AdminReportList(){
         if (entryStatus === 'accepted') return <i className={classNames('pi', 'pi-check')} style={{ color: 'green' }} />;
         if (entryStatus === 'rejected') return <i className={classNames('pi', 'pi-times')} style={{ color: 'red' }} />;
         return <i className={classNames('pi', 'pi-clock')} style={{ color: 'grey' }} />;
-    }
+    };
 
     return (
-        <div style={{ borderColor:'#d4e2da'}}>
+        <div style={{ borderColor:'#d4e2da' }}>
             <DataTable
                 value={getFilteredReports()}
                 filters={filters}
@@ -165,7 +165,7 @@ export function AdminReportList(){
                 <Column field="issueTime" header={dateHeaderTemplate} body={dateTemplate} style={{ width: '25%' }}></Column>
             </DataTable>
 
-            <Dialog header={dialogHeader(selectedReport)} visible={selectedReport !== null} onHide={() => setSelectedReport(null)} modal style={{width:'95%'}}>
+            <Dialog header={dialogHeader(selectedReport)} visible={selectedReport !== null} onHide={() => setSelectedReport(null)} modal style={{ width:'95%' }}>
                 {selectedReport && (
                     <div>
                         <p><strong>{new Date(selectedReport.timestamp).toLocaleDateString('pl-PL')}</strong> {new Date(selectedReport.timestamp).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
@@ -174,11 +174,11 @@ export function AdminReportList(){
                         <p><strong>Komentarz:</strong> {selectedReport.description}</p>
                         <img src={selectedReport.image} alt="report" style={{ width: '100%', marginBottom: '1rem', display: 'block' }} />
                         {selectedReport.reviewed && !selectedReport.penalty && (
-                            <Button severity="secondary" style={{width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center'}} onClick={()=>{void approveReport(selectedReport.id)}}>Zaakceptuj</Button>)}
+                            <Button severity="secondary" style={{ width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={()=>{void approveReport(selectedReport.id);}}>Zaakceptuj</Button>)}
                         {!selectedReport.reviewed && (
-                            <div style={{display:'flex', flexDirection:'row', gap:'1rem'}}>
-                            <Button severity="secondary" style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}} onClick={()=>{void approveReport(selectedReport.id)}}>Zaakceptuj</Button>
-                            <Button style={{width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center'}} onClick={()=> {void changeReviewed(selectedReport.id)}}>Odrzuć</Button>
+                            <div style={{ display:'flex', flexDirection:'row', gap:'1rem' }}>
+                                <Button severity="secondary" style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={()=>{void approveReport(selectedReport.id);}}>Zaakceptuj</Button>
+                                <Button style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={()=> {void changeReviewed(selectedReport.id);}}>Odrzuć</Button>
                             </div>)}
                     </div>
                 )}
@@ -196,6 +196,6 @@ export function AdminReportList(){
                 }}
             />
         </div>
-    )
+    );
 }
 
