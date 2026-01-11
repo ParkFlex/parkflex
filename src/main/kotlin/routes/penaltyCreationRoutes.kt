@@ -11,7 +11,7 @@ import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.NewPenaltyResponseModel
 import parkflex.models.NewPenaltyResponseState
-import parkflex.models.ReportIDWrapper
+import parkflex.models.ReportIdWrapper
 import parkflex.repository.ParameterRepository
 import parkflex.repository.ReservationRepository
 import parkflex.repository.ReservationRepository.TimeRelation
@@ -50,8 +50,8 @@ private fun fineFromRelation(timestamp: LocalDateTime, reservation: ReservationE
 
 fun Route.penaltyCreationRoutes() {
     post {
-        runCatching { call.receive<ReportIDWrapper>() }
-            .map { it.reportID }
+        runCatching { call.receive<ReportIdWrapper>() }
+            .map { it.reportId }
             .onFailure {
                 call.respond(
                     status = HttpStatusCode.BadRequest,

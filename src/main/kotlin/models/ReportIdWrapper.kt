@@ -3,6 +3,6 @@ package parkflex.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ReportIDWrapper(
-    val reportID: Long
+data class ReportIdWrapper(
+    val reportId: Long
 )
