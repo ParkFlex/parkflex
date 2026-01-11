@@ -14,6 +14,10 @@ interface RegisterResponse {
     user: User;
 }
 
+interface PatchAccountRequest {
+    plate?: string;
+}
+
 export const register = async ({
     name,
     email,
@@ -54,4 +58,22 @@ export const getJwtToken = (): string | null => {
 
 export const setJwtToken = (token: string): void => {
     localStorage.setItem("jwt", token);
+};
+
+export const patchAccount = async (data: { plate?: string }) => {
+    const axiosInstance = createAxiosInstance();
+    try {
+        const response = await axiosInstance.patch<PatchAccountRequest>(
+            "/account",
+            data
+        );
+        return response.data as User;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            throw new Error(
+                err.response?.data?.message || "Błąd aktualizacji konta"
+            );
+        }
+        throw new Error("Wystąpił nieoczekiwany błąd");
+    }
 };

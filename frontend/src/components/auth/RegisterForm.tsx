@@ -5,6 +5,7 @@ import { Password } from "primereact/password";
 import { Card } from "primereact/card";
 import { FormField } from "./FormField";
 import { FormError } from "./FormError";
+import { isPlateValid, normalizePlate } from "../../utils/plateUtils";
 
 interface RegisterFormProps {
     errorMessage?: string;
@@ -56,10 +57,10 @@ function validateForm(
         errors.confirmPassword = "Hasła nie są identyczne";
     }
 
-    const normalizedPlate = plate.trim().toUpperCase();
+    const normalizedPlate = normalizePlate(plate);
     if (!normalizedPlate) {
         errors.plate = "Tablica rejestracyjna jest wymagana";
-    } else if (!/^[A-Z]{1,3}[A-Z0-9]{2,5}$/.test(normalizedPlate)) {
+    } else if (!isPlateValid(normalizedPlate)) {
         errors.plate = "Nieprawidłowy format tablicy rejestracyjnej";
     }
 

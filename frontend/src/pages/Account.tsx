@@ -1,12 +1,20 @@
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
+import { useState } from "react";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
+import { InputText } from "primereact/inputtext";
 import { Avatar } from "primereact/avatar";
 import { useAuth } from "../hooks/useAuth";
+import { patchAccount } from "../api/auth";
+import type { ApiErrorModel } from "../models/ApiErrorModel";
+import { isPlateValid, normalizePlate } from "../utils/plateUtils";
 
 export function Account() {
-    const { user, token, isAuthenticated, logout } = useAuth();
-    const navigate = useNavigate();
+    const { user, setUser, token, isAuthenticated, logout } = useAuth();
+    const [editingPlate, setEditingPlate] = useState(false);
+    const [plateValue, setPlateValue] = useState(user?.plate ?? "");
+    const [plateError, setPlateError] = useState<string | undefined>(undefined);
+    const [isSaving, setIsSaving] = useState(false);
 
     const copyToken = async () => {
         if (!token) return;
@@ -47,6 +55,40 @@ export function Account() {
             </div>
         );
     }
+
+    const startEdit = () => {
+        setPlateValue(user.plate ?? "");
+        setPlateError(undefined);
+        setEditingPlate(true);
+    };
+
+    const cancelEdit = () => {
+        setEditingPlate(false);
+        setPlateError(undefined);
+        setPlateValue(user.plate ?? "");
+    };
+
+    const savePlate = async () => {
+        const normalized = normalizePlate(plateValue);
+        if (!isPlateValid(normalized)) {
+            setPlateError("Nieprawidłowy format tablicy rejestracyjnej");
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            const updated = await patchAccount({ plate: normalized });
+            setUser(updated);
+            setEditingPlate(false);
+        } catch (e) {
+            setPlateError(
+                (e as ApiErrorModel).message ||
+                    "Błąd serwera podczas aktualizacji"
+            );
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     return (
         <div
@@ -91,14 +133,6 @@ export function Account() {
                             gap: "0.4rem",
                         }}
                     >
-                        {/* Mozna dodac edytowanie tablicy rejestracyjnej */}
-                        <Button
-                            label="Edytuj profil"
-                            icon="pi pi-user-edit"
-                            className="p-button-outlined"
-                            onClick={() => navigate("/account/edit")}
-                            style={{ padding: "0.4rem 0.6rem" }}
-                        />
                         <Button
                             label="Wyloguj"
                             icon="pi pi-sign-out"
@@ -145,8 +179,61 @@ export function Account() {
                         >
                             Tablica
                         </div>
-                        <div style={{ color: "#333", fontSize: "0.95rem" }}>
-                            {user.plate}
+                        <div
+                            style={{
+                                color: "#333",
+                                fontSize: "0.95rem",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.5rem",
+                            }}
+                        >
+                            {!editingPlate ? (
+                                <>
+                                    <span>{user.plate}</span>
+                                    <Button
+                                        icon="pi pi-pencil"
+                                        className="p-button-text"
+                                        aria-label="Edytuj tablicę"
+                                        onClick={startEdit}
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <InputText
+                                        value={plateValue}
+                                        onChange={(e) =>
+                                            setPlateValue(
+                                                normalizePlate(e.target.value)
+                                            )
+                                        }
+                                        style={{ width: 200 }}
+                                    />
+                                    <Button
+                                        icon="pi pi-check"
+                                        className="p-button-text"
+                                        onClick={savePlate}
+                                        disabled={isSaving}
+                                        aria-label="Zapisz tablicę"
+                                    />
+                                    <Button
+                                        icon="pi pi-times"
+                                        className="p-button-text"
+                                        onClick={cancelEdit}
+                                        aria-label="Anuluj"
+                                    />
+                                    {plateError && (
+                                        <div
+                                            style={{
+                                                color: "#c00",
+                                                marginLeft: "0.5rem",
+                                            }}
+                                        >
+                                            {plateError}
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
 
                         <div

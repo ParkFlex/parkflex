@@ -12,6 +12,7 @@ import parkflex.db.UserTable
 import parkflex.models.ApiErrorModel
 import parkflex.models.RegisterResponse
 import parkflex.models.UserPublicModel
+import parkflex.models.PatchAccountRequest
 import parkflex.repository.UserRepository
 import parkflex.runDB
 import parkflex.utils.currentUserEntity
@@ -51,18 +52,13 @@ fun Route.registerRoute() {
         val name = req.name
         val email = req.email
         val password = req.password
-        val plateRaw = req.plate
-        var plate = plateRaw.trim().uppercase()
-        // Remove all non-alphanumeric characters
-        plate = plate.replace(Regex("[^A-Z0-9]"), "")
-
+        val plate = UserRepository.normalizePlate(req.plate)
         if (name.isBlank() || email.isBlank() || password.isBlank() || plate.isBlank()) {
             call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawne dane w request: brakujace pola", "/api/register"))
             return@post
         }
 
-        val plateRegex = Regex("^[A-Z]{1,3}[A-Z0-9]{2,5}$")
-        if (!plateRegex.matches(plate)) {
+        if (!UserRepository.isPlateValid(plate)) {
             call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawny format tablicy rejestracyjnej", "/api/register"))
             return@post
         }
@@ -106,5 +102,59 @@ fun Route.registerRoute() {
             )
 
         call.respond(HttpStatusCode.Created, RegisterResponse(token, userModel))
+    }
+}
+
+fun Route.patchAccountRoute() {
+    patch {
+        val user = call.currentUserEntity()
+        if (user == null) {
+            call.respond(HttpStatusCode.NotFound, ApiErrorModel("Nie znaleziono użytkownika", "/api/whoami"))
+            return@patch
+        }
+        val userId = user.id.value
+
+        val req =
+            try {
+                call.receive<PatchAccountRequest>()
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawny JSON", "/api/account"))
+                return@patch
+            }
+
+        var plate = req.plate
+        if (plate != null) {
+            plate = UserRepository.normalizePlate(plate)
+            if (!UserRepository.isPlateValid(plate)) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    ApiErrorModel("Niepoprawne dane: nieprawidłowy format tablicy rejestracyjnej", "/api/account"),
+                )
+
+                return@patch
+            }
+
+            runDB {
+                UserRepository.updatePlate(userId, plate)
+            }
+        }
+
+        val updated = runDB { UserEntity.findById(userId) }
+
+        if (updated == null) {
+            call.respond(HttpStatusCode.InternalServerError, ApiErrorModel("Użytkownik nie odnaleziony po aktualizacji", "/api/account"))
+            return@patch
+        }
+
+        val userModel =
+            UserPublicModel(
+                id = updated.id.value,
+                name = updated.fullName,
+                email = updated.mail,
+                role = updated.role,
+                plate = updated.plate
+            )
+
+        call.respond(HttpStatusCode.OK, userModel)
     }
 }

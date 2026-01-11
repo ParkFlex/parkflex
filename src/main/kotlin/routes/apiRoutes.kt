@@ -11,6 +11,12 @@ fun Route.apiRoutes() {
         registerRoute()
     }
 
+    route("/account") {
+        authenticate {
+            patchAccountRoute()
+        }
+    }
+
     route("/whoami") {
         authenticate {
             whoAmIRoute()
