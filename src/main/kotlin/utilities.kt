@@ -52,7 +52,10 @@ fun ApplicationCall.getRealIp(): String {
         ?: request.local.remoteHost
 }
 
-
+/**
+ * Custom Kotlinx Serialization serializer for LocalDateTime.
+ * Serializes to/from ISO 8601 date-time format (e.g., "2026-01-12T14:30:00").
+ */
 object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
@@ -65,6 +68,11 @@ object LocalDateTimeSerializer : KSerializer<LocalDateTime> {
 
 
 }
+
+/**
+ * Custom Kotlinx Serialization serializer for LocalTime.
+ * Serializes to/from HH:mm format (e.g., "14:30").
+ */
 object LocalTimeSerializer : KSerializer<LocalTime> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalTime", PrimitiveKind.STRING)
 
