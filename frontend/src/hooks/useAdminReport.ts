@@ -56,6 +56,12 @@ export const useAdminReport = () => {
     const changeReviewed = useCallback( async (reportId: number) => {
         try {
             await axios.patch(`/report/${reportId}/reviewed`, null, { headers: { 'Content-Type': 'application/json' } });
+            try {
+                const resp = await axios.get<AdminReportEntry[]>(`/reports`);
+                setAdminReportEntries(resp.data);
+            } catch (err) {
+                console.warn('Failed to refresh report list after changing reviewed status', err);
+            }
         } catch (err: unknown) {
             if (isAxiosError(err)) {
                 if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {

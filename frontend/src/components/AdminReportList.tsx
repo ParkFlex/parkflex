@@ -157,7 +157,7 @@ export function AdminReportList(){
 
                 selection={selectedReport}
                 onSelectionChange={(e) => setSelectedReport(e.value as AdminReportEntry | null)}
-                dataKey="plate"
+                dataKey="id"
                 emptyMessage="Brak zgłoszeń"
             >
                 <Column field='status' body={statusBodyTemplate} style={{ width: '15%', textAlign:'center' }} filter filterElement={statusRowFilterTemplate} filterApply={filterApplyTemplate} filterClear={filterClearTemplate} showFilterMatchModes={false}></Column>
@@ -174,11 +174,20 @@ export function AdminReportList(){
                         <p><strong>Komentarz:</strong> {selectedReport.description}</p>
                         <img src={selectedReport.image} alt="report" style={{ width: '100%', marginBottom: '1rem', display: 'block' }} />
                         {selectedReport.reviewed && !selectedReport.penalty && (
-                            <Button severity="secondary" style={{ width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={()=>{void approveReport(selectedReport.id);}}>Zaakceptuj</Button>)}
+                            <Button severity="secondary" style={{ width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={async ()=>{
+                                await approveReport(selectedReport.id);
+                                setSelectedReport(null);
+                            }}>Zaakceptuj</Button>)}
                         {!selectedReport.reviewed && (
                             <div style={{ display:'flex', flexDirection:'row', gap:'1rem' }}>
-                                <Button severity="secondary" style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={()=>{void approveReport(selectedReport.id);}}>Zaakceptuj</Button>
-                                <Button style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={()=> {void changeReviewed(selectedReport.id);}}>Odrzuć</Button>
+                                <Button severity="secondary" style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={async ()=>{
+                                    await approveReport(selectedReport.id);
+                                    setSelectedReport(null);
+                                }}>Zaakceptuj</Button>
+                                <Button style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={async ()=> {
+                                    await changeReviewed(selectedReport.id);
+                                    setSelectedReport(null);
+                                }}>Odrzuć</Button>
                             </div>)}
                     </div>
                 )}
