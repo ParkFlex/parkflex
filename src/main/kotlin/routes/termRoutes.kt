@@ -1,13 +1,9 @@
 package parkflex.routes
 
-import io.ktor.server.application.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.route
 import io.ktor.server.sse.*
 import io.ktor.sse.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
 import parkflex.service.TermService
 
 fun Route.termRoutes() {
@@ -18,11 +14,12 @@ fun Route.termRoutes() {
                 event = TermService.heartbeat.event
             }
 
-            TermService.entry.consumeEach {
+            TermService.entry.ensureNotEmpty()
+
+            TermService.entry.map {
                 send(ServerSentEvent(it))
             }
         }
-
     }
 
     route("/exit") {
@@ -32,10 +29,11 @@ fun Route.termRoutes() {
                 event = TermService.heartbeat.event
             }
 
-            TermService.exit.consumeEach {
+            TermService.exit.ensureNotEmpty()
+
+            TermService.exit.map {
                 send(ServerSentEvent(it))
             }
         }
-
     }
 }
