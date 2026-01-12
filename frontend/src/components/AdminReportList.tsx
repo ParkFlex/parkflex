@@ -1,11 +1,12 @@
 import { DataTable, type DataTableFilterMeta } from "primereact/datatable";
 import { Column, type ColumnFilterElementTemplateOptions } from "primereact/column";
 import type { AdminReportEntry } from "../models/AdminReportEntry.tsx";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Dialog } from "primereact/dialog";
 import { FilterMatchMode } from "primereact/api";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import { Toast } from "primereact/toast";
 import {
     DateRangeFilterDialog,
     type DateRangeFilter,
@@ -19,6 +20,7 @@ import { useAdminReport } from "../hooks/useAdminReport.ts";
 export function AdminReportList(){
     const { adminReportEntries:report, approveReport, changeReviewed } = useAdminReport();
     const [selectedReport, setSelectedReport] = useState<AdminReportEntry | null>(null);
+    const toast = useRef<Toast>(null);
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         plate: { value: null, matchMode: FilterMatchMode.CONTAINS },
         status: { value: null, matchMode: FilterMatchMode.EQUALS }
@@ -148,6 +150,7 @@ export function AdminReportList(){
 
     return (
         <div style={{ borderColor:'#d4e2da' }}>
+            <Toast ref={toast} position={"bottom-center"}/>
             <DataTable
                 value={getFilteredReports()}
                 filters={filters}
@@ -175,14 +178,32 @@ export function AdminReportList(){
                         <img src={selectedReport.image} alt="report" style={{ width: '100%', marginBottom: '1rem', display: 'block' }} />
                         {selectedReport.reviewed && !selectedReport.penalty && (
                             <Button severity="secondary" style={{ width:'100%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={async ()=>{
-                                await approveReport(selectedReport.id);
-                                setSelectedReport(null);
+                                const success = await approveReport(selectedReport.id);
+                                if (success) {
+                                    setSelectedReport(null);
+                                } else {
+                                    toast.current?.show({
+                                        severity: 'error',
+                                        summary: 'Błąd',
+                                        detail: 'Nie udało się zaakceptować zgłoszenia',
+                                        life: 3000
+                                    });
+                                }
                             }}>Zaakceptuj</Button>)}
                         {!selectedReport.reviewed && (
                             <div style={{ display:'flex', flexDirection:'row', gap:'1rem' }}>
                                 <Button severity="secondary" style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={async ()=>{
-                                    await approveReport(selectedReport.id);
-                                    setSelectedReport(null);
+                                    const success = await approveReport(selectedReport.id);
+                                    if (success) {
+                                        setSelectedReport(null);
+                                    } else {
+                                        toast.current?.show({
+                                            severity: 'error',
+                                            summary: 'Błąd',
+                                            detail: 'Nie udało się zaakceptować zgłoszenia',
+                                            life: 3000
+                                        });
+                                    }
                                 }}>Zaakceptuj</Button>
                                 <Button style={{ width:'50%', marginBottom:'1rem', display:'flex', justifyContent:'center' }} onClick={async ()=> {
                                     await changeReviewed(selectedReport.id);

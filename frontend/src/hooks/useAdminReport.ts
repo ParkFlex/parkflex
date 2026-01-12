@@ -32,7 +32,7 @@ export const useAdminReport = () => {
         void fetchUserListEntries();
     }, [axios]);
 
-    const approveReport = useCallback( async (reportId: number) => {
+    const approveReport = useCallback( async (reportId: number): Promise<boolean> => {
         try {
             await axios.post(`/penalty`, { reportId: reportId }, { headers: { 'Content-Type': 'application/json' } });
             try {
@@ -41,15 +41,17 @@ export const useAdminReport = () => {
             } catch (err) {
                 console.warn('Failed to refresh report list after approving report', err);
             }
+            return true;
         } catch (err: unknown) {
             if (isAxiosError(err)) {
                 if (err && (err.code === 'ERR_CANCELED' || err.name === 'CanceledError')) {
-                    return;
+                    return false;
                 }
                 console.error('Error approving report', err);
             } else {
                 console.error('Unexpected error occurred', err);
             }
+            return false;
         }
     }, [axios]);
 
