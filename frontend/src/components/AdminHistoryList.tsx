@@ -116,6 +116,7 @@ export function AdminHistoryList() {
                 <OverlayPanel ref={statusOverlayRef}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '0.5rem' }}>
                         <div
+                            key="penalty"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -134,6 +135,7 @@ export function AdminHistoryList() {
                             <span>Kara</span>
                         </div>
                         <div
+                            key="active"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -152,6 +154,7 @@ export function AdminHistoryList() {
                             <span>Aktywna</span>
                         </div>
                         <div
+                            key="planned"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -170,6 +173,7 @@ export function AdminHistoryList() {
                             <span>Zaplanowana</span>
                         </div>
                         <div
+                            key="completed"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -233,7 +237,7 @@ export function AdminHistoryList() {
                 onSelectionChange={(e) => {
                     setSelectedEntry(e.value ? e.value as AdminHistoryEntry : null );
                 }}
-                dataKey="plate"
+                dataKey={(rowData: AdminHistoryEntry) => `${rowData.plate}-${rowData.startTime}-${rowData.spot}`}
                 emptyMessage="Brak historii"
             >
                 <Column field="status" header={statusHeaderTemplate} body={statusTemplate}
