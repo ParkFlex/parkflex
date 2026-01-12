@@ -8,6 +8,7 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.route
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
+import parkflex.models.UpdatePlateModel
 import parkflex.runDB
 
 fun Route.updatePlateRoutes() {
@@ -34,26 +35,17 @@ fun Route.updatePlateRoutes() {
                 return@patch
             }
 
-            val newPlate = call.receive<String>()
-            if (newPlate.isBlank()) {
+            val updatePlateRequest = call.receive<UpdatePlateModel>()
+            val receivedPlate = updatePlateRequest.plate
+            if (receivedPlate.isBlank()) {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = ApiErrorModel("Invalid or missing user_id", context = "/user/{user_id} PATCH")
+                    message = ApiErrorModel("Invalid or missing plate", context = "/user/{user_id} PATCH")
                 )
                 return@patch
             }
 
-            val plateRegex = Regex("^[A-Z]{3}-\\d{4}$")
-            if (!plateRegex.matches(newPlate)) {
-                call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = ApiErrorModel(
-                        message = "Invalid plate format. Expected format: XYZ-0000",
-                        context = "/user/{user_id} PATCH"
-                    )
-                )
-                return@patch
-            }
+            val newPlate = receivedPlate.uppercase().replace(Regex("[^A-Z0-9]"), "")
 
             val isPlate = runDB {
                 UserEntity.all().any { it.plate == newPlate }
