@@ -98,6 +98,7 @@ fun Route.reservationRoutes() {
                     context
                 )
             )
+            return@post
         }
 
         // Parse start time
