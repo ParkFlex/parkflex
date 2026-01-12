@@ -50,6 +50,7 @@ export const useGetSpots = (
             toast.current?.show(
                 {
                     sticky: false,
+                    life: 3000,
                     summary: summary,
                     detail: detail,
                     severity: "error",
