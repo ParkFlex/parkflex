@@ -1,4 +1,4 @@
-package parkflex.modules
+package parkflex.routes
 
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
