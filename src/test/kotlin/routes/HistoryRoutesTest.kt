@@ -142,6 +142,7 @@ class HistoryRoutesTest {
         val history = response.body<List<HistoryEntry>>()
         assertTrue(history.isEmpty(), "History should be empty for a user without a reservation")
     }
+
     @Test
     fun `test creating reservation via POST and verifying in history GET`() = testApplication {
         val db = setupTestDB()

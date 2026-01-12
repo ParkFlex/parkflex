@@ -34,9 +34,9 @@ import parkflex.db.PenaltyReason
 class ReservationRoutesTest {
 
     @Test
-    fun `test post reservation WoW user exist`() = testApplication{
+    fun `test post reservation WoW user exist`() = testApplication {
         val db = setupTestDB()
-        application{ configureTest(db) }
+        application { configureTest(db) }
         val client = testingClient()
 
         val (userId, spotId) = runDB {
@@ -78,9 +78,9 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD user doest exist `() = testApplication{
+    fun `test post reservation SAD user doest exist `() = testApplication {
         val db = setupTestDB()
-        application{ configureTest(db) }
+        application { configureTest(db) }
         val client = testingClient()
 
         val spotId = runDB {
@@ -116,9 +116,9 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation (spot = NULL) Take break go home `() = testApplication{
+    fun `test post reservation (spot = NULL) Take break go home `() = testApplication {
         val db = setupTestDB()
-        application{ configureTest(db) }
+        application { configureTest(db) }
         val client = testingClient()
 
         val (userId, spotId) = runDB {
@@ -146,7 +146,7 @@ class ReservationRoutesTest {
             duration = 45
         )
 
-        val response = client.post("api/reservation"){
+        val response = client.post("api/reservation") {
             contentType(ContentType.Application.Json)
             setBody(reservationRequest)
         }
@@ -157,6 +157,7 @@ class ReservationRoutesTest {
         assertEquals("Miejsce parkingowe nie istnieje", responseBody.message)
 
     }
+
     // @return@post in reservationRoutes
     @Test
     fun `test post reservation (spot = !normal)`() = testApplication {
@@ -196,9 +197,12 @@ class ReservationRoutesTest {
         assertEquals(HttpStatusCode.BadRequest, response.status)
 
         val responseBody = response.body<ApiErrorModel>()
-        assertEquals("Rezerwacje można tworzyć tylko na miejsce typu 'normal' (otrzymano abnormal", responseBody.message)
+        assertEquals(
+            "Rezerwacje można tworzyć tylko na miejsce typu 'normal' (otrzymano abnormal",
+            responseBody.message
+        )
     }
-    
+
     @Test
     fun `test post reservation SAD spot busy`() = testApplication {
         val db = setupTestDB()
@@ -207,21 +211,23 @@ class ReservationRoutesTest {
 
         val (_, spotId) = runDB {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
-            
+
             val user = UserEntity.new(id = 2) {
-                fullName = "Integrator Test"; mail = "flow@parkflex.pl"; hash = "hash"; plate = "PO-FLOW1"; role = "user"
+                fullName = "Integrator Test"; mail = "flow@parkflex.pl"; hash = "hash"; plate = "PO-FLOW1"; role =
+                "user"
             }
 
             val otherUser = UserEntity.new(id = 3) {
-                fullName = "Inny Uzytkownik"; mail = "other@parkflex.pl"; hash = "hash"; plate = "PO-OTHER"; role = "user"
+                fullName = "Inny Uzytkownik"; mail = "other@parkflex.pl"; hash = "hash"; plate = "PO-OTHER"; role =
+                "user"
             }
-            
+
             val spot = SpotEntity.new { role = "normal"; displayOrder = 1 }
 
             ReservationEntity.new {
                 this.start = LocalDateTime.now().plusDays(1)
                 this.duration = 60
-                this.user = otherUser 
+                this.user = otherUser
                 this.spot = spot
             }
             user.id.value to spot.id.value
@@ -251,16 +257,17 @@ class ReservationRoutesTest {
         val (_, spotId) = runDB {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
             val user = UserEntity.new(id = 2) {
-                fullName = "Integrator Test"; mail = "flow@parkflex.pl"; hash = "hash"; plate = "PO-FLOW1"; role = "user"
+                fullName = "Integrator Test"; mail = "flow@parkflex.pl"; hash = "hash"; plate = "PO-FLOW1"; role =
+                "user"
             }
             val spot = SpotEntity.new { role = "normal"; displayOrder = 1 }
             user.id.value to spot.id.value
         }
 
         val reservationRequest = CreateReservationRequest(
-        spot_id = spotId,
-        start = "2024-12-12 10:00", 
-        duration = 45
+            spot_id = spotId,
+            start = "2024-12-12 10:00",
+            duration = 45
         )
 
         val response = client.post("api/reservation") {
@@ -281,10 +288,11 @@ class ReservationRoutesTest {
         val (_, spotId) = runDB {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
             val user = UserEntity.new(id = 2) {
-                fullName = "Integrator Test"; mail = "flow@parkflex.pl"; hash = "hash"; plate = "PO-FLOW1"; role = "user"
+                fullName = "Integrator Test"; mail = "flow@parkflex.pl"; hash = "hash"; plate = "PO-FLOW1"; role =
+                "user"
             }
             val spot = SpotEntity.new { role = "normal"; displayOrder = 1 }
-            
+
             ReservationEntity.new {
                 this.start = LocalDateTime.now().plusHours(1)
                 this.duration = 30
@@ -311,7 +319,7 @@ class ReservationRoutesTest {
 
         val (_, spotId) = runDB {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
-            
+
             val user = UserEntity.new(id = 2) {
                 fullName = "Zbanowany Użytkownik"
                 mail = "banned@parkflex.pl"
@@ -319,10 +327,10 @@ class ReservationRoutesTest {
                 plate = "PO-BANNED"
                 role = "user"
             }
-            
-            val spot = SpotEntity.new { 
+
+            val spot = SpotEntity.new {
                 role = "normal"
-                displayOrder = 1 
+                displayOrder = 1
             }
 
             val oldReservation = ReservationEntity.new {
@@ -334,8 +342,8 @@ class ReservationRoutesTest {
 
             PenaltyEntity.new {
                 this.reservation = oldReservation
-                this.reason = PenaltyReason.Overtime 
-                this.fine = 50L 
+                this.reason = PenaltyReason.Overtime
+                this.fine = 50L
                 this.paid = false
                 this.due = LocalDateTime.now().plusDays(7)
             }
@@ -358,27 +366,28 @@ class ReservationRoutesTest {
         val responseBody = response.body<ApiErrorModel>()
         assertEquals("Banowany uzytkownik nie moze robic rezerwacji", responseBody.message)
     }
+
     @Test
     fun `test post reservation SAD no authorization header`() = testApplication {
-            val db = setupTestDB()
-            application { configureTest(db) }
+        val db = setupTestDB()
+        application { configureTest(db) }
 
-            val client = testingClient()
+        val client = testingClient()
 
-            val reservationRequest = CreateReservationRequest(
-                spot_id = 1,
-                start = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_DATE_TIME),
-                duration = 30
-            )
+        val reservationRequest = CreateReservationRequest(
+            spot_id = 1,
+            start = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ISO_DATE_TIME),
+            duration = 30
+        )
 
-            val response = client.post("api/reservation") {
-                contentType(ContentType.Application.Json)
-                setBody(reservationRequest)
-            }
+        val response = client.post("api/reservation") {
+            contentType(ContentType.Application.Json)
+            setBody(reservationRequest)
+        }
 
-            assertEquals(HttpStatusCode.Unauthorized, response.status)
-            val responseBody = response.body<ApiErrorModel>()
-            assertEquals("Brak tokena lub token nieprawidlowy", responseBody.message)
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+        val responseBody = response.body<ApiErrorModel>()
+        assertEquals("Brak tokena lub token nieprawidlowy", responseBody.message)
     }
 
     @Test
