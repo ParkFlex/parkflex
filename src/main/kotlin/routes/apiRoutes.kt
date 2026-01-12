@@ -31,10 +31,6 @@ fun Route.apiRoutes() {
         spotsRoutes()
     }
 
-    route("/ip") {
-        ipRoutes()
-    }
-
     route("/arrive") {
         arrivalRoutes()
     }
