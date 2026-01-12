@@ -11,6 +11,33 @@ import { Toast } from "primereact/toast";
 import { useGetSpots } from "../hooks/useGetSpots.tsx";
 import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
 
+/**
+ * Komponent strony parkingu z rezerwacją miejsc.
+ * 
+ * Główny komponent do zarządzania rezerwacjami miejsc parkingowych.
+ * Umożliwia wybór miejsca, przedziału czasowego i dokonanie rezerwacji.
+ * 
+ * @remarks
+ * Funkcjonalności:
+ * - Wyświetlanie siatki miejsc parkingowych
+ * - Wybór dnia i godzin rezerwacji
+ * - Rezerwacja wybranego miejsca
+ * - Obsługa błędów i komunikatów toast
+ * - Wyświetlanie stanu blokady użytkownika
+ * 
+ * Stan komponentu:
+ * - `data`: Lista dostępnych miejsc parkingowych
+ * - `selectedId`: ID wybranego miejsca
+ * - `selectedDayTime`: Wybrany przedział czasowy rezerwacji
+ * - `isBanned`: Flaga blokady użytkownika
+ * 
+ * @example
+ * ```tsx
+ * import { ParkingPage } from './pages/Parking';
+ * 
+ * <Route path="/parking" element={<ParkingPage />} />
+ * ```
+ */
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
     const [isBanned, setIsBanned] = useState(false);
