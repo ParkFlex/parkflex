@@ -57,6 +57,7 @@ fun Route.userFullRoutes() {
                 }
 
                 val thisUser = UserListEntry(
+                    id = entry.id.value,
                     plate = entry.plate,
                     role = entry.role,
                     name = entry.fullName,

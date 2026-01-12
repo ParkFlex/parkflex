@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserListEntry(
+    val id: Long,
     val plate: String,
     val role: String,
     val name: String,
