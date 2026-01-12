@@ -24,7 +24,7 @@ export function AdminHistoryCard({ plate, startTime }: { plate: string, startTim
     return (
         <div style={{ textAlign:"left" }}>
             <Card title={`${formatDate(start)}`} subTitle={`${formatTime(start)}-${formatTime(endTime)}`} style={{ marginBottom:'1.5rem', fontSize:"20px" }}>
-                <div> Rejestracja użytkownika: {entry.plate} </div>
+                <div> Rezerwacja użytkownika: {entry.plate} </div>
                 <div> Miejsce parkingowe: {entry.spot} </div>
             </Card>
         </div>

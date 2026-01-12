@@ -6,11 +6,10 @@ import { InputText } from "primereact/inputtext";
 import { useUserList } from "../hooks/useUserList.ts";
 import { formatDateTime } from "../utils/dateUtils.ts";
 
-export function AdminUserCard({ plate }: { plate: string }){
+export function AdminUserCard({ userId }: { userId: number }){
 
-    // include changePlate from the hook so we can send plate updates to backend
     const { userListEntries: users, cancelPenalty, changePlate }= useUserList();
-    const user = users.find(u => u.plate === plate);
+    const user = users.find(u => u.id === userId);
     const [visible, setVisible] = useState(false);
     const [newPlate, setNewPlate] = useState<string>('');
     const canSave = newPlate.trim().length > 0;
@@ -47,7 +46,7 @@ export function AdminUserCard({ plate }: { plate: string }){
         return (
             <div style={{ textAlign:"left" }}>
                 <Card title={`Użytkownik nie znaleziony`} style={{ marginTop:'1rem' }}>
-                    Brak użytkownika o numerze {plate}
+                    Brak użytkownika o id {userId}
                 </Card>
             </div>
         );

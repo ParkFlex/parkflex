@@ -14,12 +14,14 @@ export function AdminUserList(){
     const [filters, setFilters] = useState<DataTableFilterMeta>({
         'plate': { value: null, matchMode: 'startsWith' },
         'role': { value: null, matchMode: 'equals' },
-        'blocked': { value: null, matchMode: 'equals' }
+        'status': { value: null, matchMode: 'equals' }
     });
     const [selectedUser, setSelectedUser] = useState<AdminUserEntry | null>(null);
 
-    const blockedTemplate = (rowData: AdminUserEntry) => {
-        return <i className={classNames('pi', { 'pi-ban': rowData.currentPenalty, 'pi-check': !rowData.currentPenalty })} style={rowData.currentPenalty ? { color: 'red' } : { color: 'green' }}></i>;
+    const statusBodyTemplate = (rowData: AdminUserEntry) => {
+        const entryStatus = getStatus(rowData);
+        if (entryStatus === 'blocked') return <i className={classNames('pi', 'pi-ban')} style={{ color: 'red' }} />;
+        return <i className={classNames('pi', 'pi-check')} style={{ color: 'green' }} />;
     };
 
     const roleTemplate = (user: AdminUserEntry) => {
@@ -47,25 +49,52 @@ export function AdminUserList(){
         );
     };
 
-    const blockedRowFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
+    const getStatus = (entry: AdminUserEntry): string => {
+        if (entry.currentPenalty) return 'blocked';
+        return 'active';
+    };
+
+    const statusRowFilterTemplate = (options: ColumnFilterElementTemplateOptions) => {
+        const current = options.value as string | null;
         return (
             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                 <Button
                     icon="pi pi-ban"
                     rounded
-                    outlined={options.value !== true}
+                    outlined={current !== 'blocked'}
                     severity="danger"
-                    onClick={() => options.filterApplyCallback(options.value === true ? null : true)}
+                    onClick={() => options.filterApplyCallback(current === 'blocked' ? null : 'blocked')}
                 />
                 <Button
                     icon="pi pi-check"
                     rounded
-                    outlined={options.value !== false}
+                    outlined={current !== 'active'}
                     severity="success"
-                    onClick={() => options.filterApplyCallback(options.value === false ? null : false)}
+                    onClick={() => options.filterApplyCallback(current === 'active' ? null : 'active')}
                 />
             </div>
         );
+    };
+
+    const getFilteredUsers = (): (AdminUserEntry & { status: string })[] => {
+        let items = users ?? [];
+
+        const plateRaw = (filters as any)?.plate?.value;
+        if (plateRaw) {
+            const needle = String(plateRaw).toLowerCase();
+            items = items.filter(i => (i.plate || '').toLowerCase().startsWith(needle));
+        }
+
+        const rawStatus = (filters as any)?.status?.value;
+        let statusVal: string | null = null;
+        if (rawStatus === true || rawStatus === 'blocked' || rawStatus === 'yes') statusVal = 'blocked';
+        else if (rawStatus === false || rawStatus === 'active' || rawStatus === 'no') statusVal = 'active';
+
+        if (statusVal !== null) {
+            items = items.filter(e => getStatus(e) === statusVal);
+        }
+
+        return items.map(e => ({ ...e, status: getStatus(e) }));
     };
 
     const tagStyleForRole = (role: string) => {
@@ -87,7 +116,7 @@ export function AdminUserList(){
     return (
         <div style={{ borderColor:'#d4e2da' }}>
             <DataTable
-                value={users ?? []}
+                value={getFilteredUsers()}
                 filters={filters}
                 onFilter={(e) => setFilters(e.filters)}
                 filterDisplay="menu"
@@ -98,11 +127,11 @@ export function AdminUserList(){
                 emptyMessage="Brak użytkowników"
             >
                 <Column field="plate" header="Tablica Rejestracyjna" filter showFilterMatchModes={false} filterPlaceholder='wyszukaj' filterApply={filterApplyTemplate} filterClear={filterClearTemplate} style={{ minWidth:'70%' }}></Column>
-                <Column field="blocked" header="Status" body={blockedTemplate} dataType="boolean" filter filterElement={blockedRowFilterTemplate} filterApply={filterApplyTemplate} filterClear={filterClearTemplate} style={{ width: '20%', textAlign:"center" }}></Column>
+                <Column field='status' header="Status" body={statusBodyTemplate} filter filterElement={statusRowFilterTemplate} filterApply={filterApplyTemplate} filterClear={filterClearTemplate} showFilterMatchModes={false} style={{ width: '20%', textAlign:"center" }}></Column>
             </DataTable>
 
             <Dialog header={dialogHeader(selectedUser)} visible={selectedUser !== null} onHide={() => setSelectedUser(null)} modal style={{ width:'95%' }}>
-                {selectedUser ? <AdminUserCard plate={selectedUser.plate} /> : null}
+                {selectedUser ? <AdminUserCard userId={selectedUser.id} /> : null}
             </Dialog>
         </div>
     );
