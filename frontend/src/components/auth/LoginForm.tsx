@@ -89,8 +89,14 @@ export function LoginForm({ onLogin, errorMessage }: LoginFormProps) {
                             handleInputChange("password", e.target.value)
                         }
                         placeholder="Wpisz swoje hasło"
-                        style={{ width: "100%" }}
-                        inputStyle={{ width: "100%" }}
+                        style={{
+                            width: "100%",
+                            boxSizing: "border-box",
+                            display: "grid",
+                            gridTemplateColumns: "1fr auto",
+                            alignItems: "center",
+                        }}
+                        inputStyle={{ width: "100%", boxSizing: "border-box" }}
                         toggleMask
                         feedback={false}
                         className={errors.password ? "p-invalid" : ""}
