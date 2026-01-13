@@ -6,6 +6,38 @@ import { Toast } from "primereact/toast";
 import { type RefObject, useCallback } from "react";
 import type { SpotState } from "../models/SpotState.ts";
 
+/**
+ * Hook do pobierania listy miejsc parkingowych dla wybranego przedziału czasowego.
+ * 
+ * @param setSpots - Funkcja callback do aktualizacji stanu z listą miejsc
+ * @param toast - Referencja do komponentu Toast do wyświetlania komunikatów o błędach
+ * @returns Funkcja callback do pobierania miejsc dla wybranej daty i godzin
+ * 
+ * @remarks
+ * Hook zwraca zmemoizowaną funkcję, która:
+ * 1. Konstruuje przedział czasowy na podstawie dnia i godzin
+ * 2. Wysyła zapytanie GET /api/spots z parametrami start i end
+ * 3. Sortuje miejsca według displayOrder
+ * 4. Aktualizuje stan przez callback setSpots
+ * 5. Obsługuje błędy i wyświetla je przez Toast
+ * 
+ * @example
+ * ```tsx
+ * const [spots, setSpots] = useState<SpotState[]>([]);
+ * const toast = useRef<Toast>(null);
+ * const getSpots = useGetSpots(setSpots, toast);
+ * 
+ * // Pobierz miejsca na jutro, 8:00-16:00
+ * const tomorrow = new Date();
+ * tomorrow.setDate(tomorrow.getDate() + 1);
+ * const start = new Date();
+ * start.setHours(8, 0);
+ * const end = new Date();
+ * end.setHours(16, 0);
+ * 
+ * getSpots(tomorrow, start, end);
+ * ```
+ */
 export const useGetSpots = (
     setSpots: (xs: SpotState[]) => void,
     toast: RefObject<Toast | null>

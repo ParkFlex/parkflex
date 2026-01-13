@@ -2,12 +2,44 @@ import { Button } from "primereact/button";
 
 import type { SpotState } from "../../models/SpotState.ts";
 
+/**
+ * Właściwości komponentu Spot.
+ */
 export interface SpotProps {
+    /** Stan miejsca parkingowego */
     state: SpotState;
+    /** ID aktualnie wybranego miejsca */
     selectedId: number | null;
+    /** Callback wywoływany przy wyborze miejsca */
     onSelect: (id: number) => void;
 }
 
+/**
+ * Komponent reprezentujący pojedyncze miejsce parkingowe w gridzie.
+ * 
+ * @param props - Właściwości komponentu
+ * 
+ * @remarks
+ * Komponent wyświetla różne typy "miejsc":
+ * - **normal** - Standardowe miejsce parkingowe (przycisk z numerem)
+ * - **gate** - Brama/wjazd (symbol ↓↑)
+ * - **blank** - Puste pole (niewidoczne)
+ * - **arrow-XX** - Strzałki kierunkowe (RD, UR, LU, DL, UP, DOWN, LEFT, RIGHT)
+ * 
+ * Kolory:
+ * - Zajęte: #b5ccbf (szary)
+ * - Wybrane: #4d7975 (ciemnozielony)
+ * - Dostępne: #f8f9fa (biały)
+ * 
+ * @example
+ * ```tsx
+ * <Spot
+ *   state={{ id: 42, role: "normal", occupied: false, displayOrder: 1 }}
+ *   selectedId={42}
+ *   onSelect={(id) => console.log('Wybrano miejsce:', id)}
+ * />
+ * ```
+ */
 export function Spot({ state, selectedId, onSelect }: SpotProps) {
     const { id, occupied, role } = state;
     const isSelected = selectedId === id;

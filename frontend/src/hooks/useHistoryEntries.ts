@@ -4,6 +4,36 @@ import { useAxios } from './useAxios';
 import type { HistoryEntry } from "../models/HistoryEntry.tsx";
 import { isAxiosError } from "axios";
 
+/**
+ * Hook do pobierania historii rezerwacji użytkownika.
+ * 
+ * @returns Obiekt zawierający posortowane wpisy historii
+ * 
+ * @remarks
+ * TODO: userId jest zahardkodowane na wartość 2.
+ * Należy pobierać prawdziwe ID zalogowanego użytkownika z kontekstu/stanu.
+ * 
+ * Hook automatycznie:
+ * 1. Pobiera dane z GET /api/historyEntry?userId=2
+ * 2. Konwertuje stringi dat na obiekty Date
+ * 3. Sortuje wpisy od najnowszych do najstarszych
+ * 4. Obsługuje błędy (w tym anulowanie zapytań)
+ * 
+ * @example
+ * ```tsx
+ * function HistoryPage() {
+ *   const { entries } = useHistoryEntries();
+ *   
+ *   return (
+ *     <div>
+ *       {entries.map(entry => (
+ *         <div key={entry.id}>{entry.startTime.toLocaleString()}</div>
+ *       ))}
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
 export const useHistoryEntries = () => {
     const axios = useAxios();
     const [entries, setEntries] = useState<HistoryEntry[]>([]);

@@ -3,6 +3,37 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 
+/**
+ * Komponent wyświetlający ekran blokady konta użytkownika.
+ * 
+ * @param props - Właściwości komponentu
+ * @param props.days - Liczba dni pozostałych do końca blokady
+ * @param props.reason - Powód zablokowania konta
+ * @param props.charge - Kwota opłaty za wcześniejsze odblokowanie (w PLN)
+ * @param props.onPay - Callback wywoływany po opłaceniu blokady z kodem płatności
+ * @param props.onWait - Callback wywoływany gdy użytkownik wybiera oczekiwanie
+ * 
+ * @remarks
+ * Komponent umożliwia użytkownikowi:
+ * - Wyświetlenie powodu i czasu trwania blokady
+ * - Opłacenie blokady przez podanie 6-cyfrowego kodu
+ * - Rezygnację z opłaty i oczekiwanie na automatyczne odblokowanie
+ * 
+ * Walidacja:
+ * - Kod płatności musi mieć dokładnie 6 cyfr
+ * - Akceptowane są tylko znaki numeryczne
+ * 
+ * @example
+ * ```tsx
+ * <ErrorBanned
+ *   days={3}
+ *   reason="przekroczenie limitu rezerwacji"
+ *   charge={150}
+ *   onPay={(code) => console.log('Opłacono kodem:', code)}
+ *   onWait={() => console.log('Użytkownik czeka')}
+ * />
+ * ```
+ */
 export const ErrorBanned = ({
     days,
     reason,

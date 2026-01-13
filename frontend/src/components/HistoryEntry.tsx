@@ -2,7 +2,33 @@ import { Card } from 'primereact/card';
 import { addMinutes, formatTime, isActiveNow, endsBeforeNow } from "../utils/dateUtils";
 import type { HistoryEntry } from "../models/HistoryEntry.tsx";
 
-
+/**
+ * Komponent wyświetlający pojedynczy wpis w historii rezerwacji.
+ * 
+ * @param props - Właściwości komponentu
+ * @param props.entry - Dane wpisu historii do wyświetlenia
+ * 
+ * @remarks
+ * Komponent automatycznie określa status rezerwacji:
+ * - **Kara** (czerwony) - jeśli status === 'penalty'
+ * - **Aktywny** (niebieski) - jeśli rezerwacja jest w trakcie
+ * - **Zakończony** (zielony) - jeśli rezerwacja się zakończyła
+ * - **Zaplanowany** (zielony) - jeśli rezerwacja jest w przyszłości
+ * 
+ * TODO: Funkcja endsBeforeNow może nie działać poprawnie - wymaga weryfikacji.
+ * 
+ * @example
+ * ```tsx
+ * const entry: HistoryEntry = {
+ *   startTime: new Date(),
+ *   durationMin: 120,
+ *   status: "active",
+ *   spot: 42
+ * };
+ * 
+ * <HistoryEntryComp entry={entry} />
+ * ```
+ */
 export default function HistoryEntryComp({ entry }: { entry: HistoryEntry }) {
     const startDate = new Date(entry.startTime);
     const endTime = addMinutes(startDate, entry.durationMin);

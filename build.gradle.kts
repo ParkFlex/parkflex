@@ -151,6 +151,52 @@ val npmBuild = tasks.register<Exec>("npmBuild") {
     commandLine(npmBin, "run", "build")
 }
 
+val npmDocs = tasks.register<Exec>("npmDocs") {
+    group = "npm"
+
+    dependsOn(npmCi)
+
+    workingDir("frontend")
+
+    commandLine(npmBin, "run", "docs")
+    
+    outputs.upToDateWhen { false }
+    
+    doFirst {
+        delete("frontend/docs")
+    }
+}
+
+tasks.register<JavaExec>("frontendDocs") {
+    group = "documentation"
+    description = "Generate TypeDoc documentation and serve it on http://localhost:8002"
+
+    dependsOn(npmDocs)
+
+    mainClass.set("DokkaServer")
+    
+    doFirst {
+        val docsDir = file("frontend/docs")
+        
+        if (!docsDir.exists()) {
+            throw GradleException("TypeDoc documentation not found at ${docsDir.absolutePath}")
+        }
+
+        val serverFile = file("DokkaServer.java")
+        val outputDir = file("${layout.buildDirectory.get()}/dokkaServer")
+        outputDir.mkdirs()
+
+        val javac = org.gradle.internal.jvm.Jvm.current().javacExecutable
+        
+        exec {
+            commandLine(javac.absolutePath, "-d", outputDir.absolutePath, serverFile.absolutePath)
+        }
+
+        classpath = files(outputDir)
+        args = listOf(docsDir.absolutePath, "8002")
+    }
+}
+
 val fullBuild = tasks.register("fullBuild") {
     group = "build"
 
