@@ -22,14 +22,9 @@ fun Route.userReportRoutes() {
             )
             return@post
         }
-        val description = entry.description
-        if (description.isBlank()) {
-            call.respond(
-                HttpStatusCode.BadRequest,
-                ApiErrorModel("Description number cannot be blank.", "/report POST")
-            )
-            return@post
-        }
+
+        val description = entry.description ?: ""
+
         val image = entry.image
         if (image.isBlank()) {
             call.respond(
