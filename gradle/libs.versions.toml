@@ -4,8 +4,9 @@ exposed = "0.61.0"
 h2 = "2.3.232"
 mariadb = "3.3.1"
 kotlin = "2.2.20"
-ktor = "3.3.1"
+ktor = "3.3.3"
 logback = "1.4.14"
+jbcrypt = "0.4"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -30,6 +31,8 @@ mariadb = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mari
 
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+
+jbcrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrypt"}
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.ktor.server.swagger)
     implementation(libs.ktor.server.cors)
     implementation(libs.exposed.java.time)
+    implementation(libs.jbcrypt)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test)
@@ -68,6 +69,21 @@ ktor {
         // Kinda a hack but this way we can keep the spec in the repo
         target = project.layout.projectDirectory.file("src/main/resources/openapi/generated.json")
     }
+}
+
+tasks.register("runDebug") {
+    group = "application"
+
+    doFirst {
+        tasks.run.configure {
+            environment(
+                "ENABLE_MOCK_DATA" to "true",
+                "ENABLE_H2_SOCKETS" to "true"
+            )
+        }
+    }
+
+    finalizedBy(tasks.run)
 }
 
 tasks.register("apiDoc") {

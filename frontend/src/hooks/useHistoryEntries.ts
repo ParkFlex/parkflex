@@ -10,7 +10,7 @@ export const useHistoryEntries = () => {
 
     useEffect(() => {
         const fetchEntries = async () => {
-            const userId = 1;
+            const userId = 2;
 
             // const json = {
             //     "userId": userId

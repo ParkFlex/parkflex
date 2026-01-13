@@ -10,10 +10,11 @@ export default defineConfig({
         environment: "jsdom",
         globals: true,
     },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                silenceDeprecations: ["global-builtin", "color-functions", "import"],
+    server: {
+        proxy: {
+            "/api": {
+                target: "http://127.0.0.1:8080",
+                changeOrigin: true
             }
         }
     }
