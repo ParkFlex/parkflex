@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.host.common)
     implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.sse)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.client.content.negotiation)
@@ -95,6 +96,36 @@ tasks.register("apiDoc") {
 
     doLast {
         println("API Documentation generated")
+    }
+}
+
+tasks.register<JavaExec>("serveDokka") {
+    group = "documentation"
+    description = "Generate Dokka documentation and serve it on http://localhost:8001"
+
+    dependsOn("dokkaGeneratePublicationHtml")
+
+    mainClass.set("DokkaServer")
+    
+    doFirst {
+        val dokkaDir = file("${layout.buildDirectory.get()}/dokka/html")
+        
+        if (!dokkaDir.exists()) {
+            throw GradleException("Dokka documentation not found at ${dokkaDir.absolutePath}")
+        }
+
+        val serverFile = file("DokkaServer.java")
+        val outputDir = file("${layout.buildDirectory.get()}/dokkaServer")
+        outputDir.mkdirs()
+
+        val javac = org.gradle.internal.jvm.Jvm.current().javacExecutable
+        
+        exec {
+            commandLine(javac.absolutePath, "-d", outputDir.absolutePath, serverFile.absolutePath)
+        }
+
+        classpath = files(outputDir)
+        args = listOf(dokkaDir.absolutePath, "8001")
     }
 }
 

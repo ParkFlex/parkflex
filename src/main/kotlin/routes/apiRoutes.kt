@@ -18,7 +18,7 @@ fun Route.apiRoutes() {
         userReportRoutes()
     }
 
-    route("/historyEntry"){
+    route("/historyEntry") {
         historyRoutes()
     }
 
@@ -30,8 +30,19 @@ fun Route.apiRoutes() {
         spotRoutes()
     }
 
-    route("/spots"){
+    route("/spots") {
         spotsRoutes()
     }
 
+    route("/ip") {
+        ipRoutes()
+    }
+
+    route("/arrive") {
+        arrivalRoutes()
+    }
+
+    route("/leave") {
+        leaveRoutes()
+    }
 }

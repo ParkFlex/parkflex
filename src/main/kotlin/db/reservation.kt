@@ -32,13 +32,17 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
     val penalties by PenaltyEntity referrersOn PenaltyTable.reservation
 
     /** When has the user arrived at the parking? */
-    val arrived by ReservationTable.arrived
+    var arrived by ReservationTable.arrived
 
     /** When has the user left the parking? */
-    val left by ReservationTable.left
+    var left by ReservationTable.left
 
     val hasPenalty: Boolean
         get() = !this.penalties.empty()
+
+    fun end(): LocalDateTime =
+        start.plusMinutes((duration.toLong()))
+
 
     fun timeCollidesWith(breakDurationMinutes: Long, startTime: LocalDateTime, endTime: LocalDateTime): Boolean {
         val existingEnd = this.start.plusMinutes(this.duration.toLong())

@@ -3,10 +3,12 @@ package parkflex
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import org.jetbrains.exposed.sql.Database
 import parkflex.config.AppConfig
 import parkflex.config.TestConfig
 
 import parkflex.modules.*
+import parkflex.service.TermService
 
 /**
  * This is the entrypoint of our program. Here we create the HTTP server and start it.
@@ -28,15 +30,20 @@ suspend fun Application.root() {
     configureCORS(config)
     configureDB(config)
     configureJSON()
+    configureSSE()
     configureRouting()
     configureStatusPages()
+
+    TermService.entry.generate()
+    TermService.exit.generate()
 }
 
 /**
  * Trimmed module for use in tests.
  */
-suspend fun Application.configureTest() {
-    configureDB(TestConfig)
+suspend fun Application.configureTest(db: Database? = null) {
+    configureDB(TestConfig, db)
     configureJSON()
+    configureSSE()
     configureRouting()
 }

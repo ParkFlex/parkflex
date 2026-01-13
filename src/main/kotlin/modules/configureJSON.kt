@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import parkflex.LocalDateTimeSerializer
+import parkflex.LocalTimeSerializer
 
 /**
  * Enables de/serialisation of JSON in HTTP calls
@@ -16,6 +17,7 @@ fun Application.configureJSON() = install(ContentNegotiation) {
         Json {
             serializersModule = SerializersModule {
                 contextual(LocalDateTimeSerializer)
+                contextual(LocalTimeSerializer)
             }
         }
     )
