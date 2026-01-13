@@ -204,7 +204,7 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD spot busy`() = testApplication {
+    fun `test post reservation spot busy`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -249,7 +249,7 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD invalid date format`() = testApplication {
+    fun `test post reservation invalid date format`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -280,7 +280,7 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD user has active reservation`() = testApplication {
+    fun `test post reservation user has active reservation`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -312,7 +312,7 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD user is banned`() = testApplication {
+    fun `test post reservation user is banned`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -368,7 +368,7 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD no authorization header`() = testApplication {
+    fun `test post reservation no authorization header`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
 
@@ -391,7 +391,7 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD invalid data body`() = testApplication {
+    fun `test post reservation invalid data body`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
