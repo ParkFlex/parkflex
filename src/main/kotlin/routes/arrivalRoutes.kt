@@ -3,13 +3,11 @@ package parkflex.routes
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import parkflex.db.ParameterEntity
-import parkflex.db.ParameterTable
 import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.NoPresentReservationModel
 import parkflex.models.SuccessfulArrivalModel
-import parkflex.models.TimeSpan
+import parkflex.models.TimeTableEntry
 import parkflex.repository.ParameterRepository
 import parkflex.repository.ReservationRepository
 import parkflex.runDB
@@ -18,7 +16,6 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
-import kotlin.text.toLong
 
 /**
  * Routes for handling vehicle arrival at parking entry gate.
@@ -97,7 +94,7 @@ fun Route.arrivalRoutes() {
                 ReservationRepository
                     .forDate(today)
                     .groupBy { it.spot.id.value }
-                    .mapValues { it.value.map { TimeSpan.fromReservation(it) } }
+                    .map { TimeTableEntry.fromReservations(it.key, it.value) }
             }
 
             call.respond(

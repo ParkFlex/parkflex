@@ -41,11 +41,6 @@ data class SuccessfulArrivalModel(
     val spot: Long
 ) : ArrivalResponseModel(ArrivalStatus.Ok)
 
-/**
- * Represents a time span for a reservation.
- * @property start Start time
- * @property end End time
- */
 @Serializable
 data class TimeSpan(
     @Contextual
@@ -68,6 +63,18 @@ data class TimeSpan(
     }
 }
 
+@Serializable
+data class TimeTableEntry(
+    val spot: Long,
+    val spans: List<TimeSpan>,
+) {
+    companion object {
+        fun fromReservations(spot: Long, rs: List<ReservationEntity>): TimeTableEntry {
+            return TimeTableEntry(spot, rs.map { TimeSpan.fromReservation(it) })
+        }
+    }
+}
+
 /**
  * Response model when user has no current reservation.
  * Contains information about user's upcoming reservations grouped by spot.
@@ -76,5 +83,5 @@ data class TimeSpan(
  */
 @Serializable
 data class NoPresentReservationModel(
-    val reservations: Map<Long, List<TimeSpan>>
+    val reservations: List<TimeTableEntry> // Axios is realllly bad at the deserialization of maps
 ) : ArrivalResponseModel(ArrivalStatus.NoReservation)
