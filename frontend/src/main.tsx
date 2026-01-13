@@ -10,7 +10,7 @@ import { Layout } from './pages/Layout.tsx';
 import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
-import {Report} from "./pages/Report.tsx";
+import { Report } from "./pages/Report.tsx";
 import { ParkingPage } from "./pages/Parking.tsx";
 
 createRoot(document.getElementById("root")!).render(

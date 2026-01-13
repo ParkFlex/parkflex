@@ -5,8 +5,34 @@ import React from 'react';
 import { TabMenu } from 'primereact/tabmenu';
 // import {Button} from "primereact/button";
 
-
-
+/**
+ * Komponent Layout - główny układ aplikacji z nawigacją.
+ * 
+ * @remarks
+ * Komponent opakowujący wszystkie strony aplikacji, zapewniający:
+ * - Sticky menu nawigacyjne u góry ekranu
+ * - Zakładki: Parking, Historia, Zgłoszenia, Konto
+ * - Przycisk wylogowania
+ * - Outlet dla zagnieżdżonych routów
+ * 
+ * Menu jest responsywne i dostosowuje się do urządzeń mobilnych.
+ * Style są wstrzykiwane inline przez <style> tag.
+ * 
+ * TODO: Niektóre linki (Report, Account, Admin) prowadzą do nieistniejących stron.
+ * 
+ * Funkcjonalności:
+ * - Automatyczne ustawienie aktywnej zakładki na podstawie URL
+ * - Wylogowanie przez usunięcie authToken z localStorage
+ * - Nawigacja między sekcjami aplikacji
+ * 
+ * @example
+ * ```tsx
+ * <Route path="/" element={<Layout />}>
+ *   <Route path="parking" element={<ParkingPage />} />
+ *   <Route path="history" element={<History />} />
+ * </Route>
+ * ```
+ */
 export function Layout(){
 
 

@@ -2,6 +2,10 @@ package parkflex.config
 
 import org.slf4j.event.Level
 
+/**
+ * Configuration object for test environment.
+ * Uses in-memory H2 database with minimal logging and no mock data.
+ */
 object TestConfig : Config {
     override val mariaDB: MariaDBConfig? = null
     override val hosts: List<String> = emptyList()

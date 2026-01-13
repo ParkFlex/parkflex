@@ -2,6 +2,13 @@ package parkflex.models
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Request model for creating a new reservation.
+ *
+ * @property spot_id ID of the parking spot to reserve
+ * @property start Reservation start time (ISO 8601 formatted string)
+ * @property duration Reservation duration in minutes
+ */
 @Serializable
 data class CreateReservationRequest(
     val spot_id: Long,
@@ -9,6 +16,14 @@ data class CreateReservationRequest(
     val duration: Int
 )
 
+/**
+ * Response model containing reservation details.
+ *
+ * @property id Reservation ID
+ * @property spot_id Parking spot ID
+ * @property start Reservation start time (formatted string)
+ * @property end Reservation end time (formatted string)
+ */
 @Serializable
 data class ReservationResponse(
     val id: Long,
@@ -17,6 +32,12 @@ data class ReservationResponse(
     val end: String 
 )
 
+/**
+ * Success response for reservation creation.
+ *
+ * @property message Success message
+ * @property reservation Created reservation details
+ */
 @Serializable
 data class CreateReservationSuccessResponse(
     val message: String,

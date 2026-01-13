@@ -14,6 +14,18 @@ import parkflex.service.PenaltyService
 import parkflex.service.TermService
 import java.time.LocalDateTime
 
+/**
+ * Routes for handling vehicle departure at parking exit gate.
+ * 
+ * Endpoint: POST /api/leave/{token}
+ * - Validates exit token
+ * - Finds user's active reservation (arrived but not left)
+ * - Records departure time
+ * - Checks for overtime penalties
+ * - Generates new exit token for security
+ * 
+ * TODO: Replace hardcoded uid=2L with actual authentication principal
+ */
 fun Route.leaveRoutes() {
     post("{token}") {
         val uid = 2L // TODO: use principal after auth is ready

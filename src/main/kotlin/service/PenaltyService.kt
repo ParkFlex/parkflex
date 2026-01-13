@@ -9,10 +9,20 @@ import java.time.Duration
 import java.time.LocalDateTime
 import kotlin.Long
 
+/**
+ * Service for managing parking violation penalties.
+ * Handles penalty creation, overtime calculation, and conflict resolution.
+ */
 object PenaltyService {
 
     /**
-     * Represents a penalty that has not yet been commited to the store.
+     * Represents a penalty that has not yet been committed to the database.
+     * Used as an intermediate representation during penalty creation.
+     * 
+     * @property fine Penalty amount (in cents/grosz)
+     * @property due Payment deadline
+     * @property reason Reason for the penalty
+     * @property paid Whether the penalty has been paid
      */
     private data class PartialPenalty(
         val fine: Long,
@@ -53,27 +63,34 @@ object PenaltyService {
     }
 
     /**
-     * Resolves a clash when a new penalty is being created for a reservation
-     * which already has an existing penalty.
+     * Resolves a conflict when creating a new penalty for a reservation
+     * that already has an existing penalty.
      *
-     * The strategy is that we pick the penalty with higher fine.
+     * Strategy: Keeps the penalty with higher fine amount.
+     * This ensures users are charged for the most severe violation.
      *
-     * @param existingPenalty Penalty found in the store
-     * @param partialPenalty Penalty in construction
-     *
-     * @return Updated penalty
+     * @param existingPenalty Penalty already in the database
+     * @param partialPenalty New penalty being created
+     * @return The penalty with higher fine (either updated existing or new one)
      */
     private fun resolveClash(existingPenalty: PenaltyEntity, partialPenalty: PartialPenalty): PenaltyEntity =
         if (existingPenalty.fine < partialPenalty.fine) partialPenalty.overwrite(existingPenalty)
         else existingPenalty
 
-    /***
-     * Creates a penalty if an overtime is detected.
-     *
-     * @param reservation Reservation for which the overtime is calculated. The [ReservationEntity.left] field must not be null.
-     * @param timestamp Point in time at which the penalty is being applied.
-     *
-     * @return Created penalty or `null`
+    /**
+     * Calculates and creates a penalty if overtime is detected.
+     * 
+     * Overtime is calculated as the time between reservation end (plus break time)
+     * and actual departure time. Fine is calculated per 15-minute blocks.
+     * 
+     * If a penalty already exists for this reservation, uses resolveClash() to pick
+     * the one with higher fine.
+     * 
+     * @param reservation Reservation to check for overtime. Must have non-null 'left' field.
+     * @param timestamp Point in time when penalty is being calculated (usually departure time)
+     * @return Created or updated penalty entity, or null if no overtime detected
+     * 
+     * TODO: Add validation that reservation.left is not null before calculation
      */
     suspend fun processOvertime(reservation: ReservationEntity, timestamp: LocalDateTime): PenaltyEntity? = runDB {
         val breakTime = ParameterRepository.get("reservation/break/duration")?.toLong()!!

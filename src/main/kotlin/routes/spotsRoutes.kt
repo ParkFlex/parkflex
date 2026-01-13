@@ -16,6 +16,13 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.time.format.DateTimeParseException
 
+/**
+ * Routes for querying multiple parking spots availability.
+ * 
+ * Endpoint: GET /api/spots?start={start}&end={end}
+ * Retrieves availability status of all parking spots for a given time range.
+ * Checks which spots have conflicting reservations in the specified period.
+ */
 fun Route.spotsRoutes() {
     get {
         val context = "/api/spots"

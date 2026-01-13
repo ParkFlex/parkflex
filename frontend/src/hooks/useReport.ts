@@ -1,7 +1,7 @@
-import {useCallback, useState} from "react";
-import {useAxios} from "./useAxios.ts";
-import {isAxiosError} from "axios";
-import type {ReportEntry} from "../models/ReportEntry.tsx";
+import { useCallback, useState } from "react";
+import { useAxios } from "./useAxios.ts";
+import { isAxiosError } from "axios";
+import type { ReportEntry } from "../models/ReportEntry.tsx";
 
 export const useReport = () => {
     const axios=useAxios();

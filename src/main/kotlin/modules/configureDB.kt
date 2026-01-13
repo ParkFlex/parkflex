@@ -11,6 +11,19 @@ import parkflex.repository.SpotRepository
 import parkflex.repository.UserRepository
 import parkflex.runDB
 
+/**
+ * Default system parameters loaded into the database on first startup.
+ * These can be modified at runtime through admin interface.
+ * 
+ * Parameters:
+ * - penalty/fine/wrongSpot: Fine amount for parking in wrong spot (in cents/grosz)
+ * - penalty/fine/overtime: Fine amount per 15 minutes of overtime (in cents/grosz)
+ * - penalty/block/duration: How long user is blocked after penalty (in hours)
+ * - reservation/duration/min: Minimum reservation duration (in minutes)
+ * - reservation/duration/max: Maximum reservation duration (in minutes)
+ * - reservation/break/duration: Required break between reservations (in minutes)
+ * - parking/layout: ASCII art representation of parking layout
+ */
 private val defaultParameters =
     mapOf(
         "penalty/fine/wrongSpot" to "500", // one time fee
@@ -37,6 +50,10 @@ private val defaultParameters =
 suspend fun Application.configureDB(config: Config, db: Database? = null) {
     val mdb = config.mariaDB
 
+    /**
+     * Ensures default parameters are present in the database.
+     * Populates parameter table with defaults if empty.
+     */
     fun ensureParameters() {
         if (ParameterTable.selectAll().count() == 0L)
             defaultParameters.forEach {

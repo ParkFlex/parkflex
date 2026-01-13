@@ -11,6 +11,12 @@ import parkflex.models.ApiErrorModel
 import parkflex.models.HistoryEntry
 import parkflex.runDB
 
+/**
+ * Routes for user reservation history.
+ * 
+ * Endpoint: GET /api/historyEntry?userId={userId}
+ * Retrieves reservation history for a specific user.
+ */
 fun Route.historyRoutes() {
     get {
         val id = call.queryParameters["userId"]
