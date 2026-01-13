@@ -9,11 +9,22 @@ import type { Nullable } from "primereact/ts-helpers";
 import { Dialog } from "primereact/dialog";
 import type { HistoryEntry } from "../models/HistoryEntry.tsx";
 
+/**
+ * Właściwości komponentu DateHeader.
+ */
 interface DateHeaderProps {
+    /** Data do wyświetlenia w nagłówku */
     date: Date;
+    /** Czy to pierwszy wpis na liście (zmniejsza margines) */
     isFirstEntry: boolean;
 }
 
+/**
+ * Nagłówek daty w liście historii.
+ * 
+ * @param props - Właściwości komponentu
+ * @internal
+ */
 function DateHeader({ date, isFirstEntry }: DateHeaderProps) {
     return (
         <div style={{
@@ -30,6 +41,25 @@ function DateHeader({ date, isFirstEntry }: DateHeaderProps) {
     );
 }
 
+/**
+ * Strona z historią rezerwacji użytkownika.
+ * 
+ * @remarks
+ * Komponent wyświetlający listę wszystkich rezerwacji użytkownika z możliwością filtrowania.
+ * 
+ * Funkcjonalności:
+ * - Wyświetlanie rezerwacji pogrupowanych po datach
+ * - Filtrowanie: tylko aktualne/przyszłe lub wszystkie (włącznie z historycznymi)
+ * - Filtrowanie po zakresie dat (kalendarz)
+ * - Sortowanie od najnowszych do najstarszych
+ * 
+ * TODO: endsBeforeNow może nie działać poprawnie - wymaga weryfikacji filtrowania.
+ * 
+ * @example
+ * ```tsx
+ * <Route path="/history" element={<History />} />
+ * ```
+ */
 export function History() {
     const { entries } = useHistoryEntries();
 

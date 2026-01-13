@@ -6,19 +6,69 @@ import { compareTime, formatDate, formatDateWeek, formatTime, isSameDay } from "
 import { Toolbar } from "primereact/toolbar";
 import type { DateTimeSelection } from "../DateTimeDialog/DateTimeSelection.ts";
 
+/**
+ * Typ reprezentujący przedział czasowy rezerwacji.
+ * 
+ * @remarks
+ * Składa się z dnia oraz godzin rozpoczęcia i zakończenia.
+ * Godziny są oddzielnymi obiektami Date (wykorzystywane są tylko godziny i minuty).
+ */
 export type DateTimeSpan = {
+    /** Dzień rezerwacji */
     day: Date,
+    /** Godzina rozpoczęcia */
     startTime: Date,
+    /** Godzina zakończenia */
     endTime: Date
 };
 
+/**
+ * Właściwości komponentu DateTimeSelector.
+ */
 interface DateSelectionProps {
+    /** Czy dialog wyboru czasu jest widoczny */
     visible: boolean;
+    /** Callback do zmiany widoczności dialogu */
     setVisible: (x: boolean) => void;
+    /** Aktualnie wybrany przedział czasowy */
     dayTime: DateTimeSpan;
+    /** Callback do aktualizacji przedziału czasowego */
     setDayTime: (dateTimeSpan: DateTimeSpan) => void;
 }
 
+/**
+ * Komponent do wyboru dnia i przedziału czasowego rezerwacji.
+ * 
+ * @param props - Właściwości komponentu
+ * 
+ * @remarks
+ * Komponent składa się z:
+ * - Wyświetlacza pokazującego wybrany dzień i godziny
+ * - Przycisku edycji otwierającego dialog {@link DateTimeDialog}
+ * 
+ * Walidacja:
+ * - Godzina końca musi być późniejsza niż godzina startu
+ * - Nie można wybrać dat w przeszłości
+ * - Dla dzisiejszego dnia - godzina startu musi być w przyszłości
+ * - TODO: Brak limitu czasu trwania rezerwacji
+ * 
+ * @example
+ * ```tsx
+ * const [visible, setVisible] = useState(false);
+ * const [dayTime, setDayTime] = useState<DateTimeSpan>({
+ *   day: new Date(),
+ *   startTime: new Date(0, 0, 0, 8, 0),
+ *   endTime: new Date(0, 0, 0, 16, 0)
+ * });
+ * 
+ * <DateTimeSelector
+ *   visible={visible}
+ *   setVisible={setVisible}
+ *   dayTime={dayTime}
+ *   setDayTime={setDayTime}
+ * />
+ * ```
+ */
 export function DateTimeSelector(
     {
         visible,

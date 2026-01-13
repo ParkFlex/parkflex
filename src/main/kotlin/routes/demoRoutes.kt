@@ -8,11 +8,17 @@ import parkflex.db.*
 import parkflex.models.*
 import parkflex.*
 
+/**
+ * Demo routes for testing and example purposes.
+ * Provides basic CRUD operations on demo notes.
+ * 
+ * Endpoints:
+ * - PUT /api/demo - Creates or updates a demo note
+ * - GET /api/demo?title={title} - Retrieves a demo note by title
+ */
 fun Route.demoRoutes() {
 
-    /**
-     * Save provided note to the database.
-     */
+    // PUT /api/demo - Save provided note to the database
     put {
         // Get note from the request body
         val noteFromRequest: DemoNoteModel = call.receive<DemoNoteModel>()
@@ -45,9 +51,7 @@ fun Route.demoRoutes() {
         }
     }
 
-    /**
-     * Retrieve a note from the database by title.
-     */
+    // GET /api/demo?title={title} - Retrieve a note from the database by title
     get {
 
         /* Query parameters are stored in the URL,

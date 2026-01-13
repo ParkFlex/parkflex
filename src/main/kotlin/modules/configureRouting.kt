@@ -8,6 +8,15 @@ import parkflex.routes.apiRoutes
 import parkflex.routes.frontendRoutes
 import parkflex.routes.termRoutes
 
+/**
+ * Configures all HTTP routing for the application.
+ * 
+ * Sets up:
+ * - Frontend routes (HTML, CSS, JS static files)
+ * - API routes under /api prefix
+ * - Terminal/device routes under /term prefix
+ * - Swagger UI documentation at /swagger
+ */
 fun Application.configureRouting() {
     routing {
         // Route for our frontend (html, css, js)

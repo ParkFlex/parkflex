@@ -20,6 +20,19 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 import kotlin.text.toLong
 
+/**
+ * Routes for handling vehicle arrival at parking entry gate.
+ * Validates entry tokens and checks for active reservations.
+ * 
+ * Endpoint: POST /api/arrive/{token}
+ * - Validates entry token
+ * - Checks if user has an active reservation for current time
+ * - Allows arrival during reservation or a few minutes before (controlled by parameter)
+ * - Records arrival time if valid
+ * - Generates new entry token for security
+ * 
+ * TODO: Replace hardcoded uid=2L with actual authentication principal
+ */
 fun Route.arrivalRoutes() {
     post("{token}") {
         val uid = 2L // TODO: use principal after auth is ready

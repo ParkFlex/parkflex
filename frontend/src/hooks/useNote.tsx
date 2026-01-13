@@ -2,6 +2,34 @@ import { useCallback, useState } from "react";
 import { DemoNoteModel } from "../models/DemoNoteModel.tsx";
 import { ApiErrorModel } from "../models/ApiErrorModel.tsx";
 
+/**
+ * Hook do zarządzania notatkami w sekcji demo.
+ * 
+ * @returns Obiekt z funkcjami saveNote, getNote, setNote oraz aktualną notatką
+ * 
+ * @remarks
+ * TODO: Hook używa fetch API zamiast Axios (niespójność z resztą aplikacji).
+ * Należy rozważyć refaktoryzację do useAxios.
+ * 
+ * Funkcjonalności:
+ * - `saveNote()` - Zapisuje aktualną notatkę przez PUT /api/demo
+ * - `getNote()` - Pobiera notatkę po tytule przez GET /api/demo
+ * - `setNote()` - Ustawia lokalny stan notatki
+ * - `note` - Aktualna notatka
+ * 
+ * @example
+ * ```tsx
+ * const { note, setNote, saveNote, getNote } = useNote();
+ * 
+ * // Zmień tytuł i zapisz
+ * setNote(new DemoNoteModel("Nowy tytuł", "Zawartość"));
+ * saveNote();
+ * 
+ * // Pobierz istniejącą notatkę
+ * setNote(new DemoNoteModel("Szukany tytuł", ""));
+ * getNote();
+ * ```
+ */
 export function useNote() {
     const initialNote = new DemoNoteModel("", "");
 

@@ -2,7 +2,13 @@ package parkflex.repository
 
 import parkflex.db.SpotEntity
 
+/**
+ * Repository for managing parking spots and layout.
+ */
 object SpotRepository {
+    /**
+     * Direction indicators for parking layout arrows.
+     */
     private enum class ArrowDirection {
         UP, DOWN, LEFT, RIGHT, RD, UR, LU, DL
     }
@@ -31,7 +37,23 @@ object SpotRepository {
     }
 
     /**
-     * Populates the `spots` table according to the provided layout.
+     * Populates the spots table according to the provided ASCII layout.
+     * 
+     * Layout format:
+     * - G: Gate
+     * - .: Empty/blank spot
+     * - Number: Parking spot with that ID
+     * - Arrows (^, v, <, >, RD, UR, LU, DL): Directional indicators
+     * 
+     * Example:
+     * ```
+     * G   1   2   3
+     * v   .   .   .
+     * 4   5   6   7
+     * ```
+     * 
+     * @param layout ASCII art representation of the parking layout
+     * @return Result indicating success or failure
      */
     fun populate(layout: String): Result<Unit> = runCatching {
         layout

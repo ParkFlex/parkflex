@@ -8,6 +8,22 @@ import 'primeicons/primeicons.css';
 import { useNote } from "../hooks/useNote.tsx";
 import { DemoNoteModel } from "../models/DemoNoteModel.tsx";
 
+/**
+ * Strona demonstracyjna do testowania funkcjonalności notatek.
+ * 
+ * @remarks
+ * Komponent demo umożliwiający:
+ * - Wprowadzenie tytułu i treści notatki
+ * - Zapis notatki do backendu (PUT /api/demo)
+ * - Pobranie notatki po tytule (GET /api/demo)
+ * 
+ * Używany głównie do celów testowych i demonstracyjnych.
+ * 
+ * @example
+ * ```tsx
+ * <Route path="/demo" element={<Demo />} />
+ * ```
+ */
 export function Demo() {
     const { saveNote, getNote, setNote, note } = useNote();
 
