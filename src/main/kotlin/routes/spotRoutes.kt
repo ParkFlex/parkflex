@@ -11,6 +11,13 @@ import parkflex.models.SpotReservationModel
 import parkflex.runDB
 import java.time.format.DateTimeFormatter
 
+/**
+ * Routes for retrieving single parking spot information.
+ * 
+ * Endpoint: GET /api/spot?spot_id={spot_id}
+ * Retrieves detailed information about a specific parking spot,
+ * including all its reservations.
+ */
 fun Route.spotRoutes() {
     get {
         val context = "/api/spot"
@@ -37,6 +44,7 @@ fun Route.spotRoutes() {
                         message = ApiErrorModel("Nie ma spotu o id ${spotID}", context)
                     )
                 } else {
+                    // TODO: This filtering approach is inefficient - should use database query instead
                     val reservationList: List<ReservationEntity> = runDB {
                         //jest problem z filtrowaniem w postaci it.spot == spot
                         ReservationEntity.all().filter { it.spot.id.value == spotIDLong }

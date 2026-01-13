@@ -11,7 +11,20 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-
+/**
+ * Routes for managing parking reservations.
+ * 
+ * Endpoint: POST /api/reservation
+ * Creates a new parking reservation with the following validation:
+ * - User must be authenticated
+ * - User must not be blocked (no active penalties)
+ * - User can only have one active/future reservation at a time
+ * - Spot must exist and be of type "normal"
+ * - Start time must be valid ISO 8601 format
+ * - Time slot must not conflict with existing reservations (accounting for break time)
+ * 
+ * TODO: Replace hardcoded userId=2L with actual authentication
+ */
 fun Route.reservationRoutes() {
     post {
         val context = "/api/reservation POST handler"

@@ -6,7 +6,16 @@ import io.ktor.server.sse.*
 import io.ktor.sse.*
 import parkflex.service.TermService
 
+/**
+ * Routes for terminal/device Server-Sent Events (SSE) streams.
+ * Provides real-time token updates to entry and exit gate devices.
+ * 
+ * Endpoints:
+ * - SSE /term/entry - Entry gate token stream
+ * - SSE /term/exit - Exit gate token stream
+ */
 fun Route.termRoutes() {
+    // SSE stream for entry gate tokens
     route("/entry") {
         sse {
             heartbeat {
@@ -22,6 +31,7 @@ fun Route.termRoutes() {
         }
     }
 
+    // SSE stream for exit gate tokens
     route("/exit") {
         sse {
             heartbeat {
