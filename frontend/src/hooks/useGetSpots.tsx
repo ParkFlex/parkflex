@@ -1,10 +1,10 @@
 import { useAxios } from "./useAxios.ts";
-import type { SpotState } from "../api/spots.ts";
 import { formatLocalDateTime } from "../utils/dateUtils.ts";
 import { isAxiosError } from "axios";
 import type { ApiErrorModel } from "../models/ApiErrorModel.tsx";
 import { Toast } from "primereact/toast";
 import { type RefObject, useCallback } from "react";
+import type { SpotState } from "../models/SpotState.ts";
 
 export const useGetSpots = (
     setSpots: (xs: SpotState[]) => void,

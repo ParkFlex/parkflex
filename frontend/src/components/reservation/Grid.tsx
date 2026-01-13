@@ -1,5 +1,5 @@
-import type { SpotState } from "../../api/spots";
 import { Spot } from "./Spot";
+import type { SpotState } from "../../models/SpotState.ts";
 
 interface ParkingViewProps {
     spots: SpotState[];

@@ -1,5 +1,6 @@
 import { Button } from "primereact/button";
-import type { SpotState } from "../../api/spots";
+
+import type { SpotState } from "../../models/SpotState.ts";
 
 export interface SpotProps {
     state: SpotState;

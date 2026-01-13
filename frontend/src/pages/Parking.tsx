@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import type { SpotState } from "../api/spots";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { usePostReservation } from "../hooks/usePostReservation";
@@ -10,6 +9,7 @@ import { Toolbar } from "primereact/toolbar";
 import { Toast } from "primereact/toast";
 import { useGetSpots } from "../hooks/useGetSpots.tsx";
 import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
+import type { SpotState } from "../models/SpotState.ts";
 
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);

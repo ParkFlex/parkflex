@@ -1,0 +1,1 @@
+export type SpotRole = "normal" | "blank" | "gate" | "arrow-RD" | "arrow-UR" | "arrow-LU" | "arrow-DL";
