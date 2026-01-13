@@ -12,6 +12,8 @@ import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
 import { Report } from "./pages/Report.tsx";
 import { ParkingPage } from "./pages/Parking.tsx";
+import { ArrivalPage } from "./pages/ArrivalPage.tsx";
+import { LeavePage } from "./pages/LeavePage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -19,6 +21,8 @@ createRoot(document.getElementById("root")!).render(
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Layout/>}>
+                        <Route path="/arrive/:token" element={<ArrivalPage/>}/>
+                        <Route path="/leave/:token" element={<LeavePage/>}/>
                         <Route path="/demo" element={<Demo/>}/>
                         <Route path="/history" element={<History/>}/>
                         <Route path="/parking" element={<ParkingPage/>}/>
