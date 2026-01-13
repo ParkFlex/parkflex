@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import type { SpotState } from "../api/spots";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
@@ -30,6 +31,9 @@ export function ParkingPage() {
     const { reserve } = usePostReservation();
 
     const getSpots = useGetSpots(setData, msgs);
+
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handleReserve = async () => {
         if (selectedId == null) {
@@ -119,6 +123,25 @@ export function ParkingPage() {
     useEffect(() => {
         if (isBanned) setShowParking(false);
     }, [isBanned]);
+
+    useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const msg = (location.state as any)?.successMessage;
+        if (msg) {
+            msgs.current?.clear();
+            msgs.current?.show([
+                {
+                    sticky: false,
+                    severity: "success",
+                    summary: "Sukces",
+                    detail: msg,
+                    life: 3000,
+                    closable: true,
+                },
+            ]);
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [location, msgs, navigate]);
 
     return (
         <div className="parking-page">

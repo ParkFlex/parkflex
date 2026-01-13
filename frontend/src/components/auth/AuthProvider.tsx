@@ -42,12 +42,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
     };
 
+    const setUserInContext = (user: User) => {
+        localStorage.setItem("user", JSON.stringify(user));
+        setUser(user);
+    };
+
     const value: AuthContextType = {
         user,
         token,
         isAuthenticated: !!token && !!user,
         login,
         logout,
+        setUser: setUserInContext,
     };
 
     return (

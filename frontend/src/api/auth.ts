@@ -6,6 +6,7 @@ interface RegisterRequest {
     name: string;
     email: string;
     password: string;
+    plate: string;
 }
 
 interface RegisterResponse {
@@ -46,6 +47,7 @@ export const login = async ({
                         name: "Mock User",
                         email,
                         role: "user",
+                        plate: "XYZ 1234",
                     },
                 });
             }, 600);
@@ -69,27 +71,16 @@ export const login = async ({
         throw new Error("Wystąpił nieoczekiwany błąd");
     }
 };
+interface PatchAccountRequest {
+    plate?: string;
+}
+
 export const register = async ({
     name,
     email,
     password,
+    plate,
 }: RegisterRequest): Promise<RegisterResponse> => {
-    if (MOCK_REGISTER_RESPONSE) {
-        return new Promise<RegisterResponse>((resolve) => {
-            setTimeout(() => {
-                resolve({
-                    token: "mock-jwt",
-                    user: {
-                        id: 1,
-                        name,
-                        email,
-                        role: "user",
-                    },
-                });
-            }, 1000);
-        });
-    }
-
     const axiosInstance = createAxiosInstance();
 
     try {
@@ -99,6 +90,7 @@ export const register = async ({
                 name,
                 email,
                 password,
+                plate,
             }
         );
 
@@ -123,4 +115,22 @@ export const getJwtToken = (): string | null => {
 
 export const setJwtToken = (token: string): void => {
     localStorage.setItem("jwt", token);
+};
+
+export const patchAccount = async (data: { plate?: string }) => {
+    const axiosInstance = createAxiosInstance();
+    try {
+        const response = await axiosInstance.patch<PatchAccountRequest>(
+            "/account",
+            data
+        );
+        return response.data as User;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            throw new Error(
+                err.response?.data?.message || "Błąd aktualizacji konta"
+            );
+        }
+        throw new Error("Wystąpił nieoczekiwany błąd");
+    }
 };

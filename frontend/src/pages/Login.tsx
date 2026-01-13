@@ -34,10 +34,7 @@ export function Login() {
             style={{
                 display: "flex",
                 justifyContent: "center",
-                alignItems: "center",
-                minHeight: "100vh",
-                padding: "1rem",
-                backgroundColor: "#f5f5f5",
+                padding: "0.75rem",
             }}
         >
             <div style={{ width: "100%", maxWidth: "400px" }}>
