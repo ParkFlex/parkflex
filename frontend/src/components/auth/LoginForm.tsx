@@ -21,8 +21,6 @@ function validateForm(email: string, password: string): FormErrors {
 
     if (!email.trim()) {
         errors.email = "Email jest wymagany";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errors.email = "Nieprawidłowy email";
     }
 
     if (!password) {
