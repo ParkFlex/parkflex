@@ -1,6 +1,10 @@
 package parkflex.repository
 
+import kotlinx.coroutines.CoroutineStart
+import parkflex.db.ReservationEntity
+import parkflex.db.ReservationTable
 import parkflex.db.SpotEntity
+import java.time.LocalDateTime
 
 /**
  * Repository for managing parking spots and layout.
@@ -112,5 +116,18 @@ object SpotRepository {
 
                 entity.id.value
             }
+    }
+
+    fun getFirstFree(start: LocalDateTime, end: LocalDateTime): SpotEntity? {
+        fun pred(spot: SpotEntity) =
+            ReservationEntity
+                .all()
+                .filter { it.spot.id.value == spot.id.value }
+                .any { it.start.isBefore(end) && it.end().isAfter(start) }
+                .not()
+
+        return SpotEntity
+            .all()
+            .find { pred(it) }
     }
 }

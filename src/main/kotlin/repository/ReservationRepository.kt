@@ -48,4 +48,9 @@ object ReservationRepository {
 
                 Pair(reservation, relation)
             }
+
+    fun getInProgress(userID: Long): ReservationEntity? =
+        ReservationEntity
+            .all()
+            .find { it.user.id.value == userID && it.arrived != null && it.left == null }
 }

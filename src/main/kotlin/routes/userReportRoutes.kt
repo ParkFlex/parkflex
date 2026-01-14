@@ -3,11 +3,15 @@ package parkflex.routes
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondNullable
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import parkflex.db.ReportEntity
+import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.ReportEntryModel
+import parkflex.repository.ReservationRepository
+import parkflex.repository.SpotRepository
 import parkflex.runDB
 
 fun Route.userReportRoutes() {
@@ -40,11 +44,28 @@ fun Route.userReportRoutes() {
                 this.description = description
                 this.image = image
                 this.reviewed = false
-                this.submitter = parkflex.db.UserEntity.findById(1)!!
+                this.submitter = parkflex.db.UserEntity.findById(2)!! // TODO change after auth
                 this.timestamp = java.time.LocalDateTime.now()
             }
         }
 
-        call.respond(HttpStatusCode.Created)
+        val currentReservation = ReservationRepository.getInProgress(2) // TODO change after auth
+            ?: run {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = ApiErrorModel("No reservation in progress", "POST /report")
+                )
+                return@post
+
+            }
+
+        val firstSpot = SpotRepository .getFirstFree(currentReservation.start, currentReservation.end())
+
+        firstSpot?.let { runDB { currentReservation.spot = it }  }
+
+        call.respondNullable(
+            HttpStatusCode.Created,
+            message = firstSpot?.id?.value
+        )
     }
 }
