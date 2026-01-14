@@ -20,6 +20,7 @@ object SpotRepository {
         object Gate : LayoutToken
         object Empty : LayoutToken
         data class Numbered(val x: Long) : LayoutToken
+        data class Special(val x: Long) : LayoutToken
         data class Arrow(val direction: ArrowDirection) : LayoutToken
 
         override fun compareTo(other: LayoutToken): Int {
@@ -29,6 +30,7 @@ object SpotRepository {
                     Gate -> Int.MAX_VALUE
                     is Arrow -> Int.MAX_VALUE
                     is Numbered -> token.x.toInt() // bite me
+                    is Special -> token.x.toInt() // bite me
                 }
             }
 
@@ -71,7 +73,11 @@ object SpotRepository {
                     "v" -> LayoutToken.Arrow(ArrowDirection.DOWN)
                     "<" -> LayoutToken.Arrow(ArrowDirection.LEFT)
                     ">" -> LayoutToken.Arrow(ArrowDirection.RIGHT)
-                    else -> LayoutToken.Numbered(it.toLong())
+                    else ->
+                        if (it.firstOrNull() == '!')
+                            LayoutToken.Special(it.drop(1).toLong())
+                        else
+                            LayoutToken.Numbered(it.toLong())
                 }
             }
             .withIndex()
@@ -95,6 +101,11 @@ object SpotRepository {
 
                     is LayoutToken.Numbered -> SpotEntity.new((token.value as LayoutToken.Numbered).x) {
                         role = "normal"
+                        displayOrder = token.index
+                    }
+
+                    is LayoutToken.Special -> SpotEntity.new((token.value as LayoutToken.Special).x) {
+                        role = "special"
                         displayOrder = token.index
                     }
                 }
