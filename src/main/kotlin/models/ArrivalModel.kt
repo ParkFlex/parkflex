@@ -70,4 +70,4 @@ data class TimeSpan(
  * @property reservations Map of spot ID to list of reservation time spans
  */
 @Serializable
-data object NoPresentReservationModel : ArrivalResponseModel(ArrivalStatus.NoReservation)
+class NoPresentReservationModel : ArrivalResponseModel(ArrivalStatus.NoReservation)

@@ -3,6 +3,7 @@ package parkflex.routes
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.json.Json
 import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.NoPresentReservationModel
@@ -89,7 +90,7 @@ fun Route.arrivalRoutes() {
         if (reservation == null) {
             call.respond(
                 status = HttpStatusCode.OK,
-                message = NoPresentReservationModel
+                message = NoPresentReservationModel()
             )
 
         } else {
@@ -103,7 +104,7 @@ fun Route.arrivalRoutes() {
 
             val spot = runDB { reservation.spot.id.value }
 
-            call.respondNullable(
+            call.respond(
                 status = HttpStatusCode.OK,
                 message = SuccessfulArrivalModel(startTime, endTime, spot)
             )
