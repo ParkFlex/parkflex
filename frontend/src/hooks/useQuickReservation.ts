@@ -9,7 +9,7 @@ export const useQuickReservation = (token: string, axios: AxiosInstance) => {
     const sendQuickReservation = useCallback(async (time: Date) => {
         await axios
             .post(
-                `/api/quickReservation/${token}`,
+                `/quickReservation/${token}`,
                 {
                     params: {
                         end: formatTime(time)
