@@ -6,11 +6,11 @@ import { PrimeReactProvider } from 'primereact/api';
 import '@parkflex/themes/dist/theme.css';
 
 import './index.css';
+import { AdminParameters } from './pages/AdminParameters.tsx';
 import { Layout } from './pages/Layout.tsx';
 import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
-import { Admin } from "./pages/Admin.tsx";
 import { AdminHeaderAndSidebar } from "./components/AdminHeaderAndSidebar.tsx";
 import { AdminUserList } from "./components/AdminUserList.tsx";
 import { AdminHistoryList } from "./components/AdminHistoryList.tsx";
