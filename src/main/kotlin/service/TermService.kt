@@ -4,6 +4,7 @@ import io.ktor.sse.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
+import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -28,6 +29,8 @@ object TermService {
      * @property chan Underlying Kotlin channel for token distribution
      */
     sealed class RichChannel(val chan: Channel<String>) {
+        val logger = LoggerFactory.getLogger(this.javaClass.simpleName)
+
         /**
          * Currently active token. Used for validation.
          */
@@ -62,7 +65,11 @@ object TermService {
          * Generates and sends a new random UUID token.
          * This invalidates the previous token for security.
          */
-        suspend fun generate() = send(UUID.randomUUID().toString())
+        suspend fun generate() {
+            val token = UUID.randomUUID().toString()
+            logger.info("Generated ${this.javaClass.simpleName} token: $token")
+            send(token)
+        }
 
         @OptIn(ExperimentalCoroutinesApi::class)
         suspend fun ensureNotEmpty() {
