@@ -10,6 +10,7 @@ export const useQuickReservation = (token: string, axios: AxiosInstance) => {
         await axios
             .post(
                 `/quickReservation/${token}`,
+                {},
                 {
                     params: {
                         end: formatTime(time)
