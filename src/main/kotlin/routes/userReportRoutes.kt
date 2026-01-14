@@ -49,7 +49,7 @@ fun Route.userReportRoutes() {
             }
         }
 
-        val currentReservation = ReservationRepository.getInProgress(2) // TODO change after auth
+        val currentReservation = runDB { ReservationRepository.getInProgress(2) } // TODO change after auth
             ?: run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
@@ -59,7 +59,7 @@ fun Route.userReportRoutes() {
 
             }
 
-        val firstSpot = SpotRepository .getFirstFree(currentReservation.start, currentReservation.end())
+        val firstSpot = runDB { SpotRepository.getFirstFree(currentReservation.start, currentReservation.end()) }
 
         firstSpot?.let { runDB { currentReservation.spot = it }  }
 
