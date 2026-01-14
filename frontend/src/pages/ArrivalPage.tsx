@@ -27,7 +27,7 @@ export function ArrivalPage() {
                     return (
                         <Card>
                             <div>
-                                Utworzono rezerwację do godz. {formatTime(new Date(quickReservation.end))},
+                                Utworzono rezerwację do godz. {quickReservation.end},
                                 miejsce parkingowe nr. {quickReservation.spot}.
                             </div>
                         </Card>
