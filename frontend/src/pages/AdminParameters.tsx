@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SingleParameterCard } from "../components/SingleParameterCard";
 import { useAxios } from "../hooks/useAxios"; // komponent do obsługi axios z tokenem
+import { Toast } from 'primereact/toast';
 
 export function AdminParameters() {
     const morski = '#5c7e7b';
     const jasnaZielen = '#d9e2db';
-
     const axios = useAxios(); // uzycie hooka do uzyskania instancji axios z tokenem
+    const toast = useRef<Toast>(null);
 
-    const [overtimePenalty, setOvertimePenalty] = useState(0); // Inicjalizacja stanu dla kary za przekroczenie czasu
+    const [overtimePenalty, setOvertimePenalty] = useState(0);// Inicjalizacja stanu dla kary za przekroczenie czasu
     const [wrongSpotPenalty, setWrongSpotPenalty] = useState(0); // Inicjalizacja stanu dla kary za niewłaściwe miejsce
     const [minTime, setMinTime] = useState(0); // Inicjalizacja stanu dla minimalnego czasu rezerwacji
     const [maxTime, setMaxTime] = useState(0); // Inicjalizacja stanu dla maksymalnego czasu rezerwacji
@@ -16,83 +17,111 @@ export function AdminParameters() {
     const [gap, setGap] = useState(0); // Inicjalizacja stanu dla czasu pomiędzy rezerwacjami
 
     useEffect(() => {
-        axios.get("/all") // Pobieranie wszystkich parametrów z serwera
+        axios.get("parameter/all") // Pobieranie wszystkich parametrów z backendu
             .then((response: any) => {
-                const data = response.data; // Obsługa odpowiedzi
+                const data = response.data;
+                console.log("Pobrane parametry z backendu:", data);
+
                 data.forEach((p: any) => {
-                    if (p.key === "penalty/fine/overtime") setOvertimePenalty(Number(p.value)); // Ustawianie stanow na podstawie pobranych danych
-                    if (p.key === "penalty/fine/wrongSpot") setWrongSpotPenalty(Number(p.value));
-                    if (p.key === "penalty/block/duration") setBanDuration(Number(p.value));
-                    if (p.key === "reservation/time/min") setMinTime(Number(p.value));
-                    if (p.key === "reservation/time/max") setMaxTime(Number(p.value));
-                    if (p.key === "reservation/gap") setGap(Number(p.value));
+                    // Switch case zgodnie z sugestią Karoli
+                    switch (p.key) { // Sprawdzanie klucza parametru
+                        case "penalty/fine/overtime": setOvertimePenalty(Number(p.value)); break; // Ustawanie stanu na podstawie wartości z backendu
+                        case "penalty/fine/wrongSpot": setWrongSpotPenalty(Number(p.value)); break; // Ustawianie stanu na podstawie wartości z backendu
+                        case "penalty/block/duration": setBanDuration(Number(p.value)); break; // itd itp
+                        case "reservation/duration/min": setMinTime(Number(p.value)); break;
+                        case "reservation/duration/max": setMaxTime(Number(p.value)); break;
+                        case "reservation/break/duration": setGap(Number(p.value)); break;
+                    }
                 });
             })
-            .catch((err: any) => console.error("Błąd pobierania danych:", err)); // Obsługa błędów jak cos
+            .catch((err: any) => { // Obsługa błędów
+                console.error("Błąd pobierania danych:", err);
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Błąd połączenia', // Tytuł tościa
+                    detail: 'Nie udało się pobrać ustawień z serwera' // Treść tościa :D
+                });
+            });
     }, [axios]);
 
-    function save(key: string, value: any) { // Funkcja do zapisywania zmienionych parametrów
-        axios.patch(`/${key}`, { value: String(value) }) // Wysyłanie żądania PATCH do serwera
-            .then(() => alert(`Zapisano parametr: ${key}`)) // Powiadomienie o sukcesie
-            .catch((err: any) => alert(`Błąd zapisu ${key}: ${err.message}`)); // brak sukcesow niesteyy
+    function save(key: string, value: any, label?: string) { // Funkcja do zapisywania zmian parametrów ,znak zapytani - wartość opcjonalna etykieta
+        axios.patch(`parameter/${key}`, { value: String(value) }) // Wysyłanie żądania PATCH do backendu z nową wartością
+            .then(() => {
+                toast.current?.show({ // Pokazywanie tościa po udanym zapisie
+                    severity: 'success', // Poziom
+                    summary: 'Zapisano', // Tytuł
+                    detail: `Zaktualizowano parametr`  // Treść
+                });
+            })
+            .catch((err: any) => {
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Błąd zapisu',
+                    detail: `Brak mozliwości aktualizacji parametru`
+                });
+            });
     }
 
     return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ color: morski, borderBottom: '2px solid ' + jasnaZielen }}>Ustawienia Systemowe</h2>
+            <Toast ref={toast} /> {/* tościk */}
+
+            <h2 style={{ color: morski, borderBottom: '2px solid ' + jasnaZielen, paddingBottom: '10px' }}>
+                Ustawienia Systemowe
+            </h2>
 
             <div style={{ marginTop: '30px' }}>
-                <SingleParameterCard
+                <SingleParameterCard // komponent karty pojedynczego parametru ,znajduje się w folderze components , ściezka: ../components/SingleParameterCard.tsx
                     label="Kara za przekroczony czas postoju"
                     description="Wysokość kary naliczana co 15 min"
-                    value={overtimePenalty}
-                    onChange={setOvertimePenalty}
-                    onSave={() => save("penalty/fine/overtime", overtimePenalty)} // Zapisanie zmienionego parametru, inny zapis niz ostatnio  przez wlasnie ten server
-                    mode="currency"
+                    value={overtimePenalty} // wartość parametru
+                    onChange={setOvertimePenalty} // funkcja do zmiany
+                    onSave={() => save("penalty/fine/overtime", overtimePenalty, "Kara za przekroczony czas postoju")} // funkcja do zapisu
+                    mode="currency" // tryb walutowy
                 />
 
                 <SingleParameterCard
                     label="Kara za niewłaściwe miejsce parkingowe"
-                    description="Wysokość kary za zajęcie niewłaściwego miejsca"
+                    description="Wysokość kary za zajęcie nieprzypisanego miejsca"
                     value={wrongSpotPenalty}
                     onChange={setWrongSpotPenalty}
-                    onSave={() => save("penalty/fine/wrongSpot", wrongSpotPenalty)}
+                    onSave={() => save("penalty/fine/wrongSpot", wrongSpotPenalty, "Kara za niewłaściwe miejsce parkingowe")}
                     mode="currency"
                 />
 
                 <SingleParameterCard
                     label="Minimalny czas rezerwacji"
-                    description="Najkrótszy możliwy czas rezerwacji"
+                    description="Najkrótszy możliwy czas trwania rezerwacji"
                     value={minTime}
                     onChange={setMinTime}
-                    onSave={() => save("reservation/time/min", minTime)}
-                    suffix=" min"
+                    onSave={() => save("reservation/duration/min", minTime, "Minimalny czas rezerwacji")}
+                    suffix=" min" // jednostka czasu
                 />
 
                 <SingleParameterCard
                     label="Maksymalny czas rezerwacji"
-                    description="Najdłuższy możliwy czas rezerwacji"
+                    description="Najdłuższy możliwy czas trwania rezerwacji"
                     value={maxTime}
                     onChange={setMaxTime}
-                    onSave={() => save("reservation/time/max", maxTime)}
+                    onSave={() => save("reservation/duration/max", maxTime, "Maksymalny czas rezerwacji")}
                     suffix=" min"
                 />
 
                 <SingleParameterCard
                     label="Długość trwania bana"
-                    description="Czas trwania blokady użytkownika"
+                    description="Czas trwania blokady użytkownika w dniach"
                     value={banDuration}
                     onChange={setBanDuration}
-                    onSave={() => save("penalty/block/duration", banDuration)}
-                    suffix=" dni"
+                    onSave={() => save("penalty/block/duration", banDuration , "Długość trwania bana")}
+                    suffix=" dni" // jednostka czasu w dniach
                 />
 
                 <SingleParameterCard
                     label="Czas pomiędzy rezerwacjami"
-                    description="Odstęp po jakim można znowu zarezerwować to samo miejsce"
+                    description="Odstęp po jakim można ponownie zarezerwować miejsce"
                     value={gap}
                     onChange={setGap}
-                    onSave={() => save("reservation/gap", gap)}
+                    onSave={() => save("reservation/break/duration", gap, "Czas pomiędzy rezerwacjami")}
                     suffix=" min"
                 />
             </div>
