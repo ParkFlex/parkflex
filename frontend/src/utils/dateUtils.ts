@@ -38,6 +38,17 @@ export const formatLocalDateTime = (date: Date): string => {
 };
 
 
+export const formatDateTime = (date: Date): string => {
+    return date.toLocaleString('pl-EU', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+};
+
 export const isSameDay = (date1: Date, date2: Date): boolean => {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
@@ -46,15 +57,8 @@ export const isSameDay = (date1: Date, date2: Date): boolean => {
 
 export const endsBeforeNow = (startTime: Date, duration: number): boolean => {
     const endTime = addMinutes(startTime, duration);
-    const endDate = new Date(
-        endTime.getFullYear(),
-        endTime.getMonth(),
-        endTime.getDate(),
-        endTime.getHours(),
-        endTime.getMinutes()
-    );
-
-    return endTime <  endDate;
+    const now = new Date();
+    return endTime < now;
 };
 
 export const isActiveNow = (startTime: Date, durationMin: number): boolean => {
