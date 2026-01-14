@@ -1,11 +1,15 @@
 import { useAxios } from "../hooks/useAxios.ts";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import type { ArrivalResponseModel } from "../models/ArrivalResponeModel.ts";
 import { type AxiosResponse, isAxiosError } from "axios";
+import {Card} from "primereact/card";
+import {Calendar} from "primereact/calendar";
+import {Button} from "primereact/button";
 
 export function ArrivalPage() {
     const axios = useAxios();
+    const navigate = useNavigate();
     const [data, setData] = useState<ArrivalResponseModel | null>(null);
     const [err, setErr] = useState<string | null>(null);
 
@@ -16,14 +20,20 @@ export function ArrivalPage() {
             case "Ok":
                 return <a>{data.status}, {data.startTime}, {data.endTime}, {data.spot}</a>;
             case "NoReservation":
-                return <a>
-                    {data.status},
-                    {
-                        data.reservations.reduce((acc, value) => {
-                            const spans = value.spans.map(s => `${s.start}-${s.end}`).join(", ");
-                            return acc + `${value.spot}, ${spans}`;
-                        }, "")
-                    }</a>;
+                return <Card>
+                    {/*{data.status}*/}
+                    <h1 style={{textAlign:'center', marginBottom:'45px'}}>Brak Aktywnej Rezerwacji</h1>
+                    <Card style={{display:'flex', flexDirection:'column', backgroundColor:'white'}}>
+                        <div style={{marginBottom:'15px', textAlign:'center', fontWeight:'bold' }}>Wbierz godzinę końcową:</div>
+                        <div style={{width:'100%', display:'flex', justifyContent:'center'}}>
+                            <Calendar inline timeOnly></Calendar>
+                        </div>
+                        <div style={{marginTop:'15px', width:'100%', display:'flex', justifyContent:'space-between'}}>
+                            <Button style={{width:'48%', backgroundColor:'white', justifyContent:'center'}} outlined onClick={() => navigate('/parking')}>Anuluj</Button>
+                            <Button style={{width:'48%', justifyContent:'center'}}>Akceptuj</Button>
+                        </div>
+                    </Card>
+                </Card>;
         }
     };
 
