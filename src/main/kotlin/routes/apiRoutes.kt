@@ -20,7 +20,6 @@ fun Route.apiRoutes() {
         adminHistoryRoutes()
     }
 
-
     route("report") {
        reviewedRoutes()
     }
@@ -38,6 +37,10 @@ fun Route.apiRoutes() {
 
     route("/reservation") {
         reservationRoutes()
+    }
+
+    route("/quickReservation") {
+        quickReservationRoutes()
     }
 
     route("/spot") {
