@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.Test
 import parkflex.db.ParameterEntity
 import parkflex.db.ParameterTable
+import parkflex.db.ParameterType
 import kotlin.test.*
 
 class ParameterDatabaseTest {
@@ -24,6 +25,7 @@ class ParameterDatabaseTest {
             val created = ParameterEntity.new {
                 key = "api_url"
                 value = "https://api.parkflex.pl"
+                type = ParameterType.String
             }
 
             val retrieved = ParameterEntity.findById(created.id)
@@ -40,8 +42,8 @@ class ParameterDatabaseTest {
 
         transaction {
 
-            ParameterEntity.new { key = "version"; value = "1.0.0" }
-            ParameterEntity.new { key = "env"; value = "prod" }
+            ParameterEntity.new { key = "version"; value = "1.0.0"; type = ParameterType.String }
+            ParameterEntity.new { key = "env"; value = "prod"; type = ParameterType.String }
 
             val versionParam = ParameterEntity.find { ParameterTable.key eq "version" }.single()
 

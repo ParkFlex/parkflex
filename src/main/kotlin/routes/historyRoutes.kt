@@ -2,10 +2,8 @@ package parkflex.routes
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import org.jetbrains.exposed.sql.appendTo
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.HistoryEntry

@@ -4,10 +4,14 @@ import { formatDate, isSameDay, endsBeforeNow, formatDateWeek } from '../utils/d
 import { useState } from "react";
 import { Button } from "primereact/button";
 import HistoryEntryComp from "../components/HistoryEntry";
-import { Calendar } from "primereact/calendar";
-import type { Nullable } from "primereact/ts-helpers";
-import { Dialog } from "primereact/dialog";
 import type { HistoryEntry } from "../models/HistoryEntry.tsx";
+import {
+    DateRangeFilterDialog,
+    type DateRangeFilter,
+    hasDateFilter,
+    filterByDateRange,
+    createEmptyDateRangeFilter
+} from "../components/DateRangeFilterDialog";
 
 /**
  * Właściwości komponentu DateHeader.
@@ -63,7 +67,7 @@ function DateHeader({ date, isFirstEntry }: DateHeaderProps) {
 export function History() {
     const { entries } = useHistoryEntries();
 
-    const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
+    const [dateFilter, setDateFilter] = useState<DateRangeFilter>(createEmptyDateRangeFilter());
     const [showCalendar, setShowCalendar] = useState<boolean>(false);
     const [onlyNow, setOnlyNow] = useState<boolean>(true);
 
@@ -82,17 +86,7 @@ export function History() {
             ? items.filter(entry => !endsBeforeNow(new Date(entry.startTime),entry.durationMin))
             : items;
 
-        if (dates && dates.length === 2 && dates[0] && dates[1]) {
-            const startDate = new Date(dates[0]);
-            startDate.setHours(0, 0, 0, 0);
-            const endDate = new Date(dates[1]);
-            endDate.setHours(23, 59, 59, 999);
-
-            displayItems = displayItems.filter(entry => {
-                const entryDate = new Date(entry.startTime);
-                return entryDate >= startDate && entryDate <= endDate;
-            });
-        }
+        displayItems = filterByDateRange(displayItems, dateFilter, (entry) => new Date(entry.startTime));
 
         if (!displayItems || displayItems.length === 0) {
             return <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
@@ -117,6 +111,7 @@ export function History() {
     };
 
     const getButtonLabel = () => {
+        const { dates } = dateFilter;
         if (dates && dates.length === 2 && dates[0] && dates[1]) {
             const startDate = formatDate(dates[0]);
             const endDate = formatDate(dates[1]);
@@ -136,35 +131,26 @@ export function History() {
                 style={{ width:'100%', justifyContent:'left' }}
             />
 
-            <Dialog
+            <DateRangeFilterDialog
                 visible={showCalendar}
                 onHide={() => setShowCalendar(false)}
-                header="Wybierz zakres dat"
-                style={{ width: '90vw', maxWidth: '400px' }}
-            >
-                <Calendar
-                    value={dates}
-                    onChange={(e) => {
-                        setDates(e.value);
-                        if (e.value &&
-                            Array.isArray(e.value) &&
-                            e.value.length === 2 && e.value[0] &&
-                            e.value[1]) {
-                            setShowCalendar(false);
-                        }
-                    }}
-                    selectionMode="range"
-                    inline
-                    style={{ width: '100%',marginBottom:'24px',marginTop:'24px' }}
-                />
-            </Dialog>
+                filter={dateFilter}
+                onFilterChange={setDateFilter}
+                onApply={() => setShowCalendar(false)}
+                onClear={() => {
+                    setDateFilter(createEmptyDateRangeFilter());
+                    setShowCalendar(false);
+                }}
+                showTimeFilter={false}
+                autoCloseOnRangeSelect={true}
+            />
 
             <DataView value={entries} listTemplate={(items) => listTemplate(items, onlyNow)}/>
 
-            {(onlyNow || (dates && dates.length === 2 && dates[0] && dates[1])) && (
+            {(onlyNow || hasDateFilter(dateFilter)) && (
                 <Button raised label="Historia" severity='secondary' onClick={() => {
                     setOnlyNow(false);
-                    setDates(null);
+                    setDateFilter(createEmptyDateRangeFilter());
                 }} style={{ width: '100%' }} />
             )}
         </div>

@@ -104,15 +104,31 @@ export const formatLocalDateTime = (date: Date): string => {
 
 
 /**
+ * Formatuje datę wraz z czasem  do lokalnego formatu w j. polskim.
+ *
+ * @param date - Data do sformatownia
+ */
+export const formatDateTime = (date: Date): string => {
+    return date.toLocaleString('pl-EU', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+};
+
+/**
  * Sprawdza czy dwie daty to ten sam dzień.
- * 
+ *
  * @param date1 - Pierwsza data do porównania
  * @param date2 - Druga data do porównania
  * @returns true jeśli daty reprezentują ten sam dzień (rok, miesiąc, dzień)
- * 
+ *
  * @remarks
  * Ignoruje godziny, minuty i sekundy - porównuje tylko rok, miesiąc i dzień.
- * 
+ *
  * @example
  * ```typescript
  * const date1 = new Date(2026, 0, 12, 10, 0);
@@ -145,15 +161,8 @@ export const isSameDay = (date1: Date, date2: Date): boolean => {
  */
 export const endsBeforeNow = (startTime: Date, duration: number): boolean => {
     const endTime = addMinutes(startTime, duration);
-    const endDate = new Date(
-        endTime.getFullYear(),
-        endTime.getMonth(),
-        endTime.getDate(),
-        endTime.getHours(),
-        endTime.getMinutes()
-    );
-
-    return endTime <  endDate;
+    const now = new Date();
+    return endTime < now;
 };
 
 /**

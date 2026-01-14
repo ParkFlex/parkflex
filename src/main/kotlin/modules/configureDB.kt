@@ -25,15 +25,15 @@ import parkflex.runDB
  * - parking/layout: ASCII art representation of parking layout
  */
 private val defaultParameters =
-    mapOf(
-        "penalty/fine/wrongSpot" to "500", // one time fee
-        "penalty/fine/overtime" to "150",  // fee per 15mins of overtime
-        "penalty/block/duration" to (7 * 24).toString(), // duration in hours
-        "reservation/duration/min" to "30", // minutes
-        "reservation/duration/max" to "720", // minutes
-        "reservation/break/duration" to "15", // minutes
+    listOf(
+        Triple("penalty/fine/wrongSpot", ParameterType.Number, "500"), // one time fee
+        Triple("penalty/fine/overtime", ParameterType.Number, "150"),  // fee per 15mins of overtime
+        Triple("penalty/block/duration", ParameterType.Number, (7 * 24).toString()), // duration in hours
+        Triple("reservation/duration/min", ParameterType.Number, "30"), // minutes
+        Triple("reservation/duration/max", ParameterType.Number, "720"), // minutes
+        Triple("reservation/break/duration", ParameterType.Number, "15"), // minutes
 
-        "parking/layout" to
+        Triple("parking/layout", ParameterType.String,
                 """ 
                 G   1   2   3   4   5   6   7   8   9
                 v   .   .   .   .   .   .   .   .  DL
@@ -42,6 +42,7 @@ private val defaultParameters =
                 UR  .   .   .   .   .   .   .   .  LU
                 27 28  29  30  31  32  33  34  35  36
                 """.trimIndent()
+        )
     )
 
 /**
@@ -56,10 +57,11 @@ suspend fun Application.configureDB(config: Config, db: Database? = null) {
      */
     fun ensureParameters() {
         if (ParameterTable.selectAll().count() == 0L)
-            defaultParameters.forEach {
+            defaultParameters.forEach { (k, t, v) ->
                 ParameterEntity.new {
-                    key = it.key
-                    value = it.value
+                    key = k
+                    type = t
+                    value = v
                 }
             }
     }

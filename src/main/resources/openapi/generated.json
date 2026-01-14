@@ -5,42 +5,20 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/demo": {
-            "put": {
-                "summary": "Save provided note to the database.",
-                "requestBody": {
-                    "description": "",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/DemoNoteModel"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": ""
-                    },
-                    "200": {
-                        "description": ""
-                    }
-                }
-            },
-            "get": {
-                "summary": "Retrieve a note from the database by title.",
+        "/api/user/penalty/{penalty_id}/cancel": {
+            "patch": {
                 "parameters": [
                     {
-                        "name": "title",
-                        "in": "query",
-                        "required": false,
+                        "name": "penalty_id",
+                        "in": "path",
+                        "required": true,
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "400": {
+                    "422": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -65,7 +43,105 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/DemoNoteModel"
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/{user_id}": {
+            "patch": {
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": ""
+                    }
+                },
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/history": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AdminHistoryEntryModel"
+                                    }
                                 }
                             }
                         }
@@ -122,6 +198,227 @@
                 }
             }
         },
+        "/api/ip": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "CF-Connecting-IP",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Forwarded-For",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "X-Real-IP",
+                        "in": "header",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/parameter/all": {
+            "get": {
+                "summary": "Return a list of system parameters.",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ParameterModel"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/parameter/{key...}": {
+            "get": {
+                "summary": "Returns a specified parameter.",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ParameterModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Updates the value of the specified parameter.",
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ParameterUpdateModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/penalty": {
+            "post": {
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReportIdWrapper"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NewPenaltyResponseModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/{user_id}/penalty": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PenaltyModel"
+                                }
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/reports": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AdminReportEntry"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/reservation": {
             "post": {
                 "requestBody": {
@@ -165,7 +462,7 @@
                             }
                         }
                     },
-                    "404": {
+                    "409": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -175,7 +472,7 @@
                             }
                         }
                     },
-                    "409": {
+                    "404": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -191,6 +488,62 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/CreateReservationSuccessResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/report/{report_id}/reviewed": {
+            "patch": {
+                "parameters": [
+                    {
+                        "name": "report_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
                                 }
                             }
                         }
@@ -287,21 +640,29 @@
                     }
                 }
             }
+        },
+        "/api/user": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserListEntry"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
-            "DemoNoteModel": {
-                "type": "object",
-                "properties": {
-                    "title": {
-                        "type": "string"
-                    },
-                    "contents": {
-                        "type": "string"
-                    }
-                }
-            },
             "ApiErrorModel": {
                 "type": "object",
                 "properties": {
@@ -309,6 +670,27 @@
                         "type": "string"
                     },
                     "context": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AdminHistoryEntryModel": {
+                "type": "object",
+                "properties": {
+                    "startTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "durationMin": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "spot": {
+                        "type": "integer"
+                    },
+                    "plate": {
                         "type": "string"
                     }
                 }
@@ -328,6 +710,151 @@
                     },
                     "spot": {
                         "type": "integer"
+                    }
+                }
+            },
+            "ParameterModel": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "ordinal": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ParameterUpdateModel": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ReportIdWrapper": {
+                "type": "object",
+                "properties": {
+                    "reportId": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "NewPenaltyResponseModel": {
+                "type": "object",
+                "properties": {
+                    "state": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "ordinal": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
+            "PenaltyModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "reservation": {
+                        "type": "integer"
+                    },
+                    "reason": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "ordinal": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    "paid": {
+                        "type": "boolean"
+                    },
+                    "due": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "fine": {
+                        "type": "number"
+                    }
+                }
+            },
+            "AdminReportEntry": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "plate": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "submitterPlate": {
+                        "type": "string"
+                    },
+                    "image": {
+                        "type": "string"
+                    },
+                    "reviewed": {
+                        "type": "boolean"
+                    },
+                    "penalty": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "reservation": {
+                                "type": "integer"
+                            },
+                            "reason": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "ordinal": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "paid": {
+                                "type": "boolean"
+                            },
+                            "due": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "fine": {
+                                "type": "integer"
+                            }
+                        }
                     }
                 }
             },
@@ -417,6 +944,67 @@
                                 }
                             }
                         }
+                    }
+                }
+            },
+            "UserListEntry": {
+                "type": "object",
+                "properties": {
+                    "plate": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "mail": {
+                        "type": "string"
+                    },
+                    "currentPenaltyModel": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "reservation": {
+                                "type": "integer"
+                            },
+                            "reason": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "ordinal": {
+                                        "type": "integer"
+                                    }
+                                }
+                            },
+                            "paid": {
+                                "type": "boolean"
+                            },
+                            "due": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "fine": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "numberOfPastReservations": {
+                        "type": "integer"
+                    },
+                    "numberOfFutureReservations": {
+                        "type": "integer"
+                    },
+                    "numberOfPastBans": {
+                        "type": "integer"
+                    },
+                    "currentReservation": {
+                        "type": "boolean"
                     }
                 }
             }
