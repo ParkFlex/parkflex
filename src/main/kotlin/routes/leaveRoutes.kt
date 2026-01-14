@@ -2,12 +2,14 @@ package parkflex.routes
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondNullable
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import parkflex.db.ParameterEntity
 import parkflex.db.ParameterTable
 import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
+import parkflex.models.LeaveModel
 import parkflex.repository.ParameterRepository
 import parkflex.runDB
 import parkflex.service.PenaltyService
@@ -73,10 +75,19 @@ fun Route.leaveRoutes() {
             reservation.left = now
         }
 
-        PenaltyService.processOvertime(reservation, now)
+        val out =
+            PenaltyService
+                .processOvertime(reservation, now)
+                ?.let { (penalty, overtime) ->
+                    LeaveModel(
+                        fine = penalty.fine,
+                        due = penalty.due,
+                        late = overtime
+                    )
+                }
 
         TermService.exit.generate()
 
-        call.respond(HttpStatusCode.OK)
+        call.respondNullable(HttpStatusCode.OK, out)
     }
 }
