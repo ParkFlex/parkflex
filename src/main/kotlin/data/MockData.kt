@@ -70,6 +70,20 @@ fun generateMockData() {
         user = user2
     }
 
+    ReservationEntity.new {
+        start = LocalDateTime.now().minusHours(1)
+        duration = 120
+        spot = spot1
+        user = user3
+    }
+
+    ReservationEntity.new {
+        start = LocalDateTime.now().minusHours(2)
+        duration = 240
+        spot = spot3
+        user = user3
+    }
+
     val reservation3 = ReservationEntity.new {
         start = LocalDateTime.now().minusDays(1)
         duration = 90
