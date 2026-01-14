@@ -7,7 +7,6 @@ import {Calendar} from "primereact/calendar";
 import {Button} from "primereact/button";
 import {useQuickReservation} from "../hooks/useQuickReservation.ts";
 import {Card} from "primereact/card";
-import {formatTime} from "../utils/dateUtils.ts";
 
 export function ArrivalPage() {
     const axios = useAxios();
@@ -25,18 +24,17 @@ export function ArrivalPage() {
             case "NoReservation":
                 if (quickReservation)
                     return (
-                        <Card>
+                        <Card header={"Utworzono rezerwację"}>
                             <div>
-                                Utworzono rezerwację do godz. {quickReservation.end},
-                                miejsce parkingowe nr. {quickReservation.spot}.
+                                Utworzono rezerwację do godz. <b>{quickReservation.end}</b>,
+                                miejsce parkingowe <b>nr. {quickReservation.spot}</b>.
                             </div>
                         </Card>
                     );
                 else
                     return (
-                        <Card>
+                        <Card header={"Wybierz czas końca rezerwacji"}>
                             <div style={{display: "flex", flexDirection: "column"}}>
-                                {data.status}
                                 <Calendar timeOnly inline onChange={e => e.value && setTime(e.value)}/>
                                 <Button onClick={() => time && sendQuickReservation(time)} label={"Akceptuj"}/>
                             </div>
