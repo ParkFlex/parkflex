@@ -1,7 +1,7 @@
 import { Card } from "primereact/card";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-import {useEffect, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { ConfirmDialog } from "primereact/confirmdialog";
@@ -9,8 +9,6 @@ import { Toast } from "primereact/toast";
 import { useReport } from "../hooks/useReport.ts";
 import type { ReportEntry } from "../models/ReportEntry.tsx";
 import {Dialog} from "primereact/dialog";
-import {Badge} from "primereact/badge";
-import {Divider} from "primereact/divider";
 
 
 export function Report(){
@@ -119,8 +117,7 @@ export function Report(){
                             alignItems: "baseline"
                         }}>
                             <div>Przydzielono nowe miejsce:</div>
-                            <Divider layout={"vertical"}/>
-                            <Badge size="large" value={newSpot}/>
+                            <b>{newSpot}</b>
                           </div>
                         : <div> Nie udało się przydzielić nowego miejsca</div>}
                 </div>
