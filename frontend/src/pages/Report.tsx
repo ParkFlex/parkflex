@@ -114,7 +114,8 @@ export function Report(){
                     {newSpot
                         ? <div style={{
                             display: "flex",
-                            alignItems: "baseline"
+                            alignItems: "baseline",
+                            justifyContent: "space-around"
                         }}>
                             <div>Przydzielono nowe miejsce:</div>
                             <b>{newSpot}</b>
