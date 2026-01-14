@@ -18,7 +18,16 @@ export function ArrivalPage() {
     const dataComponent = (data: ArrivalResponseModel) => {
         switch (data.status) {
             case "Ok":
-                return <a>{data.status}, {data.startTime}, {data.endTime}, {data.spot}</a>;
+                return (
+                <Card>
+                    <h1 style={{textAlign:'center', marginBottom:'45px'}}>Rezerwacja Aktywna</h1>
+                    <Card style={{backgroundColor:'white', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                        <h2 style={{marginBottom:'15px' }}>Twoje miejsce to: {data.spot}</h2>
+                    </Card>
+                </Card>
+                )
+
+                // <a>{data.status}, {data.startTime}, {data.endTime}, {data.spot}</a>;
             case "NoReservation":
                 return <Card>
                     {/*{data.status}*/}
