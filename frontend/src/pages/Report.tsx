@@ -21,7 +21,7 @@ export function Report(){
     const [visible, setVisible] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const toast = useRef<Toast>(null);
-    const [newSpotDialogVisible, setNewSpotDialogVisible] = useState(true);
+    const [newSpotDialogVisible, setNewSpotDialogVisible] = useState(false);
 
     const { submitReport, loading, newSpot } = useReport();
 
