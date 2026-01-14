@@ -32,7 +32,7 @@ createRoot(document.getElementById("root")!).render(
                             <Route path="users" element={<AdminUserList />} />
                             <Route path="reservation_history" element={<AdminHistoryList />} />
                             <Route path="report_history" element={<AdminReportList />} />
-                            {/*<Route path="settings" element={<AdminSettings />} />*/}
+                            <Route path="settings" element={<AdminParameters />} />
                         </Route>
                         <Route path="*" element={<NotFound/>}/>
                     </Route>

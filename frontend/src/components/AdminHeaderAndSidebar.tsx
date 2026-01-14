@@ -21,6 +21,8 @@ export function AdminHeaderAndSidebar () {
                 return 'Historia Rezerwacji';
             case path.includes('/admin/report_history'):
                 return 'Historia Zgłoszeń';
+            case path.includes('/admin/settings'):
+                return 'Ustawienia Admina';
             default:
                 return 'Lista Użytkowników';
         }
@@ -78,12 +80,12 @@ export function AdminHeaderAndSidebar () {
                             onClick={function() { goTo('/admin/report_history'); }}
                             style={{ background: 'transparent', border: 'none', color: morski, textAlign: 'left', justifyContent: 'flex-start' }}
                         />
-                        {/*<Button*/}
-                        {/*    label="Ustawienia Admina"*/}
-                        {/*    icon="pi pi-user-edit"*/}
-                        {/*    onClick={function() { goTo('/admin/settings'); }}*/}
-                        {/*    style={{ background: 'transparent', border: 'none', color: morski, textAlign: 'left', justifyContent: 'flex-start' }}*/}
-                        {/*/>*/}
+                        <Button
+                            label="Ustawienia Admina"
+                            icon="pi pi-user-edit"
+                            onClick={function() { goTo('/admin/settings'); }}
+                            style={{ background: 'transparent', border: 'none', color: morski, textAlign: 'left', justifyContent: 'flex-start' }}
+                        />
                     </nav>
                 </Sidebar>
             </header>

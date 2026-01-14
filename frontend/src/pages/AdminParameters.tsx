@@ -66,11 +66,7 @@ export function AdminParameters() {
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <Toast ref={toast} position={"bottom-center"}/> {/* tościk */}
 
-            <h2 style={{ color: morski, borderBottom: '2px solid ' + jasnaZielen, paddingBottom: '10px' }}>
-                Ustawienia Systemowe
-            </h2>
-
-            <div style={{ marginTop: '30px' }}>
+            <div style={{ marginTop: '15px' }}>
                 <SingleParameterCard // komponent karty pojedynczego parametru ,znajduje się w folderze components , ściezka: ../components/SingleParameterCard.tsx
                     label="Kara za przekroczony czas postoju"
                     description="Wysokość kary naliczana co 15 min"
