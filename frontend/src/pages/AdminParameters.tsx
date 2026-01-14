@@ -63,8 +63,8 @@ export function AdminParameters() {
     }
 
     return (
-        <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-            <Toast ref={toast} /> {/* tościk */}
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <Toast ref={toast} position={"bottom-center"}/> {/* tościk */}
 
             <h2 style={{ color: morski, borderBottom: '2px solid ' + jasnaZielen, paddingBottom: '10px' }}>
                 Ustawienia Systemowe
@@ -92,26 +92,26 @@ export function AdminParameters() {
                 <SingleParameterCard
                     label="Minimalny czas rezerwacji"
                     description="Najkrótszy możliwy czas trwania rezerwacji"
-                    value={minTime}
-                    onChange={setMinTime}
+                    value={minTime/60}
+                    onChange={(godz:number)=>setMinTime(godz*60)}
                     onSave={() => save("reservation/duration/min", minTime, "Minimalny czas rezerwacji")}
-                    suffix=" min" // jednostka czasu
+                    suffix=" godz" // jednostka czasu
                 />
 
                 <SingleParameterCard
                     label="Maksymalny czas rezerwacji"
                     description="Najdłuższy możliwy czas trwania rezerwacji"
-                    value={maxTime}
-                    onChange={setMaxTime}
+                    value={maxTime/60}
+                    onChange={(godz:number)=>setMaxTime(godz*60)}
                     onSave={() => save("reservation/duration/max", maxTime, "Maksymalny czas rezerwacji")}
-                    suffix=" min"
+                    suffix=" godz"
                 />
 
                 <SingleParameterCard
                     label="Długość trwania bana"
                     description="Czas trwania blokady użytkownika w dniach"
-                    value={banDuration}
-                    onChange={setBanDuration}
+                    value={banDuration/24}
+                    onChange={(days: number) => setBanDuration(days * 24)}
                     onSave={() => save("penalty/block/duration", banDuration , "Długość trwania bana")}
                     suffix=" dni" // jednostka czasu w dniach
                 />
