@@ -7,6 +7,7 @@ import parkflex.db.ReservationEntity
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.QuickReservationModel
+import parkflex.repository.ParameterRepository
 import parkflex.repository.SpotRepository
 import parkflex.runDB
 import parkflex.service.TermService
@@ -63,6 +64,17 @@ fun Route.quickReservationRoutes() {
             }
 
             val duration = Duration.between(now, endDateTime).toMinutes().toInt().absoluteValue //uhhhhh
+
+            val minReservationTime = runDB { ParameterRepository.get("reservation/duration/min") }?.toLong()!!
+            val maxReservationTime = runDB { ParameterRepository.get("reservation/duration/max") }?.toLong()!!
+
+            if ((duration in minReservationTime..maxReservationTime).not()) {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = ApiErrorModel("Duration too short or too long", "POST /quickReservation/{token}")
+                )
+                return@post
+            }
 
             runDB {
                 ReservationEntity.new {
