@@ -12,6 +12,7 @@ import parkflex.runDB
 import parkflex.service.TermService
 import java.time.LocalDateTime
 import java.time.Duration
+import java.time.LocalTime
 import kotlin.math.absoluteValue
 
 fun Route.quickReservationRoutes() {
@@ -28,10 +29,10 @@ fun Route.quickReservationRoutes() {
                 return@post
             }
 
-            val end = call.queryParameters["end"]?.let { LocalDateTime.parse(it) } ?: run {
+            val endTime = call.queryParameters["end"]?.let { LocalTime.parse(it) } ?: run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = ApiErrorModel("No valid end date provided", "POST /api/quickReservation/{token}")
+                    message = ApiErrorModel("No valid end time provided", "POST /api/quickReservation/{token}")
                 )
 
                 return@post
@@ -47,8 +48,9 @@ fun Route.quickReservationRoutes() {
             }
 
             val now = LocalDateTime.now()
+            val endDateTime = endTime.atDate(now.toLocalDate())
 
-            val freeSpot = runDB { SpotRepository.getFirstFree(now, end) } ?: run {
+            val freeSpot = runDB { SpotRepository.getFirstFree(now, endDateTime) } ?: run {
                 call.respond(
                     status = HttpStatusCode.NotFound,
                     message = ApiErrorModel(
@@ -60,7 +62,7 @@ fun Route.quickReservationRoutes() {
                 return@post
             }
 
-            val duration = Duration.between(now, end).toMinutes().toInt().absoluteValue //uhhhhh
+            val duration = Duration.between(now, endDateTime).toMinutes().toInt().absoluteValue //uhhhhh
 
             runDB {
                 ReservationEntity.new {
@@ -79,7 +81,7 @@ fun Route.quickReservationRoutes() {
                 status = HttpStatusCode.Created,
                 message = QuickReservationModel(
                     spot = freeSpot.id.value,
-                    end = end
+                    end = endTime
                 )
             )
         }
