@@ -123,7 +123,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "string"
+                                "$ref": "#/components/schemas/UpdatePlateModel"
                             }
                         }
                     }
@@ -142,6 +142,52 @@
                                     "items": {
                                         "$ref": "#/components/schemas/AdminHistoryEntryModel"
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/arrive/{token}": {
+            "post": {
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NoPresentReservationModel"
                                 }
                             }
                         }
@@ -198,44 +244,31 @@
                 }
             }
         },
-        "/api/ip": {
-            "get": {
+        "/api/leave/{token}": {
+            "post": {
                 "parameters": [
                     {
-                        "name": "CF-Connecting-IP",
-                        "in": "header",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "X-Forwarded-For",
-                        "in": "header",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "X-Real-IP",
-                        "in": "header",
-                        "required": false,
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
                         "schema": {
                             "type": "string"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
+                    "400": {
                         "description": "",
                         "content": {
-                            "text/plain": {
+                            "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "$ref": "#/components/schemas/ApiErrorModel"
                                 }
                             }
                         }
+                    },
+                    "200": {
+                        "description": ""
                     }
                 }
             }
@@ -659,6 +692,35 @@
                     }
                 }
             }
+        },
+        "/api/report": {
+            "post": {
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReportEntryModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiErrorModel"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": ""
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -670,6 +732,14 @@
                         "type": "string"
                     },
                     "context": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UpdatePlateModel": {
+                "type": "object",
+                "properties": {
+                    "plate": {
                         "type": "string"
                     }
                 }
@@ -692,6 +762,74 @@
                     },
                     "plate": {
                         "type": "string"
+                    }
+                }
+            },
+            "NoPresentReservationModel": {
+                "type": "object",
+                "properties": {
+                    "reservations": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "spot": {
+                                    "type": "integer"
+                                },
+                                "spans": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "start": {
+                                                "type": "string",
+                                                "format": "time"
+                                            },
+                                            "end": {
+                                                "type": "string",
+                                                "format": "time"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "status": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "ordinal": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessfulArrivalModel": {
+                "type": "object",
+                "properties": {
+                    "startTime": {
+                        "type": "string"
+                    },
+                    "endTime": {
+                        "type": "string"
+                    },
+                    "spot": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "ordinal": {
+                                "type": "integer"
+                            }
+                        }
                     }
                 }
             },
@@ -950,6 +1088,9 @@
             "UserListEntry": {
                 "type": "object",
                 "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
                     "plate": {
                         "type": "string"
                     },
@@ -1005,6 +1146,20 @@
                     },
                     "currentReservation": {
                         "type": "boolean"
+                    }
+                }
+            },
+            "ReportEntryModel": {
+                "type": "object",
+                "properties": {
+                    "plate": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "image": {
+                        "type": "string"
                     }
                 }
             }
