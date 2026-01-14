@@ -7,9 +7,7 @@ import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.NoPresentReservationModel
 import parkflex.models.SuccessfulArrivalModel
-import parkflex.models.TimeTableEntry
 import parkflex.repository.ParameterRepository
-import parkflex.repository.ReservationRepository
 import parkflex.runDB
 import parkflex.service.TermService
 import java.time.Duration
@@ -89,17 +87,9 @@ fun Route.arrivalRoutes() {
 
 
         if (reservation == null) {
-            val today = now.toLocalDate()
-            val timeTable = runDB {
-                ReservationRepository
-                    .forDate(today)
-                    .groupBy { it.spot.id.value }
-                    .map { TimeTableEntry.fromReservations(it.key, it.value) }
-            }
-
             call.respond(
                 status = HttpStatusCode.OK,
-                message = NoPresentReservationModel(timeTable)
+                message = NoPresentReservationModel
             )
 
         } else {
@@ -113,7 +103,7 @@ fun Route.arrivalRoutes() {
 
             val spot = runDB { reservation.spot.id.value }
 
-            call.respond(
+            call.respondNullable(
                 status = HttpStatusCode.OK,
                 message = SuccessfulArrivalModel(startTime, endTime, spot)
             )
