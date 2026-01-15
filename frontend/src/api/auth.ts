@@ -32,28 +32,6 @@ export const login = async ({
     email,
     password,
 }: LoginRequest): Promise<LoginResponse> => {
-    if (MOCK_LOGIN_RESPONSE) {
-        return new Promise<LoginResponse>((resolve, reject) => {
-            setTimeout(() => {
-                if (!email || !password) {
-                    reject(new Error("Email i hasło są wymagane"));
-                    return;
-                }
-
-                resolve({
-                    token: "mock-jwt",
-                    user: {
-                        id: 1,
-                        name: "Mock User",
-                        email,
-                        role: "user",
-                        plate: "XYZ 1234",
-                    },
-                });
-            }, 600);
-        });
-    }
-
     const axiosInstance = createAxiosInstance();
 
     try {
