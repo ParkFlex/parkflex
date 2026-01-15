@@ -24,10 +24,6 @@ interface LoginResponse {
     user: User;
 }
 
-const MOCK_REGISTER_RESPONSE = true;
-
-const MOCK_LOGIN_RESPONSE = true;
-
 export const login = async ({
     email,
     password,
