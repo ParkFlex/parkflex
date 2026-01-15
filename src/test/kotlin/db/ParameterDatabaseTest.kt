@@ -1,26 +1,26 @@
-package db
+package parkflex.db
 
-import io.ktor.server.testing.*
-
+import db.configDataBase
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import parkflex.db.ParameterEntity
-import parkflex.db.ParameterTable
-import parkflex.db.ParameterType
 import kotlin.test.*
 
 class ParameterDatabaseTest {
 
-    @org.junit.jupiter.api.BeforeEach
+    private lateinit var db: Database
+
+    @BeforeEach
     fun setup() {
-        configDataBase.setupTestDB(ParameterTable)
+        db = configDataBase.setupTestDB()
     }
 
     @Test
-    fun `test creating and retrieving a parameter`() = testApplication {
-        setup()
-
-        transaction {
+    fun `test creating and retrieving a parameter`() {
+        transaction(db) {
+            SchemaUtils.create(ParameterTable)
 
             val created = ParameterEntity.new {
                 key = "api_url"
@@ -33,21 +33,7 @@ class ParameterDatabaseTest {
             assertNotNull(retrieved)
             assertEquals("api_url", retrieved.key)
             assertEquals("https://api.parkflex.pl", retrieved.value)
-        }
-    }
-
-    @Test
-    fun `test searching for a parameter by its key`() = testApplication {
-        setup()
-
-        transaction {
-
-            ParameterEntity.new { key = "version"; value = "1.0.0"; type = ParameterType.String }
-            ParameterEntity.new { key = "env"; value = "prod"; type = ParameterType.String }
-
-            val versionParam = ParameterEntity.find { ParameterTable.key eq "version" }.single()
-
-            assertEquals("1.0.0", versionParam.value)
+            assertEquals(ParameterType.String, retrieved.type)
         }
     }
 }

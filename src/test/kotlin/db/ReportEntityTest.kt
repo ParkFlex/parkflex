@@ -1,7 +1,9 @@
 package db
 
-import io.ktor.server.testing.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import parkflex.db.*
 import java.time.LocalDateTime
@@ -9,16 +11,18 @@ import kotlin.test.*
 
 class ReportEntityTest {
 
-    @org.junit.jupiter.api.BeforeEach
+    private lateinit var db: Database
+
+    @BeforeEach
     fun setup() {
-        configDataBase.setupTestDB(UserTable, ReservationTable, PenaltyTable, ReportTable)
+        db = configDataBase.setupTestDB()
     }
 
     @Test
-    fun `test creating a report with a valid user`() = testApplication {
-        setup()
+    fun `test creating a report with a valid user`() {
 
-        transaction {
+        transaction(db) {
+            SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ReportTable)
 
             val user = UserEntity.new {
                 fullName = "John Doe"
@@ -38,9 +42,11 @@ class ReportEntityTest {
             }
 
             val retrieved = ReportEntity.findById(newReport.id)
+
             assertNotNull(retrieved)
             assertEquals("W0-PARK1", retrieved.plate)
             assertEquals("John Doe", retrieved.submitter.fullName)
+            assertFalse(retrieved.reviewed)
         }
     }
 }

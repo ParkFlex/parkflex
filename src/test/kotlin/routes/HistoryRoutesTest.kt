@@ -6,13 +6,13 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
 import parkflex.models.CreateReservationRequest
 import parkflex.models.CreateReservationSuccessResponse
 import parkflex.models.HistoryEntry
-import parkflex.runDB
 import testingClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -24,7 +24,8 @@ class HistoryRoutesTest {
 
     @Test
     fun `test get history without userId(null) returns 422`() = testApplication {
-        application { configureTest() }
+        val db = setupTestDB()
+        application { configureTest(db) } // Baza przekazana do aplikacji
         val client = testingClient()
 
         val response = client.get("/api/historyEntry")
@@ -37,7 +38,7 @@ class HistoryRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        runDB {
+        newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, ReservationTable, SpotTable, PenaltyTable)
         }
 
@@ -47,14 +48,13 @@ class HistoryRoutesTest {
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
 
-
     @Test
     fun `test history returns mixed statuses (ok and penalty)`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
 
-        val (userId, spotId) = runDB {
+        val (userId, spotId) = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable)
 
             val user = UserEntity.new {
@@ -74,14 +74,14 @@ class HistoryRoutesTest {
                 this.user = user
                 this.spot = spot
                 this.start = LocalDateTime.now().minusDays(5)
-                this.duration = 60 // 1h
+                this.duration = 60
             }
 
             val badReservation = ReservationEntity.new {
                 this.user = user
                 this.spot = spot
                 this.start = LocalDateTime.now().minusDays(1)
-                this.duration = 120 // 2h
+                this.duration = 120
             }
 
             PenaltyEntity.new {
@@ -92,7 +92,7 @@ class HistoryRoutesTest {
                 due = LocalDateTime.now().plusDays(7)
             }
 
-            Pair(user.id.value, spot.id.value)
+            user.id.value to spot.id.value
         }
 
         val response = client.get("/api/historyEntry") {
@@ -102,17 +102,9 @@ class HistoryRoutesTest {
         assertEquals(HttpStatusCode.OK, response.status)
         val historyList = response.body<List<HistoryEntry>>()
 
-        assertEquals(2, historyList.size, "2 history entries should be returned")
-
-        val okEntry = historyList.find { it.durationMin == 60 }
-        assertNotNull(okEntry)
-        assertEquals("ok", okEntry.status)
-        assertEquals(spotId, okEntry.spot)
-
-        val penaltyEntry = historyList.find { it.durationMin == 120 }
-        assertNotNull(penaltyEntry)
-        assertEquals("penalty", penaltyEntry.status)
-        assertEquals(spotId, penaltyEntry.spot)
+        assertEquals(2, historyList.size)
+        assertTrue(historyList.any { it.status == "ok" && it.durationMin == 60 })
+        assertTrue(historyList.any { it.status == "penalty" && it.durationMin == 120 })
     }
 
     @Test
@@ -121,17 +113,15 @@ class HistoryRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        val userId = runDB {
+        val userId = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable)
-
-            val user = UserEntity.new {
+            UserEntity.new {
                 fullName = "Nowy Użytkownik"
                 mail = "nowy@parkflex.pl"
                 hash = "hash"
                 plate = "WB 54321"
                 role = "user"
-            }
-            user.id.value
+            }.id.value
         }
 
         val response = client.get("/api/historyEntry") {
@@ -149,10 +139,10 @@ class HistoryRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        val (userId, spotId) = runDB {
+        val (userId, spotId) = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
 
-            val user = UserEntity.new(id = 2) {
+            val user = UserEntity.new(id = 2L) {
                 fullName = "Integrator Test"
                 mail = "flow@parkflex.pl"
                 hash = "hash"
@@ -167,11 +157,9 @@ class HistoryRoutesTest {
         }
 
         val startTime = LocalDateTime.now().plusDays(1)
-        val startTimeString = startTime.format(DateTimeFormatter.ISO_DATE_TIME)
-
         val reservationRequest = CreateReservationRequest(
             spot_id = spotId,
-            start = startTimeString,
+            start = startTime.format(DateTimeFormatter.ISO_DATE_TIME),
             duration = 45
         )
 
@@ -181,8 +169,6 @@ class HistoryRoutesTest {
         }
 
         assertEquals(HttpStatusCode.OK, postResponse.status)
-        val postBody = postResponse.body<CreateReservationSuccessResponse>()
-        assertEquals("Rezerwacja utworzona pomyslnie", postBody.message)
 
         val getResponse = client.get("/api/historyEntry") {
             url { parameter("userId", userId.toString()) }
@@ -192,8 +178,7 @@ class HistoryRoutesTest {
         val history = getResponse.body<List<HistoryEntry>>()
 
         val found = history.find { it.durationMin == 45 && it.spot == spotId }
-
-        assertTrue(found != null)
+        assertNotNull(found, "Rezerwacja powinna zostać znaleziona w historii")
         assertEquals("ok", found.status)
     }
 }

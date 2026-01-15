@@ -1,0 +1,127 @@
+package parkflex.routes
+
+import db.configDataBase.setupTestDB
+import io.ktor.client.plugins.sse.sse
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.junit.jupiter.api.Test
+import parkflex.configureTest
+import parkflex.db.*
+import parkflex.service.TermService
+import testingClient
+import java.time.LocalDateTime
+import kotlin.test.assertEquals
+
+class LeaveRoutesTest {
+/*
+    @Test
+    fun `test successful exit`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        newSuspendedTransaction(db = db) {
+            SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
+
+            val user = UserEntity.new(id = 2) {
+                fullName = "Test User"
+                mail = "test@parkflex.pl"
+                hash = "hash"
+                plate = "WA 12345"
+                role = "user"
+            }
+            val spot = SpotEntity.new {
+                role = "standard"
+                displayOrder = 1
+            }
+            ReservationEntity.new {
+                this.user = user
+                this.spot = spot
+                this.start = LocalDateTime.now().minusHours(1)
+                this.duration = 120
+                this.arrived = LocalDateTime.now().minusMinutes(30)
+                this.left = null
+            }
+        }
+
+        runBlocking {
+            client.sse(host = "127.0.0.1", port = 8080, path = "/events") {
+                // this: ClientSSESession
+            }
+        }
+        val response = client.post("/api/leave/$validToken")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+
+    }
+*/
+    @Test
+    fun `test exit with invalid token returns 400`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        val response = client.post("/api/leave/wrong-token")
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+    }
+
+    @Test
+    fun `test exit when no active reservation exists returns 400`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        newSuspendedTransaction(db = db) {
+            SchemaUtils.create(UserTable, SpotTable, ReservationTable, ParameterTable)
+            UserEntity.new(id = 2) {
+                fullName = "No Reservation User"
+                mail = "no@res.pl"
+                hash = "hash"
+                plate = "WA 00000"
+                role = "user"
+            }
+        }
+
+        val token = TermService.exit.generate()
+        val response = client.post("/api/leave/$token")
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+    }
+
+    @Test
+    fun `test exit when user already left returns 400`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        newSuspendedTransaction(db = db) {
+            SchemaUtils.create(UserTable, SpotTable, ReservationTable, ParameterTable)
+            val user = UserEntity.new(id = 2) {
+                fullName = "Already Left"
+                mail = "left@parkflex.pl"
+                hash = "hash"
+                plate = "WA 11111"
+                role = "user"
+            }
+            val spot = SpotEntity.new { role = "standard"; displayOrder = 1 }
+
+            ReservationEntity.new {
+                this.user = user
+                this.spot = spot
+                this.start = LocalDateTime.now()
+                this.duration = 60
+                this.arrived = LocalDateTime.now().minusMinutes(10)
+                this.left = LocalDateTime.now().minusMinutes(5)
+            }
+        }
+
+        val token = TermService.exit.generate()
+        val response = client.post("/api/leave/$token")
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+    }
+}
