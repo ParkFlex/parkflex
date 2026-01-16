@@ -13,7 +13,7 @@ export const useUserList = () => {
 
             try {
                 const resp = await axios.get<AdminUserEntry[]>(
-                    `/user`,
+                    `/admin/user`,
                 );
                 setUserListEntries(resp.data);
             } catch (err: unknown) {
@@ -35,9 +35,9 @@ export const useUserList = () => {
     const cancelPenalty = useCallback(async (penaltyId: number) => {
         if (!penaltyId) return;
         try {
-            await axios.patch(`/penalty/${penaltyId}/cancel`, null, { headers: { 'Content-Type': 'application/json' } });
+            await axios.patch(`/admin/penalty/${penaltyId}/cancel`, null, { headers: { 'Content-Type': 'application/json' } });
             try {
-                const resp = await axios.get<AdminUserEntry[]>(`/user`);
+                const resp = await axios.get<AdminUserEntry[]>(`/admin/user`);
                 setUserListEntries(resp.data);
             } catch (err) {
                 console.warn('Failed to refresh user list after cancelling penalty', err);
@@ -57,9 +57,9 @@ export const useUserList = () => {
     const changePlate = useCallback(async (userId: number, newPlate: string) => {
         if (!userId || !newPlate) return;
         try {
-            await axios.patch(`/user/${userId}`, { plate: newPlate }, { headers: { 'Content-Type': 'application/json' } });
+            await axios.patch(`/admin/user/${userId}`, { plate: newPlate }, { headers: { 'Content-Type': 'application/json' } });
             try {
-                const resp = await axios.get<AdminUserEntry[]>(`/user`);
+                const resp = await axios.get<AdminUserEntry[]>(`/admin/user`);
                 setUserListEntries(resp.data);
             } catch (err) {
                 console.warn('Failed to refresh user list after changing plate', err);

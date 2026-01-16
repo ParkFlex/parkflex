@@ -17,7 +17,7 @@ export function AdminParameters() {
     const [gap, setGap] = useState(0); // Inicjalizacja stanu dla czasu pomiędzy rezerwacjami
 
     useEffect(() => {
-        axios.get("parameter/all") // Pobieranie wszystkich parametrów z backendu
+        axios.get("/admin/parameter/all") // Pobieranie wszystkich parametrów z backendu
             .then((response: any) => {
                 const data = response.data;
                 console.log("Pobrane parametry z backendu:", data);
@@ -45,7 +45,7 @@ export function AdminParameters() {
     }, [axios]);
 
     function save(key: string, value: any, label?: string) { // Funkcja do zapisywania zmian parametrów ,znak zapytani - wartość opcjonalna etykieta
-        axios.patch(`parameter/${key}`, { value: String(value) }) // Wysyłanie żądania PATCH do backendu z nową wartością
+        axios.patch(`/admin/parameter/${key}`, { value: String(value) }) // Wysyłanie żądania PATCH do backendu z nową wartością
             .then(() => {
                 toast.current?.show({ // Pokazywanie tościa po udanym zapisie
                     severity: 'success', // Poziom

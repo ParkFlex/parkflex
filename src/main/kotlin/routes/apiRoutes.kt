@@ -20,27 +20,10 @@ import parkflex.routes.term.leaveRoutes
  * Routes for the REST API.
  */
 fun Route.apiRoutes() {
-    route("/user") {
-        userFullRoutes()
-
-        updatePlateRoutes()
-
-        penaltyRoutes()
-
-        penaltyCancelRoutes()
+    route("/admin") {
+        adminRoutes()
     }
 
-    route("/users") {
-        adminHistoryRoutes()
-    }
-
-    route("report") {
-       reviewedRoutes()
-    }
-
-    route("reports"){
-        reportsRoutes()
-    }
     route("report"){
         userReportRoutes()
     }
@@ -67,13 +50,5 @@ fun Route.apiRoutes() {
 
     route("/leave") {
         leaveRoutes()
-    }
-
-    route("/parameter") {
-        parameterRoutes()
-    }
-
-    route("/penalty") {
-        penaltyCreationRoutes()
     }
 }

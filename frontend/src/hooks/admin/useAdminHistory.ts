@@ -13,7 +13,7 @@ export const useAdminHistory = () => {
 
             try {
                 const resp = await axios.get<AdminHistoryEntry[]>(
-                    `/users/history`,
+                    `/admin/users/history`,
                 );
 
                 setAdminHistoryEntries(resp.data);

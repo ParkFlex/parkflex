@@ -13,7 +13,7 @@ export const useAdminReport = () => {
 
             try {
                 const resp = await axios.get<AdminReportEntry[]>(
-                    `/reports`,
+                    `/admin/reports`,
                 );
                 setAdminReportEntries(resp.data);
             } catch (err: unknown) {
@@ -34,9 +34,9 @@ export const useAdminReport = () => {
 
     const approveReport = useCallback( async (reportId: number): Promise<boolean> => {
         try {
-            await axios.post(`/penalty`, { reportId: reportId }, { headers: { 'Content-Type': 'application/json' } });
+            await axios.post(`/admin/penalty`, { reportId: reportId }, { headers: { 'Content-Type': 'application/json' } });
             try {
-                const resp = await axios.get<AdminReportEntry[]>(`/reports`);
+                const resp = await axios.get<AdminReportEntry[]>(`/admin/reports`);
                 setAdminReportEntries(resp.data);
             } catch (err) {
                 console.warn('Failed to refresh report list after approving report', err);
@@ -57,9 +57,9 @@ export const useAdminReport = () => {
 
     const changeReviewed = useCallback( async (reportId: number) => {
         try {
-            await axios.patch(`/report/${reportId}/reviewed`, null, { headers: { 'Content-Type': 'application/json' } });
+            await axios.patch(`/admin/report/${reportId}/reviewed`, null, { headers: { 'Content-Type': 'application/json' } });
             try {
-                const resp = await axios.get<AdminReportEntry[]>(`/reports`);
+                const resp = await axios.get<AdminReportEntry[]>(`/admin/reports`);
                 setAdminReportEntries(resp.data);
             } catch (err) {
                 console.warn('Failed to refresh report list after changing reviewed status', err);
