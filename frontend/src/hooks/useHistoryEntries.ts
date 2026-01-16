@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { useAxios } from './useAxios';
-import type { HistoryEntry } from "../models/HistoryEntry.tsx";
+import type { HistoryEntry } from "../models/history/HistoryEntry.tsx";
 import { isAxiosError } from "axios";
 
 /**

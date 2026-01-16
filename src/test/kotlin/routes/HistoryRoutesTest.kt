@@ -10,9 +10,8 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
-import parkflex.models.CreateReservationRequest
-import parkflex.models.CreateReservationSuccessResponse
-import parkflex.models.HistoryEntry
+import parkflex.models.reservation.CreateReservationRequest
+import parkflex.models.history.HistoryEntry
 import testingClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

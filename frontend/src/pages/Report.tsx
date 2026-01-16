@@ -6,8 +6,8 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
-import { useReport } from "../hooks/useReport.ts";
-import type { ReportEntry } from "../models/ReportEntry.tsx";
+import { useReport } from "../hooks/report/useReport.ts";
+import type { ReportEntry } from "../models/report/ReportEntry.tsx";
 
 
 export function Report(){

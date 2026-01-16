@@ -9,7 +9,7 @@ import { Toolbar } from "primereact/toolbar";
 import { Toast } from "primereact/toast";
 import { useGetSpots } from "../hooks/useGetSpots.tsx";
 import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
-import type { SpotState } from "../models/SpotState.ts";
+import type { SpotState } from "../models/reservation/SpotState.ts";
 
 /**
  * Komponent strony parkingu z rezerwacją miejsc.

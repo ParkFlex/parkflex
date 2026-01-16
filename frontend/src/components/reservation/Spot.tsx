@@ -1,6 +1,6 @@
 import { Button } from "primereact/button";
 
-import type { SpotState } from "../../models/SpotState.ts";
+import type { SpotState } from "../../models/reservation/SpotState.ts";
 
 /**
  * Właściwości komponentu Spot.

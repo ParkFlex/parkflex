@@ -4,7 +4,7 @@ import { formatDate, isSameDay, endsBeforeNow, formatDateWeek } from '../utils/d
 import { useState } from "react";
 import { Button } from "primereact/button";
 import HistoryEntryComp from "../components/HistoryEntry";
-import type { HistoryEntry } from "../models/HistoryEntry.tsx";
+import type { HistoryEntry } from "../models/history/HistoryEntry.tsx";
 import {
     DateRangeFilterDialog,
     type DateRangeFilter,

@@ -8,7 +8,7 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.route
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
-import parkflex.models.UpdatePlateModel
+import parkflex.models.admin.UpdatePlateModel
 import parkflex.runDB
 
 fun Route.updatePlateRoutes() {

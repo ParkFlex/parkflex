@@ -8,7 +8,7 @@ import io.ktor.server.routing.route
 import parkflex.db.PenaltyEntity
 import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
-import parkflex.models.PenaltyModel
+import parkflex.models.admin.PenaltyModel
 import parkflex.runDB
 
 

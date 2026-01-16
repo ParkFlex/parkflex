@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
 import parkflex.models.ApiErrorModel
-import parkflex.models.SpotModel
+import parkflex.models.reservation.SpotModel
 import testingClient
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
