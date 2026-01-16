@@ -31,6 +31,7 @@ suspend fun Application.root() {
     configureDB(config)
     configureJSON()
     configureSSE()
+    configureAuth(config)
     configureRouting()
     configureStatusPages()
 

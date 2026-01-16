@@ -147,4 +147,9 @@ class AppConfig : Config {
 
         mail to passwd
     }
+
+    val jwtIssuer: String = getenvWrapped("PARKFLEX_JWT_ISSUER") ?: "parkflex"
+    val jwtSecret: String = getenvWrapped("PARKFLEX_JWT_SECRET") ?: "#!@secret!31#$"
+    val jwtExpiresMs: Long =
+        getenvWrapped("PARKFLEX_JWT_EXPIRES_MS")?.toLong() ?: (7 * 24 * 3600 * 1000L)
 }
