@@ -23,6 +23,7 @@ import { Register } from "./pages/Register.tsx";
 import { AuthProvider } from "./components/auth";
 import { Account } from "./pages/Account.tsx";
 import { Login } from "./pages/Login.tsx";
+import { HomePage } from "./pages/HomePage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -30,15 +31,16 @@ createRoot(document.getElementById("root")!).render(
             <AuthProvider>
                 <BrowserRouter>
                     <Routes>
+                        <Route path="/homepage" element={<HomePage/>}/>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                         <Route element={<Layout />}>
-                            <Route path="/" element={<Navigate to="/parking" />} />
+                            <Route index element={<Navigate to="/homepage" />} />
                             <Route path="/arrive/:token" element={<ArrivalPage/>}/>
                             <Route path="/leave/:token" element={<LeavePage/>}/>
                             <Route path="/parking" element={<ParkingPage />} />
                             <Route path="/demo" element={<Demo />} />
                             <Route path="/history" element={<History />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
                             <Route path="/account" element={<Account />} />
                             <Route path="/report" element={<Report/>}/>
                             <Route path="/admin" element={<AdminHeaderAndSidebar />}>
@@ -48,8 +50,8 @@ createRoot(document.getElementById("root")!).render(
                                 <Route path="report_history" element={<AdminReportList />} />
                                 <Route path="settings" element={<AdminParameters />} />
                             </Route>
-                            <Route path="*" element={<NotFound />} />
                         </Route>
+                        <Route path="*" element={<NotFound />} />
                     </Routes>
                 </BrowserRouter>
             </AuthProvider>
