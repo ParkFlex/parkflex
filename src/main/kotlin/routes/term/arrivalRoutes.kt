@@ -7,9 +7,7 @@ import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.NoPresentReservationModel
 import parkflex.models.SuccessfulArrivalModel
-import parkflex.models.TimeTableEntry
 import parkflex.repository.ParameterRepository
-import parkflex.repository.ReservationRepository
 import parkflex.runDB
 import parkflex.service.TermService
 import java.time.Duration
@@ -20,14 +18,14 @@ import kotlin.math.abs
 /**
  * Routes for handling vehicle arrival at parking entry gate.
  * Validates entry tokens and checks for active reservations.
- * 
+ *
  * Endpoint: POST /api/arrive/{token}
  * - Validates entry token
  * - Checks if user has an active reservation for current time
  * - Allows arrival during reservation or a few minutes before (controlled by parameter)
  * - Records arrival time if valid
  * - Generates new entry token for security
- * 
+ *
  * TODO: Replace hardcoded uid=2L with actual authentication principal
  */
 fun Route.arrivalRoutes() {
@@ -89,17 +87,9 @@ fun Route.arrivalRoutes() {
 
 
         if (reservation == null) {
-            val today = now.toLocalDate()
-            val timeTable = runDB {
-                ReservationRepository
-                    .forDate(today)
-                    .groupBy { it.spot.id.value }
-                    .map { TimeTableEntry.fromReservations(it.key, it.value) }
-            }
-
             call.respond(
                 status = HttpStatusCode.OK,
-                message = NoPresentReservationModel(timeTable)
+                message = NoPresentReservationModel()
             )
 
         } else {

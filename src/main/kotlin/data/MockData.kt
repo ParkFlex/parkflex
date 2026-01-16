@@ -36,7 +36,7 @@ fun generateMockData() {
         role = "user"
     }
 
-    UserEntity.new {
+    val user3 = UserEntity.new {
         fullName = "Blocked User"
         mail = "blocked@example.com"
         hash = "hashed_password_blocked"
@@ -70,6 +70,20 @@ fun generateMockData() {
         user = user2
     }
 
+    ReservationEntity.new {
+        start = LocalDateTime.now().minusHours(1)
+        duration = 120
+        spot = spot1
+        user = user3
+    }
+
+    ReservationEntity.new {
+        start = LocalDateTime.now().minusHours(2)
+        duration = 240
+        spot = spot3
+        user = user3
+    }
+
     val reservation3 = ReservationEntity.new {
         start = LocalDateTime.now().minusDays(1)
         duration = 90
@@ -89,7 +103,7 @@ fun generateMockData() {
         start = LocalDateTime.now().minusDays(2)
         duration = 60
         spot = spot5
-        user = user1
+        user = user2
     }
 
     val pastReservation2 = ReservationEntity.new {
@@ -120,6 +134,20 @@ fun generateMockData() {
         user = user2
     }
 
+    val reservation5 = ReservationEntity.new {
+        start = LocalDateTime.now().minusDays(1)
+        duration = 90
+        spot = spot1
+        user = user2
+    }
+
+    val reservation6 = ReservationEntity.new {
+        start = LocalDateTime.now().minusDays(5)
+        duration = 120
+        spot = spot1
+        user = user2
+    }
+
     // Create mock penalties
     PenaltyEntity.new {
         reservation = pastReservation
@@ -130,7 +158,7 @@ fun generateMockData() {
     }
 
     val penalty1 = PenaltyEntity.new {
-        reservation = reservation3
+        reservation = reservation5
         reason = PenaltyReason.WrongSpot
         paid = true
         fine = 2500
@@ -138,7 +166,7 @@ fun generateMockData() {
     }
 
     PenaltyEntity.new {
-        reservation = reservation4
+        reservation = reservation6
         reason = PenaltyReason.WrongSpot
         paid = false
         fine = 2500
@@ -153,7 +181,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-19T08:43")
         image = placeholderImg
         reviewed = false
-        plate = user2.plate
+        plate = user3.plate
     }
 
     // Reviewed, penalty assigned
@@ -164,7 +192,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-16T08:20")
         image = placeholderImg
         reviewed = true
-        plate = user1.plate
+        plate = user3.plate
     }
 
     // Reviewed, penalty not assigned
@@ -175,7 +203,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-18T08:17")
         image = placeholderImg
         reviewed = true
-        plate = user2.plate
+        plate = user3.plate
     }
 
     // Should be WrongSpot
@@ -186,7 +214,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2026-01-09T12:00")
         image = placeholderImg
         reviewed = false
-        plate = user2.plate
+        plate = user3.plate
     }
 
     // Should be Overtime
@@ -197,7 +225,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2026-01-07T22:00")
         image = placeholderImg
         reviewed = false
-        plate = user2.plate
+        plate = user3.plate
     }
 
     logger.info("✅ Mock data generated successfully!")

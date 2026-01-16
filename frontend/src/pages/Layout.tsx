@@ -35,24 +35,28 @@ import { TabMenu } from 'primereact/tabmenu';
  */
 export function Layout(){
 
+    const morski = '#4b807b';
+    const jasnaZielen = '#d4e2da';
 
     const mobileStyles = `
     
     .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
         border-bottom: none;
-        background-color: lightgrey;
+        background-color: #d4e2da;
         border-radius: 1.0rem ;
+        color: #4b807b;
     }
     
      .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link:hover {
-        background-color: #ccccff;
+        background-color: #4b807b;
+        color: white;
         time-transition: background-color 0.5s ease;
         }
         
     .p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link{
-        background-color: #9999ff;
+        background-color: #4b807b;
         time-transition: background-color 0.5s ease;
-        color: black;
+        color: white;
        
     }
     
@@ -84,7 +88,7 @@ export function Layout(){
         }
         
         #logout .p-menuitem-link{
-        background-color: #ff6666;
+        background-color: rgb(255, 100.29, 88.95);
         color: white;
         }
         
