@@ -16,6 +16,7 @@ import { AdminUserList } from "./components/AdminUserList.tsx";
 import { AdminHistoryList } from "./components/AdminHistoryList.tsx";
 import { AdminReportList } from "./components/AdminReportList.tsx";
 import { ParkingPage } from "./pages/Parking.tsx";
+import {HomePage} from "./pages/HomePage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -27,6 +28,7 @@ createRoot(document.getElementById("root")!).render(
                         <Route path="/demo" element={<Demo/>}/>
                         <Route path="/history" element={<History/>}/>
                         <Route path="/parking" element={<ParkingPage/>}/>
+                        <Route path="/homepage" element={<HomePage/>}/>
                         <Route path="/admin" element={<AdminHeaderAndSidebar />}>
                             <Route index element={<Navigate to="users" replace />} />
                             <Route path="users" element={<AdminUserList />} />
