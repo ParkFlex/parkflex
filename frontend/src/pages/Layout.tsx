@@ -120,10 +120,10 @@ export function Layout(){
 
     const items = [
         { label: '', icon: 'pi pi-sign-out', command: () => { logout();}, id: 'logout' },
-        { label: 'Parking', icon: 'pi pi-car' , command: () => { navigate('/Parking'); setActiveIndex(0);}, },
-        { label: 'Historia', icon: 'pi pi-history', command: () => { navigate('/History');setActiveIndex(1); } },
-        { label: 'Zgłoszenia', icon: 'pi pi-ban', command: () => { navigate('/Report'); setActiveIndex(2);} },
-        { label: 'Konto',  icon: 'pi pi-user', command: () => { navigate('/Account');setActiveIndex(3); } },
+        { label: 'Parking', icon: 'pi pi-car' , command: () => { navigate('/parking'); setActiveIndex(0);}, },
+        { label: 'Historia', icon: 'pi pi-history', command: () => { navigate('/history');setActiveIndex(1); } },
+        { label: 'Zgłoszenia', icon: 'pi pi-ban', command: () => { navigate('/report'); setActiveIndex(2);} },
+        { label: 'Konto',  icon: 'pi pi-user', command: () => { navigate('/account');setActiveIndex(3); } },
         // { label: 'Admin',  icon: 'pi pi-cog', command: () => { navigate('/Admin');setActiveIndex(3) } },
 
 
