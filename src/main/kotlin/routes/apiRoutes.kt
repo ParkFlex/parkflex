@@ -11,6 +11,10 @@ fun Route.apiRoutes() {
         registerRoute()
     }
 
+    route("/login") {
+        loginRoute()
+    }
+
     route("/account") {
         authenticate {
             patchAccountRoute()

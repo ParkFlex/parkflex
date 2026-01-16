@@ -7,9 +7,11 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.mindrot.jbcrypt.BCrypt
 import parkflex.db.UserEntity
 import parkflex.db.UserTable
 import parkflex.models.ApiErrorModel
+import parkflex.models.LoginResponse
 import parkflex.models.RegisterResponse
 import parkflex.models.UserPublicModel
 import parkflex.models.PatchAccountRequest
@@ -157,4 +159,51 @@ fun Route.patchAccountRoute() {
 
         call.respond(HttpStatusCode.OK, userModel)
     }
+}
+fun Route.loginRoute() {
+    post {
+        val req =
+            try {
+                call.receive<parkflex.models.LoginRequest>()
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawny JSON", "/api/login"))
+                return@post
+            }
+        val email = req.email
+        val password = req.password
+        if (email.isBlank() || password.isBlank()) {
+            call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawne dane w request: brakujace pola", "/api/login"))
+            return@post
+        }
+        val user =
+            runDB {
+                UserEntity.find { UserTable.mail eq email }.firstOrNull()
+            }
+        if (user == null) {
+            call.respond(HttpStatusCode.Unauthorized, ApiErrorModel("Nieprawidłowy email lub hasło", "/api/login"))
+            return@post
+        }
+
+        val passwordMatches =
+            runCatching {
+                BCrypt.checkpw(password, user.hash)
+            }.getOrDefault(false)
+
+        if (!passwordMatches) {
+            call.respond(HttpStatusCode.Unauthorized, ApiErrorModel("Nieprawidłowy email lub hasło", "/api/login"))
+            return@post
+        }
+        
+        val token = parkflex.repository.JwtRepository.generateToken(user.id.value, user.mail, user.role)
+
+        val userModel =
+            UserPublicModel(
+                id = user.id.value,
+                name = user.fullName,
+                email = user.mail,
+                role = user.role,
+                plate = user.plate,
+            )
+        call.respond(HttpStatusCode.OK, LoginResponse(token, userModel))
+    }   
 }
