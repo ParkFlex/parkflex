@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { usePostReservation } from "../hooks/usePostReservation";
-import { DateTimeSelector, type DateTimeSpan } from "../components/reservation/DateTimeSelector.tsx";
+import {
+    DateTimeSelector,
+    type DateTimeSpan,
+} from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
@@ -55,6 +59,9 @@ export function ParkingPage() {
 
     const getSpots = useGetSpots(setData, msgs);
 
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const handleReserve = async () => {
         if (selectedId == null) {
             msgs.current?.clear();
@@ -79,7 +86,8 @@ export function ParkingPage() {
             const start = new Date(selectedDayTime.day);
             start.setHours(startTime.getHours(), startTime.getMinutes(), 0);
 
-            const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
+            const durationMinutes =
+                (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
 
             const resp = await reserve(selectedId, start, durationMinutes);
 
@@ -94,7 +102,11 @@ export function ParkingPage() {
                 },
             ]);
 
-            getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
+            getSpots(
+                selectedDayTime.day,
+                selectedDayTime.startTime,
+                selectedDayTime.endTime
+            );
             setSelectedId(null);
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
@@ -126,17 +138,40 @@ export function ParkingPage() {
         return {
             day: day,
             startTime: start,
-            endTime: end
+            endTime: end,
         };
     });
 
     useEffect(() => {
-        getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
+        getSpots(
+            selectedDayTime.day,
+            selectedDayTime.startTime,
+            selectedDayTime.endTime
+        );
     }, [getSpots, selectedDayTime]);
 
     useEffect(() => {
         if (isBanned) setShowParking(false);
     }, [isBanned]);
+
+    useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const msg = (location.state as any)?.successMessage;
+        if (msg) {
+            msgs.current?.clear();
+            msgs.current?.show([
+                {
+                    sticky: false,
+                    severity: "success",
+                    summary: "Sukces",
+                    detail: msg,
+                    life: 3000,
+                    closable: true,
+                },
+            ]);
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [location, msgs, navigate]);
 
     return (
         <div className="parking-page">
@@ -145,7 +180,7 @@ export function ParkingPage() {
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center"
+                        alignItems: "center",
                     }}
                 >
                     <DateTimeSelector
@@ -155,7 +190,7 @@ export function ParkingPage() {
                         setDayTime={setSelectedDayTime}
                     />
 
-                    <Divider/>
+                    <Divider />
 
                     <ParkingGrid
                         spots={data}
@@ -163,29 +198,35 @@ export function ParkingPage() {
                         setSelectedId={setSelectedId}
                     />
 
-                    <Divider/>
+                    <Divider />
 
                     <div
                         style={{
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            width: "100%"
+                            width: "100%",
                         }}
                     >
                         <Toolbar
                             style={{
                                 width: "95%",
-                                marginTop: "1em"
+                                marginTop: "1em",
                             }}
                             start={
                                 <>
                                     <p> Miejsce: {selectedId ?? "brak"}</p>
-                                    <Divider layout={"vertical"}/>
-                                    <p> {formatDateWeek(selectedDayTime.day)} </p>
-                                    <Divider layout={"vertical"}/>
+                                    <Divider layout={"vertical"} />
                                     <p>
-                                        {formatTime(selectedDayTime.startTime)}-{formatTime(selectedDayTime.endTime)}
+                                        {" "}
+                                        {formatDateWeek(
+                                            selectedDayTime.day
+                                        )}{" "}
+                                    </p>
+                                    <Divider layout={"vertical"} />
+                                    <p>
+                                        {formatTime(selectedDayTime.startTime)}-
+                                        {formatTime(selectedDayTime.endTime)}
                                     </p>
                                 </>
                             }
