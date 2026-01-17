@@ -46,5 +46,7 @@ suspend fun Application.configureTest(db: Database? = null) {
     configureDB(TestConfig, db)
     configureJSON()
     configureSSE()
+    configureStatusPages()
+    configureAuth(TestConfig)
     configureRouting()
 }

@@ -24,6 +24,11 @@ interface Config {
     
     /** Admin credentials as (email, password) pair */
     val adminData: Pair<String, String>
+
+    /** JWT Configuration */
+    val jwtIssuer: String
+    val jwtSecret: String
+    val jwtExpiresMs: Long
 }
 
 /**
