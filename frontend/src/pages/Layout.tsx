@@ -99,21 +99,8 @@ export function Layout() {
     const { user, isAuthenticated, logout } = useAuth();
     const [activeIndex, setActiveIndex] = useState(() => {
         const path = window.location.pathname;
-
-        const routes: Record<string, number> = {
-            history: 1,
-            report: 2,
-            account: 3,
-            admin: 4,
-        };
-
-        for (const key in routes) {
-            if (path.includes(key)) {
-                return routes[key];
-            }
-        }
-
-        return 0;
+        const routes = ["history", "report", "account", "admin"];
+        return routes.findIndex((r) => path.includes(r)) + 1;
     });
 
     const items = [
