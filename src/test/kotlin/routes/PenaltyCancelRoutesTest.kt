@@ -1,4 +1,4 @@
-package routes
+package parkflex.routes
 
 import db.configDataBase.setupTestDB
 import io.ktor.client.request.patch
