@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import React from 'react';
+import React from "react";
 
 import { TabMenu } from "primereact/tabmenu";
 import { useAuth } from "../hooks/useAuth";
@@ -96,16 +96,12 @@ export function Layout() {
     `;
 
     const navigate = useNavigate();
-
+    const { user, isAuthenticated, logout } = useAuth();
     const [activeIndex, setActiveIndex] = useState(() => {
         const path = window.location.pathname;
-        if (path.includes("history")) return 1;
-        if (path.includes("report")) return 2;
-        if (path.includes("account")) return 3;
-        return 0;
+        const routes = ["history", "report", "account", "admin"];
+        return routes.findIndex((r) => path.includes(r)) + 1;
     });
-
-    const { isAuthenticated, logout } = useAuth();
 
     const items = [
         {
@@ -141,6 +137,15 @@ export function Layout() {
             },
         },
         {
+            label: "Admin",
+            icon: "pi pi-cog",
+            command: () => {
+                navigate("/admin");
+                setActiveIndex(4);
+            },
+            visible: user?.role === "admin",
+        },
+        {
             label: "",
             icon: "pi pi-sign-out",
             command: () => {
@@ -150,7 +155,6 @@ export function Layout() {
             id: "logout",
             visible: isAuthenticated,
         },
-        // { label: 'Admin',  icon: 'pi pi-cog', command: () => { navigate('/Admin');setActiveIndex(3) } },
     ];
 
     return (
