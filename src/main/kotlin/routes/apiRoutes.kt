@@ -47,7 +47,9 @@ fun Route.apiRoutes() {
     }
 
     route("/historyEntry") {
-        historyRoutes()
+        authenticate {
+            historyRoutes()
+        }
     }
 
     route("/reservation") {

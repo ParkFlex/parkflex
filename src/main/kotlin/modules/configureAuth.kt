@@ -8,7 +8,7 @@ import io.ktor.http.*
 import io.ktor.server.response.respondText
 import parkflex.models.ApiErrorModel
 
-fun Application.configureAuth(config: parkflex.config.AppConfig) {
+fun Application.configureAuth(config: parkflex.config.Config) {
     JwtRepository.init(config.jwtSecret, config.jwtIssuer, config.jwtExpiresMs)
 
     install(Authentication) {
