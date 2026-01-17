@@ -26,7 +26,6 @@ import kotlin.test.assertEquals
 
 class PenaltyCancelRoutesTest {
 
-    // TODO: Change to 200 OK after fixing transaction bug in PenaltyCancelRoutes
     @Test
     fun `test cancel penalty success`() = testApplication {
         val db = setupTestDB()
@@ -57,8 +56,7 @@ class PenaltyCancelRoutesTest {
 
         val response = client.patch("/api/admin/user/penalty/$penaltyId/cancel")
 
-        assertEquals(HttpStatusCode.InternalServerError, response.status)
-        //assertEquals("Penalty with ID $penaltyId has been successfully cancelled.", response.bodyAsText())
+        assertEquals(HttpStatusCode.OK, response.status)
     }
 
     @Test
