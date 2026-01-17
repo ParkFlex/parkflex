@@ -31,6 +31,7 @@ suspend fun Application.root() {
     configureDB(config)
     configureJSON()
     configureSSE()
+    configureAuth(config)
     configureRouting()
     configureStatusPages()
 
@@ -45,5 +46,7 @@ suspend fun Application.configureTest(db: Database? = null) {
     configureDB(TestConfig, db)
     configureJSON()
     configureSSE()
+    configureStatusPages()
+    configureAuth(TestConfig)
     configureRouting()
 }

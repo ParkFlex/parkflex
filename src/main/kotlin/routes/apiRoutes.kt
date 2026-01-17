@@ -1,5 +1,6 @@
 package parkflex.routes
 
+import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import parkflex.routes.history.historyRoutes
 import parkflex.routes.report.userReportRoutes
@@ -18,12 +19,38 @@ fun Route.apiRoutes() {
         adminRoutes()
     }
 
-    route("report"){
+    route("report") {
         userReportRoutes()
     }
 
+    route("/register") {
+        registerRoute()
+    }
+
+    route("/login") {
+        loginRoute()
+    }
+
+    route("/account") {
+        authenticate {
+            patchAccountRoute()
+        }
+    }
+
+    route("/whoami") {
+        authenticate {
+            whoAmIRoute()
+        }
+    }
+
+    route("/demo") {
+        demoRoutes()
+    }
+
     route("/historyEntry") {
-        historyRoutes()
+        authenticate {
+            historyRoutes()
+        }
     }
 
     route("/reservation") {

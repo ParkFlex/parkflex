@@ -13,6 +13,7 @@ import parkflex.db.*
 import parkflex.models.reservation.CreateReservationRequest
 import parkflex.models.history.HistoryEntry
 import testingClient
+import parkflex.repository.JwtRepository
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.test.assertEquals
@@ -22,13 +23,13 @@ import kotlin.test.assertTrue
 class HistoryRoutesTest {
 
     @Test
-    fun `test get history without userId(null) returns 422`() = testApplication {
+    fun `test get history without user credentials returns 401`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) } // Baza przekazana do aplikacji
         val client = testingClient()
 
         val response = client.get("/api/historyEntry")
-        assertEquals(HttpStatusCode.UnprocessableEntity, response.status)
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
 
     @Test
@@ -41,8 +42,9 @@ class HistoryRoutesTest {
             SchemaUtils.create(UserTable, ReservationTable, SpotTable, PenaltyTable)
         }
 
+        val token = JwtRepository.generateToken(99999, "", "")
         val response = client.get("/api/historyEntry") {
-            url { parameter("userId", "99999") }
+            header(HttpHeaders.Authorization, "Bearer $token")
         }
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
@@ -53,7 +55,7 @@ class HistoryRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        val (userId, spotId) = newSuspendedTransaction(db = db) {
+        val (userId) = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable)
 
             val user = UserEntity.new {
@@ -94,8 +96,9 @@ class HistoryRoutesTest {
             user.id.value to spot.id.value
         }
 
+        val token = JwtRepository.generateToken(userId, "jan.history@parkflex.pl", "user")
         val response = client.get("/api/historyEntry") {
-            url { parameter("userId", userId.toString()) }
+            header(HttpHeaders.Authorization, "Bearer $token")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -123,8 +126,9 @@ class HistoryRoutesTest {
             }.id.value
         }
 
+        val token = JwtRepository.generateToken(userId, "nowy@parkflex.pl", "user")
         val response = client.get("/api/historyEntry") {
-            url { parameter("userId", userId.toString()) }
+            header(HttpHeaders.Authorization, "Bearer $token")
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -159,9 +163,10 @@ class HistoryRoutesTest {
         val reservationRequest = CreateReservationRequest(
             spot_id = spotId,
             start = startTime.format(DateTimeFormatter.ISO_DATE_TIME),
-            duration = 45
+            duration = 45,
         )
 
+        val token = JwtRepository.generateToken(userId, "flow@parkflex.pl", "user")
         val postResponse = client.post("/api/reservation") {
             contentType(ContentType.Application.Json)
             setBody(reservationRequest)
@@ -170,7 +175,7 @@ class HistoryRoutesTest {
         assertEquals(HttpStatusCode.OK, postResponse.status)
 
         val getResponse = client.get("/api/historyEntry") {
-            url { parameter("userId", userId.toString()) }
+            header(HttpHeaders.Authorization, "Bearer $token")
         }
 
         assertEquals(HttpStatusCode.OK, getResponse.status)

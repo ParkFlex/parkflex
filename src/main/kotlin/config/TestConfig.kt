@@ -13,4 +13,7 @@ object TestConfig : Config {
     override val ENABLE_H2_SOCKETS: Boolean = false
     override val CALL_LOG_LEVEL: Level = Level.ERROR
     override val adminData: Pair<String, String> = "admin" to ""
+    override val jwtIssuer: String = "parkflex"
+    override val jwtSecret: String = "#!@secret!31#$"
+    override val jwtExpiresMs: Long = 7 * 24 * 3600 * 1000L
 }

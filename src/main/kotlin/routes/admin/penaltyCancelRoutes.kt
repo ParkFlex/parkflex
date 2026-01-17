@@ -31,7 +31,10 @@ fun Route.penaltyCancelRoutes() {
                 return@patch
             }
             if(penalty.paid == false){
-                penalty.paid = true
+                runDB {
+                    penalty.paid = true
+                }
+
                 call.respond(
                     status = HttpStatusCode.OK,
                     message = "Penalty with ID $idLong has been successfully cancelled."
