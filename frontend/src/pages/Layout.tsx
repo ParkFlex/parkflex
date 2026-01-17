@@ -96,17 +96,25 @@ export function Layout() {
     `;
 
     const navigate = useNavigate();
-    const { user } = useAuth();
-
+    const { user, isAuthenticated, logout } = useAuth();
     const [activeIndex, setActiveIndex] = useState(() => {
         const path = window.location.pathname;
-        if (path.includes("history")) return 1;
-        if (path.includes("report")) return 2;
-        if (path.includes("account")) return 3;
+
+        const routes: Record<string, number> = {
+            history: 1,
+            report: 2,
+            account: 3,
+            admin: 4,
+        };
+
+        for (const key in routes) {
+            if (path.includes(key)) {
+                return routes[key];
+            }
+        }
+
         return 0;
     });
-
-    const { isAuthenticated, logout } = useAuth();
 
     const items = [
         {
@@ -146,7 +154,7 @@ export function Layout() {
             icon: "pi pi-cog",
             command: () => {
                 navigate("/admin");
-                setActiveIndex(3);
+                setActiveIndex(4);
             },
             visible: user?.role === "admin",
         },
