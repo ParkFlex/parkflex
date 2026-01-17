@@ -1,6 +1,6 @@
-import { StrictMode } from 'react';
+import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Route, Routes, BrowserRouter, Navigate } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 
 import { PrimeReactProvider } from "primereact/api";
 import "@parkflex/themes/dist/theme.css";

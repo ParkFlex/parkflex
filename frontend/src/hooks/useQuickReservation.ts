@@ -1,7 +1,7 @@
-import type {AxiosInstance} from "axios";
-import {useCallback, useState} from "react";
+import type { AxiosInstance } from "axios";
+import { useCallback, useState } from "react";
 import type { QuickReservationModel } from "../models/QuickReservationModel";
-import {formatTime} from "../utils/dateUtils.ts";
+import { formatTime } from "../utils/dateUtils.ts";
 
 export const useQuickReservation = (token: string, axios: AxiosInstance) => {
     const [quickReservation, setQuickReservation] = useState<QuickReservationModel | null>(null);
@@ -20,4 +20,4 @@ export const useQuickReservation = (token: string, axios: AxiosInstance) => {
     }, []);
 
     return { quickReservation, sendQuickReservation };
-}
+};
