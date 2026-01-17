@@ -10,6 +10,7 @@ import parkflex.*
 import parkflex.models.reservation.CreateReservationRequest
 import parkflex.models.reservation.CreateReservationSuccessResponse
 import parkflex.models.reservation.ReservationResponse
+import parkflex.utils.currentUserEntity
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -44,13 +45,7 @@ fun Route.reservationRoutes() {
             return@post
         }
 
-        val userId: Long = 2 // TODO: Add middleware for auth and get user ID
-        val user: UserEntity? = runDB {
-            UserEntity.findById(userId)
-        }
-
-        // Assert user is valid
-        if (user == null) {
+        val user = call.currentUserEntity() ?: run {
             call.respond(
                 status = HttpStatusCode.Unauthorized,
                 message = ApiErrorModel("Brak tokena lub token nieprawidlowy", context)
