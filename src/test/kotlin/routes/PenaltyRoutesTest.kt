@@ -20,7 +20,7 @@ import parkflex.db.SpotTable
 
 import parkflex.db.UserEntity
 import parkflex.db.UserTable
-import parkflex.models.PenaltyModel
+import parkflex.models.admin.*
 import testingClient
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
@@ -61,7 +61,7 @@ class PenaltyRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.get("/api/user/$userId/penalty")
+        val response = client.get("/api/admin/user/$userId/penalty")
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = response.body<PenaltyModel>()
@@ -86,7 +86,7 @@ class PenaltyRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.get("/api/user/$userId/penalty")
+        val response = client.get("/api/admin/user/$userId/penalty")
 
         assertEquals(HttpStatusCode.NoContent, response.status)
     }
@@ -103,7 +103,7 @@ class PenaltyRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.get("/api/user/67/penalty")
+        val response = client.get("/api/admin/user/67/penalty")
 
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
@@ -115,7 +115,7 @@ class PenaltyRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.get("/api/user/abc/penalty")
+        val response = client.get("/api/admin/user/abc/penalty")
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
     }

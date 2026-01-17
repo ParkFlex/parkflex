@@ -2,7 +2,7 @@ import { useAxios } from "./useAxios";
 import type {
     CreateReservationSuccessResponse,
     ReservationResponse,
-} from "../models/ReservationResponse";
+} from "../models/reservation/ReservationResponse.tsx";
 import { useCallback, useState } from "react";
 import { isAxiosError } from "axios";
 import { ApiErrorModel } from "../models/ApiErrorModel";

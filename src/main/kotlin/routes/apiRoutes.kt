@@ -1,39 +1,55 @@
 package parkflex.routes
 
+import io.ktor.server.auth.*
 import io.ktor.server.routing.*
+import parkflex.routes.history.historyRoutes
+import parkflex.routes.report.userReportRoutes
+import parkflex.routes.reservation.reservationRoutes
+import parkflex.routes.reservation.spotRoutes
+import parkflex.routes.reservation.spotsRoutes
+import parkflex.routes.term.arrivalRoutes
+import parkflex.routes.term.leaveRoutes
 
 /**
  * Routes for the REST API.
  */
 fun Route.apiRoutes() {
-    route("/user") {
-        userFullRoutes()
-
-        updatePlateRoutes()
-
-        penaltyRoutes()
-
-        penaltyCancelRoutes()
+    route("/admin") {
+        adminRoutes()
     }
-
-    route("/users") {
-        adminHistoryRoutes()
-    }
-
 
     route("report") {
-       reviewedRoutes()
-    }
-
-    route("reports"){
-        reportsRoutes()
-    }
-    route("report"){
         userReportRoutes()
     }
 
+    route("/register") {
+        registerRoute()
+    }
+
+    route("/login") {
+        loginRoute()
+    }
+
+    route("/account") {
+        authenticate {
+            patchAccountRoute()
+        }
+    }
+
+    route("/whoami") {
+        authenticate {
+            whoAmIRoute()
+        }
+    }
+
+    route("/demo") {
+        demoRoutes()
+    }
+
     route("/historyEntry") {
-        historyRoutes()
+        authenticate {
+            historyRoutes()
+        }
     }
 
     route("/reservation") {
@@ -54,13 +70,5 @@ fun Route.apiRoutes() {
 
     route("/leave") {
         leaveRoutes()
-    }
-
-    route("/parameter") {
-        parameterRoutes()
-    }
-
-    route("/penalty") {
-        penaltyCreationRoutes()
     }
 }

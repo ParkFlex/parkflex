@@ -2,11 +2,10 @@ package parkflex.modules
 
 import io.ktor.server.application.*
 import io.ktor.server.plugins.swagger.*
-import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import parkflex.routes.apiRoutes
 import parkflex.routes.frontendRoutes
-import parkflex.routes.termRoutes
+import parkflex.routes.term.termRoutes
 
 /**
  * Configures all HTTP routing for the application.

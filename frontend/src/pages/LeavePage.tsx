@@ -13,7 +13,7 @@ export function LeavePage() {
     useEffect(() => {
         axios
             .post<ArrivalResponseModel>(`/leave/${token}`)
-            .catch(e => (isAxiosError(e)) && setErr(e.response?.data?.message))
+            .catch(e => (isAxiosError(e)) && setErr(e.response?.data?.message));
     }, [axios, token]);
 
     return (

@@ -4,7 +4,7 @@ import { isAxiosError } from "axios";
 import type { ApiErrorModel } from "../models/ApiErrorModel.tsx";
 import { Toast } from "primereact/toast";
 import { type RefObject, useCallback } from "react";
-import type { SpotState } from "../models/SpotState.ts";
+import type { SpotState } from "../models/reservation/SpotState.ts";
 
 /**
  * Hook do pobierania listy miejsc parkingowych dla wybranego przedziału czasowego.

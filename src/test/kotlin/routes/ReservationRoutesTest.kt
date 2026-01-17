@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
 import parkflex.models.*
+import parkflex.models.reservation.CreateReservationRequest
+import parkflex.models.reservation.CreateReservationSuccessResponse
 import testingClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

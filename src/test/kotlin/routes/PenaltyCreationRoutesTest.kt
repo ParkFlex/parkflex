@@ -27,16 +27,14 @@ import parkflex.db.SpotTable
 
 import parkflex.db.UserEntity
 import parkflex.db.UserTable
-import parkflex.models.NewPenaltyResponseModel
-import parkflex.models.NewPenaltyResponseState
-import parkflex.models.ReportIdWrapper
+import parkflex.models.admin.*
 import testingClient
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
 class PenaltyCreationRoutesTest {
     @Test
-    fun `test create penalty success created`() = testApplication{
+    fun `test create penalty success created`() = testApplication {
         val db = setupTestDB()
         val client = testingClient()
 
@@ -71,9 +69,9 @@ class PenaltyCreationRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.post("/api/penalty") {
+        val response = client.post("/api/admin/penalty") {
             contentType(ContentType.Application.Json)
-        setBody(ReportIdWrapper(reportId))
+            setBody(ReportIdWrapper(reportId))
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -82,7 +80,7 @@ class PenaltyCreationRoutesTest {
     }
 
     @Test
-    fun `test create penalty report not found`() = testApplication{
+    fun `test create penalty report not found`() = testApplication {
         val db = setupTestDB()
         val client = testingClient()
 
@@ -92,7 +90,7 @@ class PenaltyCreationRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.post("/api/penalty") {
+        val response = client.post("/api/admin/penalty") {
             contentType(ContentType.Application.Json)
             setBody(ReportIdWrapper(67))
         }
@@ -101,7 +99,7 @@ class PenaltyCreationRoutesTest {
     }
 
     @Test
-    fun `test create penalty already reviewed`() = testApplication{
+    fun `test create penalty already reviewed`() = testApplication {
         val db = setupTestDB()
         val client = testingClient()
 
@@ -146,7 +144,7 @@ class PenaltyCreationRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.post("/api/penalty") {
+        val response = client.post("/api/admin/penalty") {
             contentType(ContentType.Application.Json)
             setBody(ReportIdWrapper(reportId))
         }
@@ -155,7 +153,7 @@ class PenaltyCreationRoutesTest {
     }
 
     @Test
-    fun `test create penalty no reservation found`() = testApplication{
+    fun `test create penalty no reservation found`() = testApplication {
         val db = setupTestDB()
         val client = testingClient()
 
@@ -183,7 +181,7 @@ class PenaltyCreationRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.post("/api/penalty") {
+        val response = client.post("/api/admin/penalty") {
             contentType(ContentType.Application.Json)
             setBody(ReportIdWrapper(reportId))
         }
@@ -192,7 +190,7 @@ class PenaltyCreationRoutesTest {
     }
 
     @Test
-    fun `test create penalty updated`() = testApplication{
+    fun `test create penalty updated`() = testApplication {
         val db = setupTestDB()
         val client = testingClient()
 
@@ -235,7 +233,7 @@ class PenaltyCreationRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.post("/api/penalty") {
+        val response = client.post("/api/admin/penalty") {
             contentType(ContentType.Application.Json)
             setBody(ReportIdWrapper(reportId))
         }
@@ -246,7 +244,7 @@ class PenaltyCreationRoutesTest {
     }
 
     @Test
-    fun `test create penalty not changed`() = testApplication{
+    fun `test create penalty not changed`() = testApplication {
         val db = setupTestDB()
         val client = testingClient()
 
@@ -289,7 +287,7 @@ class PenaltyCreationRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.post("/api/penalty") {
+        val response = client.post("/api/admin/penalty") {
             contentType(ContentType.Application.Json)
             setBody(ReportIdWrapper(reportId))
         }
@@ -300,13 +298,13 @@ class PenaltyCreationRoutesTest {
     }
 
     @Test
-    fun `test create penalty invalid json`() = testApplication{
+    fun `test create penalty invalid json`() = testApplication {
         val db = setupTestDB()
         val client = testingClient()
 
         application { configureTest(db) }
 
-        val response = client.post("/api/penalty") {
+        val response = client.post("/api/admin/penalty") {
             contentType(ContentType.Application.Json)
             setBody("{}")
         }

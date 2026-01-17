@@ -55,7 +55,7 @@ class PenaltyCancelRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.patch("/api/user/penalty/$penaltyId/cancel")
+        val response = client.patch("/api/admin/user/penalty/$penaltyId/cancel")
 
         assertEquals(HttpStatusCode.InternalServerError, response.status)
         //assertEquals("Penalty with ID $penaltyId has been successfully cancelled.", response.bodyAsText())
@@ -89,7 +89,7 @@ class PenaltyCancelRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.patch("/api/user/penalty/$penaltyId/cancel")
+        val response = client.patch("/api/admin/user/penalty/$penaltyId/cancel")
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
 
@@ -119,7 +119,7 @@ class PenaltyCancelRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.patch("/api/user/penalty/67/cancel")
+        val response = client.patch("/api/admin/user/penalty/67/cancel")
 
         assertEquals(HttpStatusCode.NotFound, response.status)
     }

@@ -1,6 +1,6 @@
 import { Card } from 'primereact/card';
 import { addMinutes, formatTime, isActiveNow, endsBeforeNow } from "../utils/dateUtils";
-import type { HistoryEntry } from "../models/HistoryEntry.tsx";
+import type { HistoryEntry } from "../models/history/HistoryEntry.tsx";
 
 /**
  * Komponent wyświetlający pojedynczy wpis w historii rezerwacji.
