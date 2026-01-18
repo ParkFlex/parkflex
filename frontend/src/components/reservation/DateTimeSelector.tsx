@@ -34,6 +34,12 @@ interface DateSelectionProps {
     dayTime: DateTimeSpan;
     /** Callback do aktualizacji przedziału czasowego */
     setDayTime: (dateTimeSpan: DateTimeSpan) => void;
+
+    /** Minimal reservation duration */
+    minTime: number;
+
+    /** Maximal reservation duration */
+    maxTime: number;
 }
 
 /**
@@ -75,6 +81,8 @@ export function DateTimeSelector(
         setVisible,
         dayTime,
         setDayTime,
+        maxTime,
+        minTime
     }: DateSelectionProps
 ) {
 
@@ -127,7 +135,12 @@ export function DateTimeSelector(
         const inPast = day.valueOf() < now.valueOf();
         if (inPast) return false;
 
-        // TODO: max reservation time? padding, etc?
+        /* min-max reservation time */
+        const duration =
+            (endTime.getHours() * 60) + endTime.getMinutes() -
+            (startTime.getHours() * 60) - startTime.getMinutes();
+
+        if (duration < minTime || duration > maxTime) return false;
 
         return true;
     };

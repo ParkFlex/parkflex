@@ -194,6 +194,8 @@ export function ParkingPage() {
                         setVisible={setDateSelectorVisible}
                         dayTime={selectedDayTime}
                         setDayTime={setSelectedDayTime}
+                        minTime={prelude.minReservationTime}
+                        maxTime={prelude.maxReservationTime}
                     />
 
                     <Divider/>
