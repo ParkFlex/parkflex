@@ -1,26 +1,27 @@
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
-import { ErrorBanned } from "../components/Banned";
-import { ParkingGrid } from "../components/reservation/Grid";
-import { usePostReservation } from "../hooks/usePostReservation";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useLocation, useNavigate} from "react-router";
+import {ErrorBanned} from "../components/Banned";
+import {ParkingGrid} from "../components/reservation/Grid";
+import {usePostReservation} from "../hooks/usePostReservation";
 import {
     DateTimeSelector,
     type DateTimeSpan,
 } from "../components/reservation/DateTimeSelector.tsx";
-import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
-import { Toolbar } from "primereact/toolbar";
-import { Toast } from "primereact/toast";
-import { useGetSpots } from "../hooks/useGetSpots.tsx";
-import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
-import type { SpotState } from "../models/reservation/SpotState.ts";
+import {Button} from "primereact/button";
+import {Divider} from "primereact/divider";
+import {Toolbar} from "primereact/toolbar";
+import {Toast} from "primereact/toast";
+import {useGetSpots} from "../hooks/useGetSpots.tsx";
+import {formatDateWeek, formatTime} from "../utils/dateUtils.ts";
+import type {SpotState} from "../models/reservation/SpotState.ts";
+import {usePrelude} from "../hooks/usePrelude.ts";
 
 /**
  * Komponent strony parkingu z rezerwacją miejsc.
- * 
+ *
  * Główny komponent do zarządzania rezerwacjami miejsc parkingowych.
  * Umożliwia wybór miejsca, przedziału czasowego i dokonanie rezerwacji.
- * 
+ *
  * @remarks
  * Funkcjonalności:
  * - Wyświetlanie siatki miejsc parkingowych
@@ -28,30 +29,22 @@ import type { SpotState } from "../models/reservation/SpotState.ts";
  * - Rezerwacja wybranego miejsca
  * - Obsługa błędów i komunikatów toast
  * - Wyświetlanie stanu blokady użytkownika
- * 
+ *
  * Stan komponentu:
  * - `data`: Lista dostępnych miejsc parkingowych
  * - `selectedId`: ID wybranego miejsca
  * - `selectedDayTime`: Wybrany przedział czasowy rezerwacji
  * - `isBanned`: Flaga blokady użytkownika
- * 
+ *
  * @example
  * ```tsx
  * import { ParkingPage } from './pages/Parking';
- * 
+ *
  * <Route path="/parking" element={<ParkingPage />} />
  * ```
  */
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
-    const [isBanned, setIsBanned] = useState(false);
-    const [showParking, setShowParking] = useState(true);
-    const [banDays, setBanDays] = useState(3);
-    const [banReason, setBanReason] = useState(
-        "przekroczenie limitu rezerwacji"
-    );
-    const [chargeAmount, setChargeAmount] = useState(150);
-
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const msgs = useRef<Toast>(null);
@@ -61,6 +54,8 @@ export function ParkingPage() {
 
     const location = useLocation();
     const navigate = useNavigate();
+
+    const { prelude, getPrelude } = usePrelude();
 
     const handleReserve = async () => {
         if (selectedId == null) {
@@ -151,10 +146,6 @@ export function ParkingPage() {
     }, [getSpots, selectedDayTime]);
 
     useEffect(() => {
-        if (isBanned) setShowParking(false);
-    }, [isBanned]);
-
-    useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const msg = (location.state as any)?.successMessage;
         if (msg) {
@@ -169,13 +160,26 @@ export function ParkingPage() {
                     closable: true,
                 },
             ]);
-            navigate(location.pathname, { replace: true, state: {} });
+            navigate(location.pathname, {replace: true, state: {}});
         }
     }, [location, msgs, navigate]);
 
     return (
         <div className="parking-page">
-            {showParking ? (
+            {prelude.penaltyInformation ? (
+                <ErrorBanned
+                    due={prelude.penaltyInformation?.due}
+                    reason={prelude.penaltyInformation.reason}
+                    charge={prelude.penaltyInformation.fine}
+                    onPay={() => {
+                        alert("Blokada została opłacona");
+                        getPrelude();
+                    }}
+                    onWait={() => {
+                        alert("wait")
+                    }}
+                />
+            ) : (
                 <div
                     style={{
                         display: "flex",
@@ -190,7 +194,7 @@ export function ParkingPage() {
                         setDayTime={setSelectedDayTime}
                     />
 
-                    <Divider />
+                    <Divider/>
 
                     <ParkingGrid
                         spots={data}
@@ -198,7 +202,7 @@ export function ParkingPage() {
                         setSelectedId={setSelectedId}
                     />
 
-                    <Divider />
+                    <Divider/>
 
                     <div
                         style={{
@@ -216,14 +220,14 @@ export function ParkingPage() {
                             start={
                                 <>
                                     <p> Miejsce: {selectedId ?? "brak"}</p>
-                                    <Divider layout={"vertical"} />
+                                    <Divider layout={"vertical"}/>
                                     <p>
                                         {" "}
                                         {formatDateWeek(
                                             selectedDayTime.day
                                         )}{" "}
                                     </p>
-                                    <Divider layout={"vertical"} />
+                                    <Divider layout={"vertical"}/>
                                     <p>
                                         {formatTime(selectedDayTime.startTime)}-
                                         {formatTime(selectedDayTime.endTime)}
@@ -238,23 +242,9 @@ export function ParkingPage() {
                                 />
                             }
                         />
-                        <Toast position="bottom-center" ref={msgs} />
+                        <Toast position="bottom-center" ref={msgs}/>
                     </div>
                 </div>
-            ) : (
-                <ErrorBanned
-                    days={banDays}
-                    reason={banReason}
-                    charge={chargeAmount}
-                    onPay={() => {
-                        alert("Blokada została opłacona");
-                        setIsBanned(false);
-                        setShowParking(true);
-                    }}
-                    onWait={() => {
-                        setShowParking(true);
-                    }}
-                />
             )}
         </div>
     );

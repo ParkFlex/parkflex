@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import {formatDate} from "../utils/dateUtils.ts";
 
 /**
  * Komponent wyświetlający ekran blokady konta użytkownika.
@@ -35,13 +36,13 @@ import { InputText } from "primereact/inputtext";
  * ```
  */
 export const ErrorBanned = ({
-    days,
+    due,
     reason,
     charge,
     onPay,
     onWait,
 }: {
-    days: number;
+    due: Date;
     reason: string;
     charge: number;
     onPay: (code: string) => void;
@@ -62,7 +63,7 @@ export const ErrorBanned = ({
             <p>
                 Twoje konto zostało zablokowane z powodu {reason}.
                 <br />
-                Pozostały czas blokady to : {days} {days === 1 ? "dzień" : "dni"}.
+                Blokada jest aktywna do: {formatDate(due)}
                 <br />
                 Opłata za wcześniejsze odblokowanie konta wynosi {charge} PLN.
             </p>
