@@ -10,6 +10,7 @@ import parkflex.models.SuccessfulArrivalModel
 import parkflex.repository.ParameterRepository
 import parkflex.runDB
 import parkflex.service.TermService
+import parkflex.utils.userId
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -25,17 +26,22 @@ import kotlin.math.abs
  * - Allows arrival during reservation or a few minutes before (controlled by parameter)
  * - Records arrival time if valid
  * - Generates new entry token for security
- *
- * TODO: Replace hardcoded uid=2L with actual authentication principal
  */
 fun Route.arrivalRoutes() {
     post("{token}") {
-        val uid = 2L // TODO: use principal after auth is ready
+        val uid = call.userId() ?: run {
+            call.respond(
+                status = HttpStatusCode.Unauthorized,
+                message = ApiErrorModel("No user id in context", "POST /arrive/{token}")
+            )
+
+            return@post
+        }
 
         val token = call.parameters["token"] ?: run {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("No token provided", "POST /entry/{token}")
+                message = ApiErrorModel("No token provided", "POST /arrive/{token}")
             )
 
             return@post
@@ -44,7 +50,7 @@ fun Route.arrivalRoutes() {
         if (!TermService.entry.isCurrent(token)) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("Invalid entry token token: $token", "POST /entry/{token}")
+                message = ApiErrorModel("Invalid entry token token: $token", "POST /arrive/{token}")
             )
 
             return@post
@@ -58,7 +64,7 @@ fun Route.arrivalRoutes() {
                     status = HttpStatusCode.InternalServerError,
                     message = ApiErrorModel(
                         "The \"reservation/break/duration\" parameter is malformed or does not exist",
-                        "POST /api/enter/{token}"
+                        "POST /arrive/{token}"
                     )
                 )
 

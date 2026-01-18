@@ -11,6 +11,7 @@ import parkflex.models.LeaveModel
 import parkflex.runDB
 import parkflex.service.PenaltyService
 import parkflex.service.TermService
+import parkflex.utils.userId
 import java.time.LocalDateTime
 
 /**
@@ -27,12 +28,19 @@ import java.time.LocalDateTime
  */
 fun Route.leaveRoutes() {
     post("{token}") {
-        val uid = 2L // TODO: use principal after auth is ready
+        val uid = call.userId() ?: run {
+            call.respond(
+                status = HttpStatusCode.Unauthorized,
+                message = ApiErrorModel("No user id in context", "POST /leave/{token}")
+            )
+
+            return@post
+        }
 
         val token = call.parameters["token"] ?: run {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("No token provided", "POST /exit/{token}")
+                message = ApiErrorModel("No token provided", "POST /leave/{token}")
             )
 
             return@post
@@ -41,7 +49,7 @@ fun Route.leaveRoutes() {
         if (!TermService.exit.isCurrent(token)) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("Invalid exit token token: $token", "POST /exit/{token}")
+                message = ApiErrorModel("Invalid exit token token: $token", "POST /leave/{token}")
             )
 
             return@post
@@ -61,7 +69,7 @@ fun Route.leaveRoutes() {
         if (reservation == null) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("No in-progress reservation found", "POST /exit/{token}")
+                message = ApiErrorModel("No in-progress reservation found", "POST /leave/{token}")
             )
 
             return@post

@@ -72,11 +72,15 @@ fun Route.apiRoutes() {
     }
 
     route("/arrive") {
-        arrivalRoutes()
+        authenticate {
+            arrivalRoutes()
+        }
     }
 
     route("/leave") {
-        leaveRoutes()
+        authenticate {
+            leaveRoutes()
+        }
     }
 
     route("/prelude") {

@@ -70,7 +70,7 @@ fun Route.reservationRoutes() {
             ReservationEntity.find { ReservationTable.user eq user.id }.firstOrNull { !it.isPast() }
         }
 
-        if (currentReservation != null) {
+        if (currentReservation != null && currentReservation.left == null) {
             val day = currentReservation.start.format(DateTimeFormatter.ISO_DATE)
             val timeFormatter = DateTimeFormatter.ofPattern("HH:MM")
             val startTime = currentReservation.start.format(timeFormatter)
