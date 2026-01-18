@@ -1,6 +1,7 @@
 package parkflex.data
 
 import parkflex.db.*
+import parkflex.repository.UserRepository
 import java.time.LocalDateTime
 import kotlin.io.encoding.Base64
 
@@ -20,29 +21,29 @@ fun generateMockData() {
     } ?: throw Exception("placeholder.jpeg not found")
 
     // Create mock users
-    val user1 = UserEntity.new {
-        fullName = "John Doe"
-        mail = "john.doe@example.com"
-        hash = "hashed_password_123"
-        plate = "ABC-1234"
-        role = "user"
-    }
+    val user1 = UserRepository.unsafeCreateUser(
+        fullName = "John Doe",
+        mail = "john.doe@example.com",
+        password = "123",
+        plate = "ABC-1234",
+        role = "user",
+    )
 
-    val user2 = UserEntity.new {
-        fullName = "Jane Smith"
-        mail = "jane.smith@example.com"
-        hash = "hashed_password_456"
-        plate = "XYZ-9876"
-        role = "user"
-    }
+    val user2 = UserRepository.unsafeCreateUser(
+        fullName = "Jane Smith",
+        mail = "jane.smith@example.com",
+        password = "123",
+        plate = "XYZ-9876",
+        role = "user",
+    )
 
-    val user3 = UserEntity.new {
-        fullName = "Blocked User"
-        mail = "blocked@example.com"
-        hash = "hashed_password_blocked"
-        plate = "BLK-0000"
-        role = "user"
-    }
+    val user3 = UserRepository.unsafeCreateUser(
+        fullName = "Blocked User",
+        mail = "blocked@example.com",
+        password = "hashed_password_blocked",
+        plate = "BLK-0000",
+        role = "user",
+    )
 
     // Create mock parking spots
     val spot1 = SpotEntity.findById(1)!!

@@ -29,10 +29,10 @@ object UserRepository {
         password: String,
         role: String,
         plate: String,
-    ) {
+    ): UserEntity {
         val hash = BCrypt.hashpw(password, BCrypt.gensalt())
 
-        UserEntity.new {
+        return UserEntity.new {
             this.mail = mail
             this.hash = hash
             this.plate = plate
