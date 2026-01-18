@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import {useEffect, useState, type ReactNode, useMemo} from "react";
 import { clearJwt, getJwtToken, setJwtToken } from "../../api/auth";
 import {
     AuthContext,
@@ -10,10 +10,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
 
-    useEffect(() => {
-        const storedToken = getJwtToken();
-        const storedUser = localStorage.getItem("user");
+    const storedToken = getJwtToken();
+    const storedUser = localStorage.getItem("user");
 
+    useMemo(() => {
         if (storedToken && storedUser) {
             try {
                 const parsedUser = JSON.parse(storedUser);
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!token && !!user,
         login,
         logout,
-        setUser: setUserInContext,
+        setUser: setUserInContext
     };
 
     return (
