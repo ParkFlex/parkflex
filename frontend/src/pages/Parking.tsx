@@ -70,7 +70,7 @@ export function ParkingPage() {
                     severity: "warn",
                     summary: "Uwaga",
                     detail: "Najpierw wybierz miejsce.",
-                    closable: false,
+                    closable: true,
                 },
             ]);
             return;
@@ -85,7 +85,7 @@ export function ParkingPage() {
             start.setHours(startTime.getHours(), startTime.getMinutes(), 0);
 
             const durationMinutes =
-                (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
+                Math.ceil((endTime.getTime() - startTime.getTime()) / 60_000); // ms to minutes
 
             const resp = await reserve(selectedId, start, durationMinutes);
 
