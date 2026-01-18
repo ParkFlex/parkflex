@@ -26,6 +26,7 @@ import { Login } from "./pages/Login.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { Protected } from "./components/auth/Protected.tsx";
 import { Unprotected } from "./components/auth/Unprotected.tsx";
+import {AdminProtected} from "./components/auth/AdminProtected.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -45,7 +46,7 @@ createRoot(document.getElementById("root")!).render(
                             <Route path="/history" element={<History />} />
                             <Route path="/account" element={<Account />} />
                             <Route path="/report" element={<Report/>}/>
-                            <Route path="/admin" element={<AdminHeaderAndSidebar />}>
+                            <Route path="/admin" element={<AdminProtected><AdminHeaderAndSidebar /></AdminProtected>}>
                                 <Route index element={<Navigate to="users" replace />} />
                                 <Route path="users" element={<AdminUserList />} />
                                 <Route path="reservation_history" element={<AdminHistoryList />} />
