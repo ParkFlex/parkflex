@@ -63,7 +63,7 @@ fun Route.parameterRoutes() {
                     .mapCatching {
                         // type check
                         if (param.type == ParameterType.Number && !it.value.all { char -> char.isDigit() })
-                            throw InvalidBodyException("Parameter is numeric but got a string")
+                            throw InvalidBodyException("Parameter jest liczbowy, a otrzymano ciąg znaków")
 
                         runDB { param.value = it.value }
 
