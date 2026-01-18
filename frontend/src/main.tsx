@@ -24,6 +24,7 @@ import { AuthProvider } from "./components/auth";
 import { Account } from "./pages/Account.tsx";
 import { Login } from "./pages/Login.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
+import { Protected } from "./components/auth/Protected.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -34,10 +35,11 @@ createRoot(document.getElementById("root")!).render(
                         <Route path="/homepage" element={<HomePage/>}/>
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route element={<Layout />}>
-                            <Route index element={<Navigate to="/homepage" />} />
+                        <Route index element={<Navigate to="/homepage" />} />
+                        <Route element={<Protected><Layout /></Protected>}>
                             <Route path="/arrive/:token" element={<ArrivalPage/>}/>
                             <Route path="/leave/:token" element={<LeavePage/>}/>
+
                             <Route path="/parking" element={<ParkingPage />} />
                             <Route path="/demo" element={<Demo />} />
                             <Route path="/history" element={<History />} />

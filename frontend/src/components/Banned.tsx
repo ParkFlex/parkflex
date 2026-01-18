@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import {formatDate} from "../utils/dateUtils.ts";
+import { formatDate } from "../utils/dateUtils.ts";
 
 /**
  * Komponent wyświetlający ekran blokady konta użytkownika.

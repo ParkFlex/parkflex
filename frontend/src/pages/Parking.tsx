@@ -1,21 +1,21 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useLocation, useNavigate} from "react-router";
-import {ErrorBanned} from "../components/Banned";
-import {ParkingGrid} from "../components/reservation/Grid";
-import {usePostReservation} from "../hooks/usePostReservation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { ErrorBanned } from "../components/Banned";
+import { ParkingGrid } from "../components/reservation/Grid";
+import { usePostReservation } from "../hooks/usePostReservation";
 import {
     DateTimeSelector,
     type DateTimeSpan,
 } from "../components/reservation/DateTimeSelector.tsx";
-import {Button} from "primereact/button";
-import {Divider} from "primereact/divider";
-import {Toolbar} from "primereact/toolbar";
-import {Toast} from "primereact/toast";
-import {useGetSpots} from "../hooks/useGetSpots.tsx";
-import {formatDateWeek, formatTime} from "../utils/dateUtils.ts";
-import type {SpotState} from "../models/reservation/SpotState.ts";
-import {usePrelude} from "../hooks/usePrelude.ts";
-import {useAxios} from "../hooks/useAxios.ts";
+import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
+import { Toolbar } from "primereact/toolbar";
+import { Toast } from "primereact/toast";
+import { useGetSpots } from "../hooks/useGetSpots.tsx";
+import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
+import type { SpotState } from "../models/reservation/SpotState.ts";
+import { usePrelude } from "../hooks/usePrelude.ts";
+import { useAxios } from "../hooks/useAxios.ts";
 
 /**
  * Komponent strony parkingu z rezerwacją miejsc.
@@ -168,7 +168,7 @@ export function ParkingPage() {
                     closable: true,
                 },
             ]);
-            navigate(location.pathname, {replace: true, state: {}});
+            navigate(location.pathname, { replace: true, state: {} });
         }
     }, [location, msgs, navigate]);
 
@@ -183,7 +183,7 @@ export function ParkingPage() {
                         axios.post("/payment").then(getPrelude);
                     }}
                     onWait={() => {
-                        alert("wait")
+                        alert("wait");
                     }}
                 />
             ) : (

@@ -1,4 +1,4 @@
-import type {PenaltyReason} from "./PenaltyReason.ts";
+import type { PenaltyReason } from "./PenaltyReason.ts";
 
 export interface PenaltyInformation {
     fine: number,

@@ -7,7 +7,7 @@ import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { useQuickReservation } from "../hooks/useQuickReservation.ts";
 import { Card } from "primereact/card";
-import {usePrelude} from "../hooks/usePrelude.ts";
+import { usePrelude } from "../hooks/usePrelude.ts";
 
 export function ArrivalPage() {
     const axios = useAxios();
@@ -69,12 +69,12 @@ export function ArrivalPage() {
                                         })()}
                                         onChange={e => e.value && setTime(e.value)}
                                         minDate={(() => {
-                                           const now = new Date();
+                                            const now = new Date();
                                             // +5 just to be a bit more sure
-                                           now.setMinutes(now.getMinutes() + prelude.minReservationTime + 5);
-                                           now.setMilliseconds(0);
+                                            now.setMinutes(now.getMinutes() + prelude.minReservationTime + 5);
+                                            now.setMilliseconds(0);
 
-                                           return now;
+                                            return now;
                                         })()}
                                         maxDate={(() => {
                                             const now = new Date();

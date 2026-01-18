@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link, useLocation } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { login } from "../api/auth";
 import { LoginForm } from "../components/auth/LoginForm";
@@ -10,6 +10,7 @@ export function Login() {
     );
 
     const navigate = useNavigate();
+    const location = useLocation();
     const { login: setAuth } = useAuth();
 
     const handleLogin = async (email: string, password: string) => {
@@ -18,7 +19,7 @@ export function Login() {
         try {
             const response = await login({ email, password });
             setAuth(response.token, response.user);
-            navigate("/parking");
+            navigate(location.state?.path || "/parking");
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);

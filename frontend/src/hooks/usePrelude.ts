@@ -1,6 +1,6 @@
 import { type AxiosResponse } from "axios";
-import type {PenaltyInformation, PreludeModel} from "../models/PreludeModel.ts";
-import {useCallback, useEffect, useState} from "react";
+import type { PenaltyInformation, PreludeModel } from "../models/PreludeModel.ts";
+import { useCallback, useEffect, useState } from "react";
 import { useAxios } from "./useAxios.ts";
 
 export const usePrelude = () => {
