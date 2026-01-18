@@ -7,9 +7,11 @@ import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { useQuickReservation } from "../hooks/useQuickReservation.ts";
 import { Card } from "primereact/card";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 import { usePrelude } from "../hooks/usePrelude.ts";
 
 export function ArrivalPage() {
+    useDocumentTitle("Przyjazd");
     const axios = useAxios();
     const [data, setData] = useState<ArrivalResponseModel | null>(null);
     const [err, setErr] = useState<string | null>(null);
@@ -112,10 +114,14 @@ export function ArrivalPage() {
     }, [axios, token]);
 
     return (
-        <>
+        <div style={{
+            padding: "2rem 1rem",
+            maxWidth: "95%",
+            margin: "0 auto"
+        }}>
             <a>{err || ""}</a>
             <br/>
             {(data != null) && dataComponent(data)}
-        </>
+        </div>
     );
 }

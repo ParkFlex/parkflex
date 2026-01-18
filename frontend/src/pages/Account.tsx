@@ -8,8 +8,10 @@ import { useAuth } from "../hooks/useAuth";
 import { patchAccount } from "../api/auth";
 import type { ApiErrorModel } from "../models/ApiErrorModel";
 import { isPlateValid, normalizePlate } from "../utils/plateUtils";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 
 export function Account() {
+    useDocumentTitle("Konto");
     const { user, setUser, token, isAuthenticated, logout } = useAuth();
     const [editingPlate, setEditingPlate] = useState(false);
     const [plateValue, setPlateValue] = useState(user?.plate ?? "");
@@ -95,10 +97,11 @@ export function Account() {
             style={{
                 display: "flex",
                 justifyContent: "center",
-                padding: "0.75rem",
+                padding: "2rem 1rem",
+                minHeight: "calc(100vh - 240px)"
             }}
         >
-            <Card style={{ width: 700, maxWidth: "95%", padding: "0.75rem" }}>
+            <Card style={{ width: 700, maxWidth: "95%", padding: "2rem" }}>
                 <div
                     style={{
                         display: "flex",

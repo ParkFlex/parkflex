@@ -1,9 +1,5 @@
 import { DateTimeDialog } from "../DateTimeDialog";
-import { Button } from "primereact/button";
-import { Chips } from "primereact/chips";
-import { Chip } from "primereact/chip";
 import { compareTime, formatDate, formatDateWeek, formatTime, isSameDay } from "../../utils/dateUtils.ts";
-import { Toolbar } from "primereact/toolbar";
 import type { DateTimeSelection } from "../DateTimeDialog/DateTimeSelection.ts";
 
 /**
@@ -86,37 +82,6 @@ export function DateTimeSelector(
     }: DateSelectionProps
 ) {
 
-    const controls =
-        <div
-            className="p-inputgroup"
-            style={
-                ({
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "95%",
-                    justifyItems: "stretch",
-                    height: "3.5rem"
-                })
-            }>
-            <span
-                className="p-inputgroup-addon"
-                style={ { flexGrow: "2" } }
-            >
-                {formatDateWeek(dayTime.day)}
-            </span>
-            <span
-                className="p-inputgroup-addon"
-                style={ { flexGrow: "1" } }
-            >
-                {`${formatTime(dayTime.startTime!)} – ${formatTime(dayTime.endTime!)}`}
-            </span>
-            <Button
-                style={{ width: "3em" }}
-                onClick={() => setVisible(true)}
-                icon="pi pi-pencil"
-            />
-        </div>;
-    
     const validator = (day: Date, startTime: Date | null, endTime: Date | null) => {
         const now = new Date();
 
@@ -173,9 +138,6 @@ export function DateTimeSelector(
 
                 isValid={({ days, startTime, endTime }) => validator(days, startTime, endTime) }
             />
-
-            {controls}
-
         </>
     );
 }

@@ -63,7 +63,7 @@ export function AdminParameters() {
     }
 
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '95%', margin: '0 auto' }}>
             <Toast ref={toast} position={"bottom-center"}/> {/* tościk */}
 
             <div style={{ marginTop: '15px' }}>

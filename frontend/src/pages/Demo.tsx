@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import 'primeicons/primeicons.css';
 import { useNote } from "../hooks/useNote.tsx";
 import { DemoNoteModel } from "../models/DemoNoteModel.tsx";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 
 /**
  * Strona demonstracyjna do testowania funkcjonalności notatek.
@@ -25,6 +26,7 @@ import { DemoNoteModel } from "../models/DemoNoteModel.tsx";
  * ```
  */
 export function Demo() {
+    useDocumentTitle("Demo");
     const { saveNote, getNote, setNote, note } = useNote();
 
     const setTitle = (title: string) => {
@@ -38,7 +40,11 @@ export function Demo() {
     };
 
     return (
-        <>
+        <div style={{
+            padding: "2rem 1rem",
+            maxWidth: "95%",
+            margin: "0 auto"
+        }}>
             <label htmlFor="note-title">title:</label>
             <InputText
                 id="note-title"
@@ -57,6 +63,6 @@ export function Demo() {
 
             <Button icon="pi pi-save" onClick={saveNote} label="Save note"/>
             <Button icon="pi pi-expand" onClick={getNote} label="Get note"/>
-        </>
+        </div>
     );
 }

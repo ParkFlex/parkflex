@@ -3,6 +3,7 @@ import { Button } from "primereact/button"; // tu buttona z prime reacta
 import { useState } from "react"; // Hook - pozwala stronie "pamiętać" rzeczy
 import { useNavigate, useLocation } from "react-router"; // pozwala funkcji goTo na zmiane adresu na /admin/list i pokaż tamtą stronę bez odświeżania całego okna przeglądarki
 import { Outlet } from "react-router";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle.ts";
 
 export function AdminHeaderAndSidebar () {
     const [visible, setVisible] = useState(false);
@@ -36,6 +37,9 @@ export function AdminHeaderAndSidebar () {
         setVisible(false);
     }
 
+    const headerTitle = getHeaderTitle();
+    useDocumentTitle(`Panel admina: ${headerTitle}`);
+
     function goTo(path: string) {
         navigate(path);
         close();
@@ -60,7 +64,7 @@ export function AdminHeaderAndSidebar () {
                     <h2 style={{ margin: 0, color: morski, fontSize: '1.2rem' }}>{getHeaderTitle()}</h2>
                 </div>
 
-                <Sidebar visible={visible} onHide={close} position="left">
+                <Sidebar visible={visible} onHide={close} position="left" modal dismissable>
                     <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
                         <Button
                             label="Lista Użytkowników"
