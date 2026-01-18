@@ -170,6 +170,7 @@ class HistoryRoutesTest {
         val postResponse = client.post("/api/reservation") {
             contentType(ContentType.Application.Json)
             setBody(reservationRequest)
+            bearerAuth(token)
         }
 
         assertEquals(HttpStatusCode.OK, postResponse.status)
