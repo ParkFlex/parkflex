@@ -1,12 +1,15 @@
 package parkflex.routes.history
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import parkflex.db.UserEntity
+import kotlinx.serialization.InternalSerializationApi
 import parkflex.models.ApiErrorModel
 import parkflex.models.history.HistoryEntry
+import parkflex.models.history.HistoryEntryStatus
+import parkflex.routes.reservation.reservationRoutes
 import parkflex.runDB
 import parkflex.utils.currentUserEntity
 
@@ -29,12 +32,20 @@ fun Route.historyRoutes() {
 
         val historyList: List<HistoryEntry> =
             runDB {
-                user.reservations.map { reservation ->
+                user.reservations.map { res ->
+                    val status = when {
+                        res.hasPenalty -> HistoryEntryStatus.Penalty
+                        res.arrived != null && res.left == null -> HistoryEntryStatus.InProgress
+                        res.arrived == null && res.left == null -> HistoryEntryStatus.Planned
+                        res.arrived != null && res.arrived != null -> HistoryEntryStatus.Past
+                        else -> throw IllegalStateException("Reservation does not fit any sensible status case")
+                    }
+
                     HistoryEntry(
-                        startTime = reservation.start,
-                        durationMin = reservation.duration,
-                        status = if (reservation.hasPenalty) "penalty" else "ok",
-                        spot = reservation.spot.id.value,
+                        startTime = res.start,
+                        durationMin = res.duration,
+                        status = status,
+                        spot = res.spot.id.value,
                     )
                 }
             }
