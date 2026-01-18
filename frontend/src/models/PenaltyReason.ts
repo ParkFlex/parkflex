@@ -1,0 +1,1 @@
+export type PenaltyReason = "WrongSpot" | "Overtime" | "NotArrived";
