@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 
 import { PrimeReactProvider } from "primereact/api";
+import { addLocale, locale } from 'primereact/api';
 import "@parkflex/themes/dist/theme.css";
 
 import './index.css';
@@ -27,7 +28,18 @@ import { HomePage } from "./pages/HomePage.tsx";
 import { Protected } from "./components/auth/Protected.tsx";
 import { Unprotected } from "./components/auth/Unprotected.tsx";
 import {AdminProtected} from "./components/auth/AdminProtected.tsx";
+addLocale('pl', {
+    firstDayOfWeek: 1,
+    dayNames: ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'],
+    dayNamesShort: ['Niedz', 'Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob'],
+    dayNamesMin: ['Nd', 'Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'Sb'],
+    monthNames: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
+    monthNamesShort: ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'],
+    today: 'Dziś',
+    clear: 'Wyczyść'
+});
 
+locale('pl');
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <PrimeReactProvider value={{ ripple: true }}>
