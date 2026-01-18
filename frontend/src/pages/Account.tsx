@@ -117,6 +117,9 @@ export function Account() {
                             backgroundColor: "#6c757d",
                             color: "#fff",
                             fontSize: "1rem",
+                            flexShrink: 0,
+                            minWidth: "3rem",
+                            minHeight: "3rem",
                         }}
                     />
                     <div style={{ flex: 1 }}>
