@@ -51,7 +51,7 @@ export default function HistoryEntryComp({entry}: { entry: HistoryEntry }) {
             color = '#4caae6';
             break;
         case "Planned":
-            color = '#37c37f';
+            color = '#32aa9c';
             break;
         case "Past":
             color = '#4b807b';

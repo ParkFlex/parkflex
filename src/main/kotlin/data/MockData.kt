@@ -62,6 +62,8 @@ fun generateMockData() {
         duration = 60
         spot = spot1
         user = user1
+        arrived = start
+        left = arrived?.plusMinutes(55)
     }
 
     ReservationEntity.new {
@@ -76,6 +78,8 @@ fun generateMockData() {
         duration = 120
         spot = spot1
         user = user3
+        arrived = start.minusMinutes(5)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     ReservationEntity.new {
@@ -83,6 +87,8 @@ fun generateMockData() {
         duration = 240
         spot = spot3
         user = user3
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val reservation3 = ReservationEntity.new {
@@ -90,6 +96,8 @@ fun generateMockData() {
         duration = 90
         spot = spot3
         user = user1
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val reservation4 = ReservationEntity.new {
@@ -97,6 +105,8 @@ fun generateMockData() {
         duration = 120
         spot = spot1
         user = user1
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
 
@@ -105,6 +115,8 @@ fun generateMockData() {
         duration = 60
         spot = spot5
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation2 = ReservationEntity.new {
@@ -112,6 +124,8 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation3 = ReservationEntity.new {
@@ -119,6 +133,8 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation4 = ReservationEntity.new {
@@ -126,6 +142,8 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation5 = ReservationEntity.new {
@@ -133,6 +151,8 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val reservation5 = ReservationEntity.new {
@@ -140,6 +160,8 @@ fun generateMockData() {
         duration = 90
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val reservation6 = ReservationEntity.new {
@@ -147,6 +169,8 @@ fun generateMockData() {
         duration = 120
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     // Create mock penalties
