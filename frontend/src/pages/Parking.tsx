@@ -149,6 +149,11 @@ export function ParkingPage() {
     }, [getSpots, selectedDayTime]);
 
     useEffect(() => {
+        if (selectedId != null && data.find(el => el.id == selectedId)?.occupied)
+            setSelectedId(null);
+    }, [data]);
+
+    useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const msg = (location.state as any)?.successMessage;
         if (msg) {
