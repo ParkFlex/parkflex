@@ -10,10 +10,14 @@ import parkflex.*
 import parkflex.models.reservation.CreateReservationRequest
 import parkflex.models.reservation.CreateReservationSuccessResponse
 import parkflex.models.reservation.ReservationResponse
+import parkflex.repository.ParameterRepository
 import parkflex.utils.currentUserEntity
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import kotlin.math.absoluteValue
+import kotlin.math.min
 
 /**
  * Routes for managing parking reservations.
@@ -91,7 +95,7 @@ fun Route.reservationRoutes() {
         val spot: SpotEntity? = runDB {
             SpotEntity.findById(request.spot_id)
         }
-        
+
         // Assert spot exists
         if (spot == null) {
             call.respond(
@@ -124,11 +128,28 @@ fun Route.reservationRoutes() {
             return@post
         }
         val endTime: LocalDateTime = startTime.plusMinutes(request.duration.toLong())
-        
+
+
+        val minTime = runDB { ParameterRepository.get("reservation/duration/min")!!.toLong() }
+        val maxTime = runDB { ParameterRepository.get("reservation/duration/max")!!.toLong() }
+
+        val inRange = Duration.between(startTime, endTime).toMinutes().absoluteValue in minTime..maxTime
+        if (!inRange) {
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = ApiErrorModel(
+                    "Rezerwacja jest zbyt krótka (musi byc w zakresie ${minTime}min - ${maxTime}min)",
+                    context
+                )
+            )
+
+            return@post
+        }
+
 
         // Check for reservation interval conflicts
         val breakDurationMinutes: Long = runDB {
-            val param = ParameterEntity.find { 
+            val param = ParameterEntity.find {
                 ParameterTable.key eq "reservation/break/duration"
             }.firstOrNull()
 
