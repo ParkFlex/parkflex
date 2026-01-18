@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useLocation, useNavigate} from "react-router";
 import {ErrorBanned} from "../components/Banned";
 import {ParkingGrid} from "../components/reservation/Grid";
@@ -15,6 +15,7 @@ import {useGetSpots} from "../hooks/useGetSpots.tsx";
 import {formatDateWeek, formatTime} from "../utils/dateUtils.ts";
 import type {SpotState} from "../models/reservation/SpotState.ts";
 import {usePrelude} from "../hooks/usePrelude.ts";
+import {useAxios} from "../hooks/useAxios.ts";
 
 /**
  * Komponent strony parkingu z rezerwacją miejsc.
@@ -46,6 +47,8 @@ import {usePrelude} from "../hooks/usePrelude.ts";
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
     const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const axios = useAxios();
 
     const msgs = useRef<Toast>(null);
     const { reserve } = usePostReservation();
@@ -172,8 +175,7 @@ export function ParkingPage() {
                     reason={prelude.penaltyInformation.reason}
                     charge={prelude.penaltyInformation.fine}
                     onPay={() => {
-                        alert("Blokada została opłacona");
-                        getPrelude();
+                        axios.post("/payment").then(getPrelude);
                     }}
                     onWait={() => {
                         alert("wait")

@@ -84,5 +84,11 @@ fun Route.apiRoutes() {
             preludeRoutes()
         }
     }
+
+    route("/payment") {
+        authenticate {
+            paymentRoutes()
+        }
+    }
 }
 
