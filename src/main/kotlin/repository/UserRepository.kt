@@ -51,9 +51,35 @@ object UserRepository {
 
     fun normalizePlate(plate: String): String = plate.trim().uppercase().replace(Regex("[^A-Z0-9]"), "")
 
-    // TODO: Stricter validation rules may be needed
+    // Polish registration plate validation
+    // Supports 2-letter and 3-letter district codes with multiple resource types
     fun isPlateValid(plate: String): Boolean {
-        val regex = Regex("^[A-Z]{1,3}[0-9]{2,5}$")
-        return regex.matches(normalizePlate(plate))
+        val normalized = normalizePlate(plate)
+        
+        // 2-letter district code patterns
+        val patterns2Letter = listOf(
+            Regex("^[A-Z]{2}\\d{5}$"),           // I: XY12345
+            Regex("^[A-Z]{2}\\d{4}[A-Z]$"),     // II: XY1234A
+            Regex("^[A-Z]{2}\\d{3}[A-Z]{2}$"),  // III: XY123AC
+            Regex("^[A-Z]{2}[1-9][A-Z]\\d{3}$"),  // IV: XY1A234 (first digit 1-9)
+            Regex("^[A-Z]{2}[1-9][A-Z]{2}\\d{2}$"), // V: XY1AC23 (first digit 1-9)
+        )
+
+        // 3-letter district code patterns
+        val patterns3Letter = listOf(
+            Regex("^[A-Z]{3}[A-Z]\\d{3}$"),     // I: XYZA123
+            Regex("^[A-Z]{3}\\d{2}[A-Z]{2}$"),  // II: XYZ12AC
+            Regex("^[A-Z]{3}[1-9][A-Z]\\d{2}$"),  // III: XYZ1A23 (first digit 1-9)
+            Regex("^[A-Z]{3}\\d{2}[A-Z][1-9]$"),  // IV: XYZ12A3 (last digit 1-9)
+            Regex("^[A-Z]{3}[1-9][A-Z]{2}[1-9]$"), // V: XYZ1AC2 (no digit can be 0)
+            Regex("^[A-Z]{3}[A-Z]{2}\\d{2}$"),  // VI: XYZAC12
+            Regex("^[A-Z]{3}\\d{5}$"),          // VII: XYZ12345
+            Regex("^[A-Z]{3}\\d{4}[A-Z]$"),     // VIII: XYZ1234A
+            Regex("^[A-Z]{3}\\d{3}[A-Z]{2}$"),  // IX: XYZ123AC
+            Regex("^[A-Z]{3}[A-Z]\\d{2}[A-Z]$"), // X: XYZA12C
+            Regex("^[A-Z]{3}[A-Z][1-9][A-Z]{2}$"), // XI: XYZA1CE (digit ≠ 0)
+        )
+
+        return (patterns2Letter + patterns3Letter).any { it.matches(normalized) }
     }
 }

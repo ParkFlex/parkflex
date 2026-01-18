@@ -5,6 +5,7 @@ import React from "react";
 
 import { TabMenu } from "primereact/tabmenu";
 import { useAuth } from "../hooks/useAuth";
+import logoImg from "./logoZielonyBezNapisu.png";
 
 /**
  * Komponent Layout - główny układ aplikacji z nawigacją.
@@ -76,14 +77,19 @@ export function Layout() {
          }
         
         .menu{
-        position: sticky;
+        position: fixed;
         z-index: 1000;
         background-color: white;
         top: 0;
+        left: 0;
+        right: 0;
         width: 100%;
-        border-bottom: 0.1rem solid #4b807b;
-        border-radius: 0 0 2rem 2rem;
         padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        justify-content: space-between;
         }
         
         #logout .p-menuitem-link{
@@ -99,6 +105,129 @@ export function Layout() {
         background-color: #ff3333;
         
         }
+
+        .menu-logo {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        flex-shrink: 0;
+        }
+
+        .menu-logo img {
+        height: 100%;
+        width: auto;
+        }
+
+        .menu-logo h2 {
+        margin: 0;
+        color: #4b807b;
+        font-size: 1.5rem;
+        }
+
+        .menu-nav {
+        display: flex;
+        justify-content: center;
+        flex: 1;
+        }
+
+        .menu.collapsed {
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-in-out;
+        }
+
+        .menu:not(.collapsed) {
+        transform: translateY(0);
+        transition: transform 0.3s ease-in-out;
+        }
+
+        .menu-expand-btn {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 999;
+        background-color: #4b807b;
+        color: white;
+        border: none;
+        border-radius: 0 0 12px 12px;
+        width: 60px;
+        height: 8px;
+        padding: 8px 0;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0;
+        }
+
+        .menu-expand-btn::before {
+        content: '';
+        width: 40px;
+        height: 4px;
+        background-color: white;
+        border-radius: 2px;
+        }
+
+        .menu-expand-btn:hover {
+        background-color: #2d5055;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu.collapsed ~ .menu-expand-btn {
+        display: flex;
+        animation: slideDown 0.3s ease-in-out;
+        }
+
+        .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+        }
+
+        .menu:not(.collapsed) ~ .menu-overlay {
+        display: block;
+        }
+
+        @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        }
+
+        @media (max-width: 768px) {
+            .menu {
+                flex-direction: column;
+                gap: 1rem;
+                justify-content: center;
+            }
+
+            .menu-logo {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .menu-nav {
+                width: 100%;
+            }
+
+            .menu-logo h2 {
+                display: none;
+            }
+        }
     `;
 
     const navigate = useNavigate();
@@ -108,6 +237,7 @@ export function Layout() {
         const routes = ["history", "report", "account", "admin"];
         return routes.findIndex((r) => path.includes(r)) + 1;
     });
+    const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
 
     const items = [
         {
@@ -119,8 +249,8 @@ export function Layout() {
             },
         },
         {
-            label: "Historia",
-            icon: "pi pi-history",
+            label: "Rezerwacje",
+            icon: "pi pi-calendar",
             command: () => {
                 navigate("/history");
                 setActiveIndex(1);
@@ -166,13 +296,28 @@ export function Layout() {
     return (
         <>
             <style>{mobileStyles}</style>
-            <div className={"menu"}>
-                <TabMenu
-                    model={items}
-                    activeIndex={activeIndex}
-                    onTabChange={(e) => setActiveIndex(e.index)}
-                />
+            <div className={`menu ${isHeaderCollapsed ? "collapsed" : ""}`}>
+                <div className={"menu-logo"}>
+                    <img src={logoImg} alt="ParkFlex" />
+                    <h2>ParkFlex</h2>
+                </div>
+                <div className={"menu-nav"}>
+                    <TabMenu
+                        model={items}
+                        activeIndex={activeIndex}
+                        onTabChange={(e) => setActiveIndex(e.index)}
+                    />
+                </div>
             </div>
+            <div 
+                className="menu-overlay"
+                onClick={() => setIsHeaderCollapsed(true)}
+            />
+            <button 
+                className="menu-expand-btn"
+                onClick={() => setIsHeaderCollapsed(false)}
+                title="Rozwiń nagłówek"
+            />
             <div id="content">
                 <Outlet />
             </div>

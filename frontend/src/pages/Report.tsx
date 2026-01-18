@@ -124,6 +124,11 @@ export function Report(){
                 </div>
             </Dialog>
 
+            <div style={{
+                padding: "2rem 1rem",
+                maxWidth: "95%",
+                margin: "0 auto"
+            }}>
             <Card>
                 <h1 style={{ fontSize:'24px', margin:'0rem', marginBottom:'32px', textAlign:'center' }}>Zgłoś użytkownika</h1>
                 <div style={{ display:'flex',flexDirection:'column', gap:'24px' }}>
@@ -154,6 +159,7 @@ export function Report(){
                 </div>
 
             </Card>
+            </div>
         </>
     );
 }

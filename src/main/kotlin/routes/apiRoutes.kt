@@ -54,7 +54,9 @@ fun Route.apiRoutes() {
     }
 
     route("/reservation") {
-        reservationRoutes()
+        authenticate {
+            reservationRoutes()
+        }
     }
 
     route("/quickReservation") {

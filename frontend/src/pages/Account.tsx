@@ -95,10 +95,11 @@ export function Account() {
             style={{
                 display: "flex",
                 justifyContent: "center",
-                padding: "0.75rem",
+                padding: "2rem 1rem",
+                minHeight: "calc(100vh - 240px)"
             }}
         >
-            <Card style={{ width: 700, maxWidth: "95%", padding: "0.75rem" }}>
+            <Card style={{ width: 700, maxWidth: "95%", padding: "2rem" }}>
                 <div
                     style={{
                         display: "flex",
