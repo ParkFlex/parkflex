@@ -89,8 +89,6 @@ object PenaltyService {
      * @param reservation Reservation to check for overtime. Must have non-null 'left' field.
      * @param timestamp Point in time when penalty is being calculated (usually departure time)
      * @return Created or updated penalty entity, or null if no overtime detected
-     * 
-     * TODO: Add validation that reservation.left is not null before calculation
      */
     suspend fun processOvertime(reservation: ReservationEntity, timestamp: LocalDateTime): Pair<PenaltyEntity, Long>? =
         runDB {
@@ -100,9 +98,11 @@ object PenaltyService {
                 Duration.between(reservation.end().plusMinutes(breakTime), reservation.left).toMinutes()
 
             when {
-                overtimeMinutes > 0 -> {
+                overtimeMinutes >= 0 -> {
                     val per15min = ParameterRepository.get("penalty/fine/overtime")?.toLong()!!
-                    val fine = (overtimeMinutes / 15) * per15min
+
+                    // We count every 15mins
+                    val fine = Math.ceilDiv(overtimeMinutes, 15) * per15min
 
                     val penaltyHours = ParameterRepository.get("penalty/block/duration")?.toLong()!!
 

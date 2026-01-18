@@ -23,8 +23,6 @@ import java.time.LocalDateTime
  * - Records departure time
  * - Checks for overtime penalties
  * - Generates new exit token for security
- *
- * TODO: Replace hardcoded uid=2L with actual authentication principal
  */
 fun Route.leaveRoutes() {
     post("{token}") {
