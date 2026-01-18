@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
@@ -15,6 +15,15 @@ export function Account() {
     const [plateValue, setPlateValue] = useState(user?.plate ?? "");
     const [plateError, setPlateError] = useState<string | undefined>(undefined);
     const [isSaving, setIsSaving] = useState(false);
+    const [isNarrowInfo, setIsNarrowInfo] = useState(false);
+
+    useEffect(() => {
+        const media = window.matchMedia("(max-width: 640px)");
+        const sync = () => setIsNarrowInfo(media.matches);
+        sync();
+        media.addEventListener("change", sync);
+        return () => media.removeEventListener("change", sync);
+    }, []);
 
     const copyToken = async () => {
         if (!token) return;
@@ -98,13 +107,15 @@ export function Account() {
                 padding: "0.75rem",
             }}
         >
-            <Card style={{ width: 700, maxWidth: "95%", padding: "0.75rem" }}>
+            <Card style={{ width: "min(700px, 100%)", padding: "0.75rem" }}>
                 <div
                     style={{
                         display: "flex",
                         gap: "0.75rem",
                         alignItems: "center",
                         marginBottom: "0.75rem",
+                        flexWrap: "wrap",
+                        rowGap: "0.5rem",
                     }}
                 >
                     <Avatar
@@ -122,9 +133,17 @@ export function Account() {
                             minHeight: "3rem",
                         }}
                     />
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                         <h3 style={{ margin: 0 }}>{user.name}</h3>
-                        <div style={{ color: "#666", fontSize: "0.95rem" }}>
+                        <div
+                            style={{
+                                color: "#666",
+                                fontSize: "0.95rem",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                            }}
+                        >
                             {user.email}
                         </div>
                     </div>
@@ -134,6 +153,8 @@ export function Account() {
                             display: "flex",
                             flexDirection: "column",
                             gap: "0.4rem",
+                            flex: "0 0 auto",
+                            marginLeft: "auto",
                         }}
                     >
                         <Button
@@ -155,7 +176,9 @@ export function Account() {
                     <div
                         style={{
                             display: "grid",
-                            gridTemplateColumns: "130px 1fr",
+                                gridTemplateColumns: isNarrowInfo
+                                    ? "1fr"
+                                    : "130px 1fr",
                             rowGap: "0.5rem",
                             columnGap: "0.75rem",
                         }}
@@ -261,7 +284,7 @@ export function Account() {
                                 style={{
                                     fontFamily: "monospace",
                                     wordBreak: "break-all",
-                                    maxWidth: 420,
+                                    maxWidth: "100%",
                                     color: "#666",
                                 }}
                             >
