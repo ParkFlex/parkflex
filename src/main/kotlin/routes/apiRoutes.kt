@@ -78,4 +78,11 @@ fun Route.apiRoutes() {
     route("/leave") {
         leaveRoutes()
     }
+
+    route("/prelude") {
+        authenticate {
+            preludeRoutes()
+        }
+    }
 }
+
