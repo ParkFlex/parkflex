@@ -38,7 +38,11 @@ export function Demo() {
     };
 
     return (
-        <>
+        <div style={{
+            padding: "2rem 1rem",
+            maxWidth: "95%",
+            margin: "0 auto"
+        }}>
             <label htmlFor="note-title">title:</label>
             <InputText
                 id="note-title"
@@ -57,6 +61,6 @@ export function Demo() {
 
             <Button icon="pi pi-save" onClick={saveNote} label="Save note"/>
             <Button icon="pi pi-expand" onClick={getNote} label="Get note"/>
-        </>
+        </div>
     );
 }

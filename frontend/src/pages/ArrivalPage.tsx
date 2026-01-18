@@ -81,10 +81,14 @@ export function ArrivalPage() {
     }, [axios, token]);
 
     return (
-        <>
+        <div style={{
+            padding: "2rem 1rem",
+            maxWidth: "95%",
+            margin: "0 auto"
+        }}>
             <a>{err || ""}</a>
             <br/>
             {(data != null) && dataComponent(data)}
-        </>
+        </div>
     );
 }

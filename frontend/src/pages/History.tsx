@@ -122,11 +122,14 @@ export function History() {
 
     return (
 
-        <div>
+        <div style={{
+            padding: "2rem 1rem",
+            maxWidth: "95%",
+            margin: "0 auto"
+        }}>
             <Button
                 icon="pi pi-calendar"
                 label={getButtonLabel()}
-                outlined
                 onClick={()=>setShowCalendar(true)}
                 style={{ width:'100%', justifyContent:'left' }}
             />
@@ -147,12 +150,13 @@ export function History() {
 
             <DataView value={entries} listTemplate={(items) => listTemplate(items, onlyNow)}/>
 
-            {(onlyNow || hasDateFilter(dateFilter)) && (
-                <Button raised label="Historia" severity='secondary' onClick={() => {
-                    setOnlyNow(false);
-                    setDateFilter(createEmptyDateRangeFilter());
-                }} style={{ width: '100%' }} />
-            )}
+            <Button 
+                raised 
+                label={onlyNow ? "Pokaż wszystkie" : "Tylko aktualne"} 
+                severity='secondary' 
+                onClick={() => setOnlyNow(!onlyNow)} 
+                style={{ width: '100%', marginTop: '1rem' }} 
+            />
         </div>
     );
 }

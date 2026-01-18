@@ -35,7 +35,7 @@ export function HomePage() {
                 ParkFlex
             </h1>
 
-            <div style={{ width: '100%', maxWidth: '320px' }}>
+            <div style={{ width: '100%', maxWidth: '90%' }}>
                 <LoginButtons
                     subText="Masz już konto?"
                     label="Zaloguj się"

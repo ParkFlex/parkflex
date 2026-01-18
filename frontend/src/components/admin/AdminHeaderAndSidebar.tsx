@@ -60,7 +60,7 @@ export function AdminHeaderAndSidebar () {
                     <h2 style={{ margin: 0, color: morski, fontSize: '1.2rem' }}>{getHeaderTitle()}</h2>
                 </div>
 
-                <Sidebar visible={visible} onHide={close} position="left">
+                <Sidebar visible={visible} onHide={close} position="left" modal dismissable>
                     <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
                         <Button
                             label="Lista Użytkowników"
