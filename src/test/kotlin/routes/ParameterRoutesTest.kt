@@ -101,6 +101,6 @@ class ParameterRoutesTest {
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
         val error = response.body<ApiErrorModel>()
-        assertTrue(error.message.contains("numeric"))
+        assertTrue(error.message.contains("Parameter jest liczbowy, a otrzymano ciąg znaków"))
     }
 }
