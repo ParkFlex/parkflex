@@ -8,5 +8,5 @@ export const Protected = ({ children }: { children: ReactNode }): ReactNode => {
 
     return authCtx.isAuthenticated
         ? children
-        : <Navigate replace to="/login" state={{ path: location.pathname }}/>;
+        : <Navigate replace to="/login" state={{ protected: location.pathname }}/>;
 };
