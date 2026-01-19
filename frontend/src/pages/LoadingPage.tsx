@@ -6,16 +6,17 @@ export const LoadingPage = () => {
     const [loadingText, setLoadingText] = useState(defaultText);
 
     useEffect(() => {
-        setInterval(() => {
+        const intervalId = setInterval(() => {
             setLoadingText((prev) => {
                 if (prev.endsWith("...")) {
                     return defaultText;
                 }
-
                 return prev + ".";
             });
         }, refreshInterval);
-    }, []);
+
+        return () => clearInterval(intervalId);
+    }, [refreshInterval, defaultText]);
 
     return (
         <div

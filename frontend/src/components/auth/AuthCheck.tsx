@@ -10,20 +10,32 @@ export function AuthCheck({ children }: { children: React.ReactNode }) {
     const { logout, token } = useAuth();
 
     useEffect(() => {
+        let isMounted = true;
+
         const validateToken = async () => {
             if (token) {
                 try {
                     const axiosInstance = createAxiosInstance();
                     await axiosInstance.get("/whoami");
-                } catch (error) {
-                    logout();
-                    navigate("/homepage");
+                } catch {
+                    if (isMounted) {
+                        logout();
+                        navigate("/login");
+                        return;
+                    }
                 }
             }
-            setIsChecking(false);
+
+            if (isMounted) {
+                setIsChecking(false);
+            }
         };
 
         validateToken();
+
+        return () => {
+            isMounted = false;
+        };
     }, [token, logout, navigate]);
 
     if (isChecking) {
