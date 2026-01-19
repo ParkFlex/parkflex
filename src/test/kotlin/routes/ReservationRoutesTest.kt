@@ -1,6 +1,7 @@
 package parkflex.routes
 
 import db.configDataBase.setupTestDB
+import dummyToken
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
@@ -26,9 +27,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ReservationRoutesTest {
-    fun dummyToken(uid: Long) =
-        JwtRepository.generateToken(uid, "dummy@parkflex.pl", "user")
-
     @Test
     fun `test post reservation WoW user exist`() = testApplication {
         val db = setupTestDB()
