@@ -37,7 +37,7 @@ fun Route.historyRoutes() {
                         res.hasPenalty -> HistoryEntryStatus.Penalty
                         res.arrived != null && res.left == null -> HistoryEntryStatus.InProgress
                         res.arrived == null && res.left == null -> HistoryEntryStatus.Planned
-                        res.arrived != null && res.arrived != null -> HistoryEntryStatus.Past
+                        res.arrived != null && res.left != null -> HistoryEntryStatus.Past
                         else -> throw IllegalStateException("Reservation does not fit any sensible status case")
                     }
 

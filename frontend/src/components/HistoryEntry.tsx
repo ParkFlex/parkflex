@@ -15,8 +15,6 @@ import type {HistoryEntry, HistoryEntryStatus} from "../models/history/HistoryEn
  * - **Zakończony** (zielony) - jeśli rezerwacja się zakończyła
  * - **Zaplanowany** (zielony) - jeśli rezerwacja jest w przyszłości
  *
- * TODO: Funkcja endsBeforeNow może nie działać poprawnie - wymaga weryfikacji.
- *
  * @example
  * ```tsx
  * const entry: HistoryEntry = {
