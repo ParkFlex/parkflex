@@ -11,6 +11,8 @@ export function AdminParameters() {
 
     const [overtimePenalty, setOvertimePenalty] = useState(0);// Inicjalizacja stanu dla kary za przekroczenie czasu
     const [wrongSpotPenalty, setWrongSpotPenalty] = useState(0); // Inicjalizacja stanu dla kary za niewłaściwe miejsce
+    const [notArrivedPenalty, setNotArrivedPenalty] = useState(0);
+    const [notArrivedMargin, setNotArrivedMargin] = useState(0);
     const [minTime, setMinTime] = useState(0); // Inicjalizacja stanu dla minimalnego czasu rezerwacji
     const [maxTime, setMaxTime] = useState(0); // Inicjalizacja stanu dla maksymalnego czasu rezerwacji
     const [banDuration, setBanDuration] = useState(0); // Inicjalizacja stanu dla długości trwania bana
@@ -27,10 +29,12 @@ export function AdminParameters() {
                     switch (p.key) { // Sprawdzanie klucza parametru
                         case "penalty/fine/overtime": setOvertimePenalty(Number(p.value)); break; // Ustawanie stanu na podstawie wartości z backendu
                         case "penalty/fine/wrongSpot": setWrongSpotPenalty(Number(p.value)); break; // Ustawianie stanu na podstawie wartości z backendu
+                        case "penalty/fine/notArrived": setNotArrivedPenalty(Number(p. value)); break;
                         case "penalty/block/duration": setBanDuration(Number(p.value)); break; // itd itp
                         case "reservation/duration/min": setMinTime(Number(p.value)); break;
                         case "reservation/duration/max": setMaxTime(Number(p.value)); break;
                         case "reservation/break/duration": setGap(Number(p.value)); break;
+                        case "penalty/notArrived/margin": setNotArrivedMargin(Number(p.value)); break;
                     }
                 });
             })
@@ -86,6 +90,15 @@ export function AdminParameters() {
                 />
 
                 <SingleParameterCard
+                    label="Kara za nieprzyjechanie"
+                    description="Wysokość kary za brak przyjazdu"
+                    value={notArrivedPenalty}
+                    onChange={setNotArrivedPenalty}
+                    onSave={() => save("penalty/fine/notArrived", notArrivedPenalty, "Kara za nieprzyjechanie")}
+                    mode="currency"
+                />
+
+                <SingleParameterCard
                     label="Minimalny czas rezerwacji"
                     description="Najkrótszy możliwy czas trwania rezerwacji"
                     value={minTime/60}
@@ -118,6 +131,15 @@ export function AdminParameters() {
                     value={gap}
                     onChange={setGap}
                     onSave={() => save("reservation/break/duration", gap, "Czas pomiędzy rezerwacjami")}
+                    suffix=" min"
+                />
+
+                <SingleParameterCard
+                    label="Maksymalny czas spóźnienia"
+                    description="Ile minut użytkownik może się spóźninić z przyjazdem"
+                    value={notArrivedMargin}
+                    onChange={setNotArrivedMargin}
+                    onSave={() => save("penalty/notArrived/margin", notArrivedMargin, "Maksymalny czas spóźnienia")}
                     suffix=" min"
                 />
             </div>
