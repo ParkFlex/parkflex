@@ -16,8 +16,9 @@ import parkflex.runDB
  * These can be modified at runtime through admin interface.
  * 
  * Parameters:
- * - penalty/fine/wrongSpot: Fine amount for parking in wrong spot (in cents/grosz)
- * - penalty/fine/overtime: Fine amount per 15 minutes of overtime (in cents/grosz)
+ * - penalty/fine/wrongSpot: Fine amount for parking in wrong spot (in PLN)
+ * - penalty/fine/overtime: Fine amount per 15 minutes of overtime (in PLN)
+ * - penalty/fine/notArrived: Fine amount for not arriving in time (in PLN)
  * - penalty/block/duration: How long user is blocked after penalty (in hours)
  * - reservation/duration/min: Minimum reservation duration (in minutes)
  * - reservation/duration/max: Maximum reservation duration (in minutes)
