@@ -98,7 +98,7 @@ class PenaltyCancelRoutesTest {
         application { configureTest(db) }
 
         val response = client.patch("/api/admin/user/penalty/$penaltyId/cancel") {
-            bearerAuth(adminToken)
+            bearerAuth(adminToken())
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)

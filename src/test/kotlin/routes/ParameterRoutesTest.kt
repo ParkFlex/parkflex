@@ -1,10 +1,12 @@
 package parkflex.routes
 
+import adminToken
 import db.configDataBase.setupTestDB
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.testApplication
+import newAdmmin
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
@@ -24,7 +26,9 @@ class ParameterRoutesTest {
         val db = setupTestDB()
         
         newSuspendedTransaction(db = db) {
-            SchemaUtils.create(ParameterTable)
+            SchemaUtils.create(ParameterTable, UserTable)
+
+            newAdmmin()
             
             ParameterEntity.new {
                 key = "parking/layout"
@@ -42,7 +46,9 @@ class ParameterRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        val response = client.get("api/admin/parameter/all")
+        val response = client.get("api/admin/parameter/all") {
+            bearerAuth(adminToken())
+        }
 
         assertEquals(HttpStatusCode.OK, response.status)
         val params = response.body<List<ParameterModel>>()
@@ -55,7 +61,10 @@ class ParameterRoutesTest {
         val db = setupTestDB()
         
         newSuspendedTransaction(db = db) {
-            SchemaUtils.create(ParameterTable)
+            SchemaUtils.create(ParameterTable, UserTable)
+
+            newAdmmin()
+
             ParameterEntity.new {
                 key = "parking/layout"
                 type = ParameterType.String
@@ -66,7 +75,9 @@ class ParameterRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        val response = client.get("api/admin/parameter/parking/layout")
+        val response = client.get("api/admin/parameter/parking/layout") {
+            bearerAuth(adminToken())
+        }
 
         assertEquals(HttpStatusCode.OK, response.status)
         val param = response.body<ParameterModel>()
@@ -78,7 +89,10 @@ class ParameterRoutesTest {
         val db = setupTestDB()
         
         newSuspendedTransaction(db = db) {
-            SchemaUtils.create(ParameterTable)
+            SchemaUtils.create(ParameterTable, UserTable)
+
+            newAdmmin()
+
             ParameterEntity.new {
                 key = "parking/layout" 
                 type = ParameterType.String
@@ -97,6 +111,7 @@ class ParameterRoutesTest {
         val response = client.patch("api/admin/parameter/max_capacity") {
             contentType(ContentType.Application.Json)
             setBody(ParameterUpdateModel(value = "not-a-number"))
+            bearerAuth(adminToken())
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
