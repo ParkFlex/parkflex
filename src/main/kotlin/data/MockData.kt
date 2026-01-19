@@ -1,6 +1,7 @@
 package parkflex.data
 
 import parkflex.db.*
+import parkflex.repository.UserRepository
 import java.time.LocalDateTime
 import kotlin.io.encoding.Base64
 
@@ -20,29 +21,29 @@ fun generateMockData() {
     } ?: throw Exception("placeholder.jpeg not found")
 
     // Create mock users
-    val user1 = UserEntity.new {
-        fullName = "John Doe"
-        mail = "john.doe@example.com"
-        hash = "hashed_password_123"
-        plate = "ABC-1234"
-        role = "user"
-    }
+    val user1 = UserRepository.unsafeCreateUser(
+        fullName = "John Doe",
+        mail = "john.doe@example.com",
+        password = "123",
+        plate = "ABC-1234",
+        role = "user",
+    )
 
-    val user2 = UserEntity.new {
-        fullName = "Jane Smith"
-        mail = "jane.smith@example.com"
-        hash = "hashed_password_456"
-        plate = "XYZ-9876"
-        role = "user"
-    }
+    val user2 = UserRepository.unsafeCreateUser(
+        fullName = "Jane Smith",
+        mail = "jane.smith@example.com",
+        password = "123",
+        plate = "XYZ-9876",
+        role = "user",
+    )
 
-    UserEntity.new {
-        fullName = "Blocked User"
-        mail = "blocked@example.com"
-        hash = "hashed_password_blocked"
-        plate = "BLK-0000"
-        role = "user"
-    }
+    val user3 = UserRepository.unsafeCreateUser(
+        fullName = "Blocked User",
+        mail = "blocked@example.com",
+        password = "hashed_password_blocked",
+        plate = "BLK-0000",
+        role = "user",
+    )
 
     // Create mock parking spots
     val spot1 = SpotEntity.findById(1)!!
@@ -61,6 +62,8 @@ fun generateMockData() {
         duration = 60
         spot = spot1
         user = user1
+        arrived = start
+        left = arrived?.plusMinutes(55)
     }
 
     ReservationEntity.new {
@@ -70,11 +73,31 @@ fun generateMockData() {
         user = user2
     }
 
+    ReservationEntity.new {
+        start = LocalDateTime.now().minusHours(1)
+        duration = 120
+        spot = spot1
+        user = user3
+        arrived = start.minusMinutes(5)
+        left = arrived?.plusMinutes(duration.toLong())
+    }
+
+    ReservationEntity.new {
+        start = LocalDateTime.now().minusHours(2)
+        duration = 240
+        spot = spot3
+        user = user3
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
+    }
+
     val reservation3 = ReservationEntity.new {
         start = LocalDateTime.now().minusDays(1)
         duration = 90
         spot = spot3
         user = user1
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val reservation4 = ReservationEntity.new {
@@ -82,6 +105,8 @@ fun generateMockData() {
         duration = 120
         spot = spot1
         user = user1
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
 
@@ -89,7 +114,9 @@ fun generateMockData() {
         start = LocalDateTime.now().minusDays(2)
         duration = 60
         spot = spot5
-        user = user1
+        user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation2 = ReservationEntity.new {
@@ -97,6 +124,8 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation3 = ReservationEntity.new {
@@ -104,6 +133,8 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation4 = ReservationEntity.new {
@@ -111,6 +142,8 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     val pastReservation5 = ReservationEntity.new {
@@ -118,6 +151,26 @@ fun generateMockData() {
         duration = 600
         spot = spot1
         user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
+    }
+
+    val reservation5 = ReservationEntity.new {
+        start = LocalDateTime.now().minusDays(1)
+        duration = 90
+        spot = spot1
+        user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
+    }
+
+    val reservation6 = ReservationEntity.new {
+        start = LocalDateTime.now().minusDays(5)
+        duration = 120
+        spot = spot1
+        user = user2
+        arrived = start.plusMinutes(2)
+        left = arrived?.plusMinutes(duration.toLong())
     }
 
     // Create mock penalties
@@ -130,7 +183,7 @@ fun generateMockData() {
     }
 
     val penalty1 = PenaltyEntity.new {
-        reservation = reservation3
+        reservation = reservation5
         reason = PenaltyReason.WrongSpot
         paid = true
         fine = 2500
@@ -138,7 +191,7 @@ fun generateMockData() {
     }
 
     PenaltyEntity.new {
-        reservation = reservation4
+        reservation = reservation6
         reason = PenaltyReason.WrongSpot
         paid = false
         fine = 2500
@@ -153,7 +206,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-19T08:43")
         image = placeholderImg
         reviewed = false
-        plate = user2.plate
+        plate = user3.plate
     }
 
     // Reviewed, penalty assigned
@@ -164,7 +217,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-16T08:20")
         image = placeholderImg
         reviewed = true
-        plate = user1.plate
+        plate = user3.plate
     }
 
     // Reviewed, penalty not assigned
@@ -175,7 +228,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2025-12-18T08:17")
         image = placeholderImg
         reviewed = true
-        plate = user2.plate
+        plate = user3.plate
     }
 
     // Should be WrongSpot
@@ -186,7 +239,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2026-01-09T12:00")
         image = placeholderImg
         reviewed = false
-        plate = user2.plate
+        plate = user3.plate
     }
 
     // Should be Overtime
@@ -197,7 +250,7 @@ fun generateMockData() {
         timestamp = LocalDateTime.parse("2026-01-07T22:00")
         image = placeholderImg
         reviewed = false
-        plate = user2.plate
+        plate = user3.plate
     }
 
     logger.info("✅ Mock data generated successfully!")

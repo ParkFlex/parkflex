@@ -1,3 +1,5 @@
+export type HistoryEntryStatus = "Planned" |  "InProgress" |  "Past" |  "Penalty";
+
 /**
  * Reprezentuje wpis w historii rezerwacji użytkownika.
  * 
@@ -20,8 +22,8 @@ export interface HistoryEntry {
     startTime: Date;
     /** Czas trwania rezerwacji w minutach */
     durationMin: number;
-    /** Status rezerwacji (np. "completed", "active", "cancelled") */
-    status: string;
+    /** Status rezerwacji */
+    status: HistoryEntryStatus;
     /** Numer miejsca parkingowego */
     spot: number;
 }

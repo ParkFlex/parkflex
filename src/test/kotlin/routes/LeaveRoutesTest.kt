@@ -1,6 +1,7 @@
 package parkflex.routes
 
 import db.configDataBase.setupTestDB
+import dummyToken
 import io.ktor.client.plugins.sse.sse
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -65,7 +66,9 @@ class LeaveRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        val response = client.post("/api/leave/wrong-token")
+        val response = client.post("/api/leave/wrong-token") {
+            bearerAuth(dummyToken(1))
+        }
         assertEquals(HttpStatusCode.BadRequest, response.status)
     }
 
@@ -87,7 +90,9 @@ class LeaveRoutesTest {
         }
 
         val token = TermService.exit.generate()
-        val response = client.post("/api/leave/$token")
+        val response = client.post("/api/leave/$token") {
+            bearerAuth(dummyToken(1))
+        }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
     }
@@ -120,7 +125,9 @@ class LeaveRoutesTest {
         }
 
         val token = TermService.exit.generate()
-        val response = client.post("/api/leave/$token")
+        val response = client.post("/api/leave/$token") {
+            bearerAuth(dummyToken(2))
+        }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
     }

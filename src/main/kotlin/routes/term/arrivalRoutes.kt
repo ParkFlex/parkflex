@@ -7,11 +7,10 @@ import parkflex.db.ReservationEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.NoPresentReservationModel
 import parkflex.models.SuccessfulArrivalModel
-import parkflex.models.TimeTableEntry
 import parkflex.repository.ParameterRepository
-import parkflex.repository.ReservationRepository
 import parkflex.runDB
 import parkflex.service.TermService
+import parkflex.utils.userId
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -20,24 +19,29 @@ import kotlin.math.abs
 /**
  * Routes for handling vehicle arrival at parking entry gate.
  * Validates entry tokens and checks for active reservations.
- * 
+ *
  * Endpoint: POST /api/arrive/{token}
  * - Validates entry token
  * - Checks if user has an active reservation for current time
  * - Allows arrival during reservation or a few minutes before (controlled by parameter)
  * - Records arrival time if valid
  * - Generates new entry token for security
- * 
- * TODO: Replace hardcoded uid=2L with actual authentication principal
  */
 fun Route.arrivalRoutes() {
     post("{token}") {
-        val uid = 2L // TODO: use principal after auth is ready
+        val uid = call.userId() ?: run {
+            call.respond(
+                status = HttpStatusCode.Unauthorized,
+                message = ApiErrorModel("No user id in context", "POST /arrive/{token}")
+            )
+
+            return@post
+        }
 
         val token = call.parameters["token"] ?: run {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("No token provided", "POST /entry/{token}")
+                message = ApiErrorModel("No token provided", "POST /arrive/{token}")
             )
 
             return@post
@@ -46,7 +50,7 @@ fun Route.arrivalRoutes() {
         if (!TermService.entry.isCurrent(token)) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                message = ApiErrorModel("Invalid entry token token: $token", "POST /entry/{token}")
+                message = ApiErrorModel("Invalid entry token token: $token", "POST /arrive/{token}")
             )
 
             return@post
@@ -60,7 +64,7 @@ fun Route.arrivalRoutes() {
                     status = HttpStatusCode.InternalServerError,
                     message = ApiErrorModel(
                         "The \"reservation/break/duration\" parameter is malformed or does not exist",
-                        "POST /api/enter/{token}"
+                        "POST /arrive/{token}"
                     )
                 )
 
@@ -89,17 +93,9 @@ fun Route.arrivalRoutes() {
 
 
         if (reservation == null) {
-            val today = now.toLocalDate()
-            val timeTable = runDB {
-                ReservationRepository
-                    .forDate(today)
-                    .groupBy { it.spot.id.value }
-                    .map { TimeTableEntry.fromReservations(it.key, it.value) }
-            }
-
             call.respond(
                 status = HttpStatusCode.OK,
-                message = NoPresentReservationModel(timeTable)
+                message = NoPresentReservationModel()
             )
 
         } else {

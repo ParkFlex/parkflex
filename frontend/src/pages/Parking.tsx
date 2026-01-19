@@ -1,8 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { ErrorBanned } from "../components/Banned";
 import { ParkingGrid } from "../components/reservation/Grid";
 import { usePostReservation } from "../hooks/usePostReservation";
-import { DateTimeSelector, type DateTimeSpan } from "../components/reservation/DateTimeSelector.tsx";
+import {
+    DateTimeSelector,
+    type DateTimeSpan,
+} from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
@@ -10,13 +14,15 @@ import { Toast } from "primereact/toast";
 import { useGetSpots } from "../hooks/useGetSpots.tsx";
 import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
 import type { SpotState } from "../models/reservation/SpotState.ts";
+import { usePrelude } from "../hooks/usePrelude.ts";
+import { useAxios } from "../hooks/useAxios.ts";
 
 /**
  * Komponent strony parkingu z rezerwacją miejsc.
- * 
+ *
  * Główny komponent do zarządzania rezerwacjami miejsc parkingowych.
  * Umożliwia wybór miejsca, przedziału czasowego i dokonanie rezerwacji.
- * 
+ *
  * @remarks
  * Funkcjonalności:
  * - Wyświetlanie siatki miejsc parkingowych
@@ -24,36 +30,35 @@ import type { SpotState } from "../models/reservation/SpotState.ts";
  * - Rezerwacja wybranego miejsca
  * - Obsługa błędów i komunikatów toast
  * - Wyświetlanie stanu blokady użytkownika
- * 
+ *
  * Stan komponentu:
  * - `data`: Lista dostępnych miejsc parkingowych
  * - `selectedId`: ID wybranego miejsca
  * - `selectedDayTime`: Wybrany przedział czasowy rezerwacji
  * - `isBanned`: Flaga blokady użytkownika
- * 
+ *
  * @example
  * ```tsx
  * import { ParkingPage } from './pages/Parking';
- * 
+ *
  * <Route path="/parking" element={<ParkingPage />} />
  * ```
  */
 export function ParkingPage() {
     const [data, setData] = useState<SpotState[]>([]);
-    const [isBanned, setIsBanned] = useState(false);
-    const [showParking, setShowParking] = useState(true);
-    const [banDays, setBanDays] = useState(3);
-    const [banReason, setBanReason] = useState(
-        "przekroczenie limitu rezerwacji"
-    );
-    const [chargeAmount, setChargeAmount] = useState(150);
-
     const [selectedId, setSelectedId] = useState<number | null>(null);
+
+    const axios = useAxios();
 
     const msgs = useRef<Toast>(null);
     const { reserve } = usePostReservation();
 
     const getSpots = useGetSpots(setData, msgs);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const { prelude, getPrelude } = usePrelude();
 
     const handleReserve = async () => {
         if (selectedId == null) {
@@ -65,7 +70,7 @@ export function ParkingPage() {
                     severity: "warn",
                     summary: "Uwaga",
                     detail: "Najpierw wybierz miejsce.",
-                    closable: false,
+                    closable: true,
                 },
             ]);
             return;
@@ -79,7 +84,8 @@ export function ParkingPage() {
             const start = new Date(selectedDayTime.day);
             start.setHours(startTime.getHours(), startTime.getMinutes(), 0);
 
-            const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60_000; // ms to minutes
+            const durationMinutes =
+                Math.ceil((endTime.getTime() - startTime.getTime()) / 60_000); // ms to minutes
 
             const resp = await reserve(selectedId, start, durationMinutes);
 
@@ -94,7 +100,11 @@ export function ParkingPage() {
                 },
             ]);
 
-            getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
+            getSpots(
+                selectedDayTime.day,
+                selectedDayTime.startTime,
+                selectedDayTime.endTime
+            );
             setSelectedId(null);
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Nieznany błąd";
@@ -126,26 +136,62 @@ export function ParkingPage() {
         return {
             day: day,
             startTime: start,
-            endTime: end
+            endTime: end,
         };
     });
 
     useEffect(() => {
-        getSpots(selectedDayTime.day, selectedDayTime.startTime, selectedDayTime.endTime);
+        getSpots(
+            selectedDayTime.day,
+            selectedDayTime.startTime,
+            selectedDayTime.endTime
+        );
     }, [getSpots, selectedDayTime]);
 
     useEffect(() => {
-        if (isBanned) setShowParking(false);
-    }, [isBanned]);
+        if (selectedId != null && data.find(el => el.id == selectedId)?.occupied)
+            setSelectedId(null);
+    }, [data]);
+
+    useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const msg = (location.state as any)?.successMessage;
+        if (msg) {
+            msgs.current?.clear();
+            msgs.current?.show([
+                {
+                    sticky: false,
+                    severity: "success",
+                    summary: "Sukces",
+                    detail: msg,
+                    life: 3000,
+                    closable: true,
+                },
+            ]);
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [location, msgs, navigate]);
 
     return (
         <div className="parking-page">
-            {showParking ? (
+            {prelude.penaltyInformation ? (
+                <ErrorBanned
+                    due={prelude.penaltyInformation?.due}
+                    reason={prelude.penaltyInformation.reason}
+                    charge={prelude.penaltyInformation.fine}
+                    onPay={() => {
+                        axios.post("/payment").then(getPrelude);
+                    }}
+                    onWait={() => {
+                        alert("wait");
+                    }}
+                />
+            ) : (
                 <div
                     style={{
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center"
+                        alignItems: "center",
                     }}
                 >
                     <DateTimeSelector
@@ -153,6 +199,8 @@ export function ParkingPage() {
                         setVisible={setDateSelectorVisible}
                         dayTime={selectedDayTime}
                         setDayTime={setSelectedDayTime}
+                        minTime={prelude.minReservationTime}
+                        maxTime={prelude.maxReservationTime}
                     />
 
                     <Divider/>
@@ -170,22 +218,28 @@ export function ParkingPage() {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            width: "100%"
+                            width: "100%",
                         }}
                     >
                         <Toolbar
                             style={{
                                 width: "95%",
-                                marginTop: "1em"
+                                marginTop: "1em",
                             }}
                             start={
                                 <>
                                     <p> Miejsce: {selectedId ?? "brak"}</p>
                                     <Divider layout={"vertical"}/>
-                                    <p> {formatDateWeek(selectedDayTime.day)} </p>
+                                    <p>
+                                        {" "}
+                                        {formatDateWeek(
+                                            selectedDayTime.day
+                                        )}{" "}
+                                    </p>
                                     <Divider layout={"vertical"}/>
                                     <p>
-                                        {formatTime(selectedDayTime.startTime)}-{formatTime(selectedDayTime.endTime)}
+                                        {formatTime(selectedDayTime.startTime)}-
+                                        {formatTime(selectedDayTime.endTime)}
                                     </p>
                                 </>
                             }
@@ -197,23 +251,9 @@ export function ParkingPage() {
                                 />
                             }
                         />
-                        <Toast position="bottom-center" ref={msgs} />
+                        <Toast position="bottom-center" ref={msgs}/>
                     </div>
                 </div>
-            ) : (
-                <ErrorBanned
-                    days={banDays}
-                    reason={banReason}
-                    charge={chargeAmount}
-                    onPay={() => {
-                        alert("Blokada została opłacona");
-                        setIsBanned(false);
-                        setShowParking(true);
-                    }}
-                    onWait={() => {
-                        setShowParking(true);
-                    }}
-                />
             )}
         </div>
     );

@@ -148,4 +148,22 @@ export function Spot({ state, selectedId, onSelect }: SpotProps) {
                 {id}
             </Button>
         );
+
+    if (role == "special")
+        return (
+            <Button
+                style={{
+                    ...baseStyle,
+                    backgroundColor: "#eeeeee",
+                    color: "darkgray",
+                    fontSize: "1rem",
+                }}
+                severity={
+                    occupied ? "danger" : isSelected ? "success" : "secondary"
+                }
+                disabled={true}
+            >
+                {id}
+            </Button>
+        );
 }

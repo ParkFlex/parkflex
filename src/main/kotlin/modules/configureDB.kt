@@ -28,6 +28,7 @@ private val defaultParameters =
     listOf(
         Triple("penalty/fine/wrongSpot", ParameterType.Number, "500"), // one time fee
         Triple("penalty/fine/overtime", ParameterType.Number, "150"),  // fee per 15mins of overtime
+        Triple("penalty/notArrived/margin", ParameterType.Number, "15"),  // how late can a person be in minutes
         Triple("penalty/block/duration", ParameterType.Number, (7 * 24).toString()), // duration in hours
         Triple("reservation/duration/min", ParameterType.Number, "30"), // minutes
         Triple("reservation/duration/max", ParameterType.Number, "720"), // minutes
@@ -40,7 +41,7 @@ private val defaultParameters =
                 .   10  11  12  13  14  15  16  17  .
                 .   19  20  21  22  23  24  25  26  .
                 UR  .   .   .   .   .   .   .   .  LU
-                27 28  29  30  31  32  33  34  35  36
+                27 28  29  30  31  32  33 !34 !35 !36
                 """.trimIndent()
         )
     )

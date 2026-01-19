@@ -1,22 +1,20 @@
-import { Card } from 'primereact/card';
-import { addMinutes, formatTime, isActiveNow, endsBeforeNow } from "../utils/dateUtils";
-import type { HistoryEntry } from "../models/history/HistoryEntry.tsx";
+import {Card} from 'primereact/card';
+import {addMinutes, formatTime, isActiveNow, endsBeforeNow} from "../utils/dateUtils";
+import type {HistoryEntry, HistoryEntryStatus} from "../models/history/HistoryEntry.tsx";
 
 /**
  * Komponent wyświetlający pojedynczy wpis w historii rezerwacji.
- * 
+ *
  * @param props - Właściwości komponentu
  * @param props.entry - Dane wpisu historii do wyświetlenia
- * 
+ *
  * @remarks
  * Komponent automatycznie określa status rezerwacji:
  * - **Kara** (czerwony) - jeśli status === 'penalty'
  * - **Aktywny** (niebieski) - jeśli rezerwacja jest w trakcie
  * - **Zakończony** (zielony) - jeśli rezerwacja się zakończyła
  * - **Zaplanowany** (zielony) - jeśli rezerwacja jest w przyszłości
- * 
- * TODO: Funkcja endsBeforeNow może nie działać poprawnie - wymaga weryfikacji.
- * 
+ *
  * @example
  * ```tsx
  * const entry: HistoryEntry = {
@@ -25,42 +23,37 @@ import type { HistoryEntry } from "../models/history/HistoryEntry.tsx";
  *   status: "active",
  *   spot: 42
  * };
- * 
+ *
  * <HistoryEntryComp entry={entry} />
  * ```
  */
-export default function HistoryEntryComp({ entry }: { entry: HistoryEntry }) {
+export default function HistoryEntryComp({entry}: { entry: HistoryEntry }) {
     const startDate = new Date(entry.startTime);
     const endTime = addMinutes(startDate, entry.durationMin);
 
-    type StatusKey = 'kara' | 'aktywny' | 'zakończony' | 'zaplanowany' | 'brak';
-
-    const hasPenalty = ('status' in entry) && entry.status === 'penalty';
-    const activeNow = isActiveNow(entry.startTime, entry.durationMin);
-    const beforeNow = endsBeforeNow(entry.startTime, entry.durationMin);
-
-    let statusKey: StatusKey;
-    if (hasPenalty) {
-        statusKey = 'kara';
-    } else if (activeNow) {
-        statusKey = 'aktywny';
-    } else if (beforeNow) {
-        statusKey = 'zakończony';
-    } else {
-        statusKey = 'zaplanowany';
-    }
-
+    const statusShowable = (status: HistoryEntryStatus) => {
+        switch(status) {
+            case 'Penalty': return "Kara";
+            case "InProgress": return "W trakcie";
+            case "Past": return "Zakończona"
+            case "Planned": return "Zaplanowana";
+        }
+    };
 
     let color: string;
-    switch (statusKey) {
-        case 'kara':
-            color = 'red';
+    switch (entry.status) {
+        case 'Penalty':
+            color = '#f63a3a';
             break;
-        case 'aktywny':
+        case 'InProgress':
             color = '#4caae6';
             break;
-        default:
+        case "Planned":
+            color = '#32aa9c';
+            break;
+        case "Past":
             color = '#4b807b';
+            break;
     }
 
     return (
@@ -74,12 +67,13 @@ export default function HistoryEntryComp({ entry }: { entry: HistoryEntry }) {
                 borderLeft: '10px solid ' + color,
             }}
         >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ flex: 1 , }}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div style={{flex: 1,}}>
                     <div style={{
                         fontSize: '1.3rem',
                         marginBottom: '0.3rem',
-                        fontFamily: 'monospace' }}>
+                        fontFamily: 'monospace'
+                    }}>
                         <strong>{formatTime(startDate)}-{formatTime(endTime)}</strong>
                     </div>
                     <div style={{
@@ -87,7 +81,7 @@ export default function HistoryEntryComp({ entry }: { entry: HistoryEntry }) {
                         color: '#666',
                         textTransform: 'capitalize'
                     }}>
-                        {statusKey}
+                        {statusShowable(entry.status)}
                     </div>
                 </div>
                 <div style={{

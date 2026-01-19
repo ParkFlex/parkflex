@@ -11,4 +11,4 @@
  * - `arrow-LU` - Strzałka w lewo-górę
  * - `arrow-DL` - Strzałka w dół-lewo
  */
-export type SpotRole = "normal" | "blank" | "gate" | "arrow-RD" | "arrow-UR" | "arrow-LU" | "arrow-DL";
+export type SpotRole = "normal" | "blank" | "gate" | "arrow-RD" | "arrow-UR" | "arrow-LU" | "arrow-DL" | "special";

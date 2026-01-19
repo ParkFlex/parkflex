@@ -49,6 +49,7 @@ export function DateTimeDialog<SelMode extends CalendarSelectionMode>(
                 value={selection.days}
                 selectionMode={selectionMode}
                 inline
+                locale="pl"
                 style={{
                     minWidth: '100%',
                     width: '100%',

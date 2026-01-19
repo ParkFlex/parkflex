@@ -1,30 +1,31 @@
 import { Outlet } from "react-router";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import React from 'react';
-import { TabMenu } from 'primereact/tabmenu';
-// import {Button} from "primereact/button";
+import React from "react";
+
+import { TabMenu } from "primereact/tabmenu";
+import { useAuth } from "../hooks/useAuth";
 
 /**
  * Komponent Layout - główny układ aplikacji z nawigacją.
- * 
+ *
  * @remarks
  * Komponent opakowujący wszystkie strony aplikacji, zapewniający:
  * - Sticky menu nawigacyjne u góry ekranu
  * - Zakładki: Parking, Historia, Zgłoszenia, Konto
  * - Przycisk wylogowania
  * - Outlet dla zagnieżdżonych routów
- * 
+ *
  * Menu jest responsywne i dostosowuje się do urządzeń mobilnych.
  * Style są wstrzykiwane inline przez <style> tag.
- * 
+ *
  * TODO: Niektóre linki (Report, Account, Admin) prowadzą do nieistniejących stron.
- * 
+ *
  * Funkcjonalności:
  * - Automatyczne ustawienie aktywnej zakładki na podstawie URL
  * - Wylogowanie przez usunięcie authToken z localStorage
  * - Nawigacja między sekcjami aplikacji
- * 
+ *
  * @example
  * ```tsx
  * <Route path="/" element={<Layout />}>
@@ -33,26 +34,30 @@ import { TabMenu } from 'primereact/tabmenu';
  * </Route>
  * ```
  */
-export function Layout(){
+export function Layout() {
 
+    const morski = '#4b807b';
+    const jasnaZielen = '#d4e2da';
 
     const mobileStyles = `
     
     .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
         border-bottom: none;
-        background-color: lightgrey;
+        background-color: #d4e2da;
         border-radius: 1.0rem ;
+        color: #4b807b;
     }
     
      .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link:hover {
-        background-color: #ccccff;
+        background-color: #4b807b;
+        color: white;
         time-transition: background-color 0.5s ease;
         }
         
     .p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link{
-        background-color: #9999ff;
+        background-color: #4b807b;
         time-transition: background-color 0.5s ease;
-        color: black;
+        color: white;
        
     }
     
@@ -79,12 +84,10 @@ export function Layout(){
         border-bottom: 0.1rem solid #4b807b;
         border-radius: 0 0 2rem 2rem;
         padding: 1rem;
-        margin-bottom: 2rem;
-        
         }
         
         #logout .p-menuitem-link{
-        background-color: #ff6666;
+        background-color: rgb(255, 100.29, 88.95);
         color: white;
         }
         
@@ -96,50 +99,83 @@ export function Layout(){
         background-color: #ff3333;
         
         }
-        
-        #content{
-        margin: 1rem;
-        }
     `;
 
     const navigate = useNavigate();
-
-    const logout = () => {
-        localStorage.removeItem('authToken');
-        navigate('/Login');
-    };
-
+    const { user, isAuthenticated, logout } = useAuth();
     const [activeIndex, setActiveIndex] = useState(() => {
         const path = window.location.pathname;
-        if (path.includes('History')) return 1;
-        if (path.includes('Report')) return 2;
-        if (path.includes('Account')) return 3;
-        return 0;
+        const routes = ["history", "report", "account", "admin"];
+        return routes.findIndex((r) => path.includes(r)) + 1;
     });
 
-
     const items = [
-        { label: '', icon: 'pi pi-sign-out', command: () => { logout();}, id: 'logout' },
-        { label: 'Parking', icon: 'pi pi-car' , command: () => { navigate('/parking'); setActiveIndex(0);}, },
-        { label: 'Historia', icon: 'pi pi-history', command: () => { navigate('/history');setActiveIndex(1); } },
-        { label: 'Zgłoszenia', icon: 'pi pi-ban', command: () => { navigate('/report'); setActiveIndex(2);} },
-        { label: 'Konto',  icon: 'pi pi-user', command: () => { navigate('/account');setActiveIndex(3); } },
-        // { label: 'Admin',  icon: 'pi pi-cog', command: () => { navigate('/Admin');setActiveIndex(3) } },
-
-
+        {
+            label: "Parking",
+            icon: "pi pi-car",
+            command: () => {
+                navigate("/parking");
+                setActiveIndex(0);
+            },
+        },
+        {
+            label: "Historia",
+            icon: "pi pi-history",
+            command: () => {
+                navigate("/history");
+                setActiveIndex(1);
+            },
+        },
+        {
+            label: "Zgłoszenia",
+            icon: "pi pi-ban",
+            command: () => {
+                navigate("/report");
+                setActiveIndex(2);
+            },
+        },
+        {
+            label: "Konto",
+            icon: "pi pi-user",
+            command: () => {
+                navigate("/account");
+                setActiveIndex(3);
+            },
+        },
+        {
+            label: "Admin",
+            icon: "pi pi-cog",
+            command: () => {
+                navigate("/admin");
+                setActiveIndex(4);
+            },
+            visible: user?.role === "admin",
+        },
+        {
+            label: "",
+            icon: "pi pi-sign-out",
+            command: () => {
+                logout();
+                navigate("/");
+            },
+            id: "logout",
+            visible: isAuthenticated,
+        },
     ];
 
-    return(
+    return (
         <>
             <style>{mobileStyles}</style>
-            <div className={'menu'} >
-                <TabMenu model={items} activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}/>
-
+            <div className={"menu"}>
+                <TabMenu
+                    model={items}
+                    activeIndex={activeIndex}
+                    onTabChange={(e) => setActiveIndex(e.index)}
+                />
             </div>
             <div id="content">
-                <Outlet/>
+                <Outlet />
             </div>
-
         </>
     );
 }

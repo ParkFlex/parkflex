@@ -53,6 +53,7 @@ export function DateRangeFilterDialog({
                 onChange={(e) => handleDateChange(e.value ?? null)}
                 selectionMode="range"
                 inline
+                locale="pl"
                 style={{ width: '100%', marginBottom: showTimeFilter ? undefined : '24px', marginTop: showTimeFilter ? undefined : '24px' }}
             />
             {showTimeFilter && (

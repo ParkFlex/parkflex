@@ -1,53 +1,55 @@
 package parkflex.routes.history
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
-import parkflex.db.UserEntity
+import kotlinx.serialization.InternalSerializationApi
 import parkflex.models.ApiErrorModel
 import parkflex.models.history.HistoryEntry
+import parkflex.models.history.HistoryEntryStatus
+import parkflex.routes.reservation.reservationRoutes
 import parkflex.runDB
+import parkflex.utils.currentUserEntity
 
 /**
  * Routes for user reservation history.
- * 
- * Endpoint: GET /api/historyEntry?userId={userId}
+ *
+ * Endpoint: GET /api/historyEntry
  * Retrieves reservation history for a specific user.
  */
 fun Route.historyRoutes() {
     get {
-        val id = call.queryParameters["userId"]
-        if (id == null) {
+        val user = call.currentUserEntity()
+        if (user == null) {
             call.respond(
-                status = HttpStatusCode.UnprocessableEntity,
-                message = ApiErrorModel("No ID found", "/api/history GET")
+                status = HttpStatusCode.NotFound,
+                message = ApiErrorModel("Nie znaleziono użytkownika", "/api/history GET"),
             )
-        } else {
-            val idLong = id.toLong()
-            val user = runDB { UserEntity.findById(idLong) }
-            if (user == null) {
-                call.respond(
-                    status = HttpStatusCode.NotFound,
-                    message = ApiErrorModel("User not found", "/api/history GET")
-                )
-            }
+            return@get
+        }
 
-            var historyList: List<HistoryEntry> = listOf()
+        val historyList: List<HistoryEntry> =
             runDB {
-                val reservations = user!!.reservations.toList()
-                for (reservation in reservations) {
-                    val status: String
-                    if (reservation.hasPenalty) {
-                        status = "penalty"
-                    } else {
-                        status = "ok"
+                user.reservations.map { res ->
+                    val status = when {
+                        res.hasPenalty -> HistoryEntryStatus.Penalty
+                        res.arrived != null && res.left == null -> HistoryEntryStatus.InProgress
+                        res.arrived == null && res.left == null -> HistoryEntryStatus.Planned
+                        res.arrived != null && res.left != null -> HistoryEntryStatus.Past
+                        else -> throw IllegalStateException("Reservation does not fit any sensible status case")
                     }
-                    val entry = HistoryEntry(reservation.start, reservation.duration, status, reservation.spot.id.value)
-                    historyList += entry
+
+                    HistoryEntry(
+                        startTime = res.start,
+                        durationMin = res.duration,
+                        status = status,
+                        spot = res.spot.id.value,
+                    )
                 }
             }
-            call.respond(historyList)
-        }
+
+        call.respond(historyList)
     }
 }

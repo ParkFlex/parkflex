@@ -8,6 +8,7 @@ import { ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import { useReport } from "../hooks/report/useReport.ts";
 import type { ReportEntry } from "../models/report/ReportEntry.tsx";
+import { Dialog } from "primereact/dialog";
 
 
 export function Report(){
@@ -18,8 +19,9 @@ export function Report(){
     const [visible, setVisible] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const toast = useRef<Toast>(null);
+    const [newSpotDialogVisible, setNewSpotDialogVisible] = useState(false);
 
-    const { submitReport, loading } = useReport();
+    const { submitReport, loading, newSpot } = useReport();
 
     const onChoose = () => inputRef.current?.click();
 
@@ -75,6 +77,7 @@ export function Report(){
             setDescription('');
             setFile(null);
             setImage(null);
+            setNewSpotDialogVisible(true);
             toast.current?.show({
                 severity: 'success',
                 summary: 'Zgłoszenie wysłane',
@@ -96,6 +99,31 @@ export function Report(){
     return(
         <>
             <Toast ref={toast} position={"bottom-center"}/>
+            <Dialog
+                onHide={() => setNewSpotDialogVisible(false)}
+                visible={newSpotDialogVisible}
+                header={"Zgłoszenie zostało wysłane"}
+            >
+                <div
+                    style={{
+                        paddingBottom: "2rem",
+                        paddingTop: "0",
+                        fontSize: "1.25rem"
+                    }}
+                >
+                    {newSpot
+                        ? <div style={{
+                            display: "flex",
+                            alignItems: "baseline",
+                            justifyContent: "space-around"
+                        }}>
+                            <div>Przydzielono nowe miejsce:</div>
+                            <b>{newSpot}</b>
+                        </div>
+                        : <div> Nie udało się przydzielić nowego miejsca</div>}
+                </div>
+            </Dialog>
+
             <Card>
                 <h1 style={{ fontSize:'24px', margin:'0rem', marginBottom:'32px', textAlign:'center' }}>Zgłoś użytkownika</h1>
                 <div style={{ display:'flex',flexDirection:'column', gap:'24px' }}>

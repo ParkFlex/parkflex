@@ -5,6 +5,7 @@ import type { ReportEntry } from "../../models/report/ReportEntry.tsx";
 
 export const useReport = () => {
     const axios=useAxios();
+    const [newSpot, setNewSpot] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
 
     const submitReport = useCallback (async (report: ReportEntry) => {
@@ -21,11 +22,13 @@ export const useReport = () => {
         };
 
         try {
-            await axios.post('/report', body, {
+            const resp = await axios.post<number | null>('/report', body, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
+
+            setNewSpot(resp.data);
         } catch (err) {
             if (isAxiosError(err)) {
                 console.error(err.response?.data?.message || 'Błąd podczas wysyłania zgłoszenia', err);
@@ -41,6 +44,7 @@ export const useReport = () => {
     return {
         submitReport,
         loading,
+        newSpot
     };
 
 };
