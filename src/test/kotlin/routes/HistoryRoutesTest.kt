@@ -12,6 +12,7 @@ import parkflex.configureTest
 import parkflex.db.*
 import parkflex.models.reservation.CreateReservationRequest
 import parkflex.models.history.HistoryEntry
+import parkflex.models.history.HistoryEntryStatus
 import testingClient
 import parkflex.repository.JwtRepository
 import java.time.LocalDateTime
@@ -105,8 +106,8 @@ class HistoryRoutesTest {
         val historyList = response.body<List<HistoryEntry>>()
 
         assertEquals(2, historyList.size)
-        assertTrue(historyList.any { it.status == "ok" && it.durationMin == 60 })
-        assertTrue(historyList.any { it.status == "penalty" && it.durationMin == 120 })
+        assertTrue(historyList.any { it.status == HistoryEntryStatus.Planned && it.durationMin == 60 })
+        assertTrue(historyList.any { it.status == HistoryEntryStatus.Penalty && it.durationMin == 120 })
     }
 
     @Test
@@ -184,6 +185,6 @@ class HistoryRoutesTest {
 
         val found = history.find { it.durationMin == 45 && it.spot == spotId }
         assertNotNull(found, "Rezerwacja powinna zostać znaleziona w historii")
-        assertEquals("ok", found.status)
+        assertEquals(found.status, HistoryEntryStatus.Planned)
     }
 }
