@@ -1,10 +1,13 @@
 package parkflex.routes
 
 import db.configDataBase.setupTestDB
+import dummyToken
 import io.ktor.client.call.body
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
+import newAdmmin
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
@@ -35,7 +38,9 @@ class PenaltyRoutesTest {
         val userId = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
 
-            val user = UserEntity.new(id = 1) {
+            newAdmmin()
+
+            val user = UserEntity.new {
                 fullName = "Test"; mail = "t@t.pl"; hash = "h"; plate = "PL1"; role = "user"
             }
 
@@ -61,7 +66,9 @@ class PenaltyRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.get("/api/admin/user/$userId/penalty")
+        val response = client.get("/api/admin/user/$userId/penalty") {
+            bearerAuth(dummyToken(1))
+        }
 
         assertEquals(HttpStatusCode.OK, response.status)
         val body = response.body<PenaltyModel>()
@@ -77,7 +84,9 @@ class PenaltyRoutesTest {
         val userId = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
 
-            val user = UserEntity.new(id = 1) {
+            newAdmmin()
+
+            val user = UserEntity.new {
                 fullName = "Test"; mail = "t@t.pl"; hash = "h"; plate = "PL1"; role = "user"
             }
 
@@ -86,7 +95,9 @@ class PenaltyRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.get("/api/admin/user/$userId/penalty")
+        val response = client.get("/api/admin/user/$userId/penalty") {
+            bearerAuth(dummyToken(1))
+        }
 
         assertEquals(HttpStatusCode.NoContent, response.status)
     }
@@ -99,11 +110,14 @@ class PenaltyRoutesTest {
         newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
 
+            newAdmmin()
         }
 
         application { configureTest(db) }
 
-        val response = client.get("/api/admin/user/67/penalty")
+        val response = client.get("/api/admin/user/67/penalty") {
+            bearerAuth(dummyToken(1))
+        }
 
         assertEquals(HttpStatusCode.NotFound, response.status)
     }
@@ -115,7 +129,9 @@ class PenaltyRoutesTest {
 
         application { configureTest(db) }
 
-        val response = client.get("/api/admin/user/abc/penalty")
+        val response = client.get("/api/admin/user/abc/penalty") {
+            bearerAuth(dummyToken(1))
+        }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
     }
