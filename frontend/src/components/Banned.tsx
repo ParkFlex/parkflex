@@ -1,29 +1,31 @@
-import { useState } from "react";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { formatDate } from "../utils/dateUtils.ts";
+import {useState} from "react";
+import {Card} from "primereact/card";
+import {Button} from "primereact/button";
+import {InputText} from "primereact/inputtext";
+import {formatDate} from "../utils/dateUtils.ts";
+import {Dialog} from "primereact/dialog";
+import {ConfirmDialog} from "primereact/confirmdialog";
+import {FloatLabel} from "primereact/floatlabel";
 
 /**
  * Komponent wyświetlający ekran blokady konta użytkownika.
- * 
+ *
  * @param props - Właściwości komponentu
  * @param props.days - Liczba dni pozostałych do końca blokady
  * @param props.reason - Powód zablokowania konta
  * @param props.charge - Kwota opłaty za wcześniejsze odblokowanie (w PLN)
  * @param props.onPay - Callback wywoływany po opłaceniu blokady z kodem płatności
- * @param props.onWait - Callback wywoływany gdy użytkownik wybiera oczekiwanie
- * 
+ *
  * @remarks
  * Komponent umożliwia użytkownikowi:
  * - Wyświetlenie powodu i czasu trwania blokady
  * - Opłacenie blokady przez podanie 6-cyfrowego kodu
  * - Rezygnację z opłaty i oczekiwanie na automatyczne odblokowanie
- * 
+ *
  * Walidacja:
  * - Kod płatności musi mieć dokładnie 6 cyfr
  * - Akceptowane są tylko znaki numeryczne
- * 
+ *
  * @example
  * ```tsx
  * <ErrorBanned
@@ -31,22 +33,19 @@ import { formatDate } from "../utils/dateUtils.ts";
  *   reason="przekroczenie limitu rezerwacji"
  *   charge={150}
  *   onPay={(code) => console.log('Opłacono kodem:', code)}
- *   onWait={() => console.log('Użytkownik czeka')}
  * />
  * ```
  */
 export const ErrorBanned = ({
-    due,
-    reason,
-    charge,
-    onPay,
-    onWait,
-}: {
+                                due,
+                                reason,
+                                charge,
+                                onPay,
+                            }: {
     due: Date;
     reason: string;
     charge: number;
     onPay: (code: string) => void;
-    onWait: () => void;
 }) => {
     const [showPayment, setShowPayment] = useState(false);
     const [code, setCode] = useState("");
@@ -62,44 +61,43 @@ export const ErrorBanned = ({
         <Card className="banned-page" title="Dostęp został zablokowany">
             <p>
                 Twoje konto zostało zablokowane z następującego powodu: {reason}.
-                <br />
+                <br/>
                 Blokada jest aktywna do: {formatDate(due)}
-                <br />
+                <br/>
                 Opłata za wcześniejsze odblokowanie konta wynosi {charge} PLN.
             </p>
 
             <Card className="banned-buttons">
                 {!showPayment && (
-                    <Button label="Opłać blokadę" onClick={() => setShowPayment(true)} />
-                )}
-                {!showPayment && (
-                    <Button
-                        label="Wolę poczekać"
-                        onClick={onWait}
-                        style={{ marginLeft: "10px" }}
-                    />
+                    <Button label="Opłać blokadę" onClick={() => setShowPayment(true)}/>
                 )}
 
-                {showPayment && (
-                    <Card style={{ marginTop: "20px" }}>
-                        <InputText
-                            type="text"
-                            maxLength={6}
-                            value={code}
-                            onChange={(e) => {
-                                const v = e.target.value;
-                                if (!isNaN(Number(v))) setCode(v);
-                            }}
-                            placeholder="Wpisz kod 6-cyfrowy płatności"
-                            style={{ width: "250px" }}
-                        />
-                        <Button
-                            label="Zapłać"
-                            onClick={handlePay}
-                            style={{ marginLeft: "10px" }}
-                        />
-                    </Card>
-                )}
+                <ConfirmDialog
+                    header={<span style={{fontSize: "1.25rem"}}>Opłać blokadę</span>}
+                    headerStyle={{paddingBottom: "0.5em"}}
+                    visible={showPayment}
+                    onHide={() => setShowPayment(false)}
+                    contentStyle={{paddingTop: "1.5rem", paddingBottom: "1rem"}}
+                    acceptLabel={"Zapłać"}
+                    accept={handlePay}
+                    rejectLabel={"Anuluj"}
+                    message={
+                        <FloatLabel>
+                            <InputText
+                                id="payment-input"
+                                type="text"
+                                maxLength={6}
+                                value={code}
+                                onChange={(e) => {
+                                    const v = e.target.value;
+                                    if (!isNaN(Number(v))) setCode(v);
+                                }}
+                                style={{ border: "1px solid" }}
+                            />
+                            <label htmlFor="payment-input">6-cyfrowy kod płatności</label>
+                        </FloatLabel>
+                    }
+                />
             </Card>
         </Card>
     );

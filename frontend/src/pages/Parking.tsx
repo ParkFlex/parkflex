@@ -182,9 +182,6 @@ export function ParkingPage() {
                     onPay={() => {
                         axios.post("/payment").then(getPrelude);
                     }}
-                    onWait={() => {
-                        alert("wait");
-                    }}
                 />
             ) : (
                 <div
