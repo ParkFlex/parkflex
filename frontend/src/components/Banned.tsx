@@ -92,7 +92,7 @@ export const ErrorBanned = ({
                                     const v = e.target.value;
                                     if (!isNaN(Number(v))) setCode(v);
                                 }}
-                                style={{ border: "1px solid" }}
+                                style={{border: "1px solid"}}
                             />
                             <label htmlFor="payment-input">6-cyfrowy kod płatności</label>
                         </FloatLabel>

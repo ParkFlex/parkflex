@@ -18,7 +18,7 @@ export const usePrelude = () => {
         const penaltyInformation: PenaltyInformation | null = data.penaltyInformation && ({
             fine: Number(data.penaltyInformation.fine),
             due: new Date(data.penaltyInformation.due),
-            reason: data.penaltyInformation.fine
+            reason: data.penaltyInformation.reason
         });
 
         const got: PreludeModel = {
