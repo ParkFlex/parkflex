@@ -9,9 +9,11 @@ import { Toast } from "primereact/toast";
 import { useReport } from "../hooks/report/useReport.ts";
 import type { ReportEntry } from "../models/report/ReportEntry.tsx";
 import { Dialog } from "primereact/dialog";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 
 
 export function Report(){
+    useDocumentTitle("Zgłoszenia");
     const [plate, setPlate] = useState('');
     const [description, setDescription] = useState('');
     const [file, setFile] = useState<File | null>(null);
@@ -124,6 +126,11 @@ export function Report(){
                 </div>
             </Dialog>
 
+            <div style={{
+                padding: "2rem 1rem",
+                maxWidth: "95%",
+                margin: "0 auto"
+            }}>
             <Card>
                 <h1 style={{ fontSize:'24px', margin:'0rem', marginBottom:'32px', textAlign:'center' }}>Zgłoś użytkownika</h1>
                 <div style={{ display:'flex',flexDirection:'column', gap:'24px' }}>
@@ -154,6 +161,7 @@ export function Report(){
                 </div>
 
             </Card>
+            </div>
         </>
     );
 }

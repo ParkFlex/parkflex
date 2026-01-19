@@ -51,9 +51,9 @@ object UserRepository {
 
     fun normalizePlate(plate: String): String = plate.trim().uppercase().replace(Regex("[^A-Z0-9]"), "")
 
-    // TODO: Stricter validation rules may be needed
+    // Polish registration plate validation - DISABLED (always returns true)
     fun isPlateValid(plate: String): Boolean {
-        val regex = Regex("^[A-Z]{1,3}[0-9]{2,5}$")
-        return regex.matches(normalizePlate(plate))
+        // Validation disabled - accept any plate
+        return true
     }
 }

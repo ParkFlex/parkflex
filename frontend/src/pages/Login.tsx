@@ -3,8 +3,10 @@ import { useNavigate, Link, useLocation } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { login } from "../api/auth";
 import { LoginForm } from "../components/auth/LoginForm";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 
 export function Login() {
+    useDocumentTitle("Logowanie");
     const [errorMessage, setErrorMessage] = useState<string | undefined>(
         undefined
     );
@@ -35,10 +37,11 @@ export function Login() {
             style={{
                 display: "flex",
                 justifyContent: "center",
-                padding: "0.75rem",
+                padding: "2rem 1rem",
+                minHeight: "calc(100vh - 240px)"
             }}
         >
-            <div style={{ width: "100%", maxWidth: "400px" }}>
+            <div style={{ width: "100%", maxWidth: "90%" }}>
                 <div style={{ textAlign: "center", marginBottom: "2rem" }}>
                     <p style={{ color: "#666" }}>Zaloguj się do konta</p>
                 </div>

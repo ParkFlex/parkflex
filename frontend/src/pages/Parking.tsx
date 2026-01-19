@@ -9,7 +9,6 @@ import {
 } from "../components/reservation/DateTimeSelector.tsx";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
-import { Toolbar } from "primereact/toolbar";
 import { Toast } from "primereact/toast";
 import { useGetSpots } from "../hooks/useGetSpots.tsx";
 import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
@@ -174,6 +173,27 @@ export function ParkingPage() {
 
     return (
         <div className="parking-page">
+            <style>{`
+                @media (max-width: 768px) {
+                    .parking-footer-content {
+                        flex-direction: column !important;
+                        gap: 0.75rem !important;
+                    }
+                    .parking-footer-data {
+                        flex-direction: column !important;
+                        gap: 0.5rem !important;
+                        align-items: flex-start !important;
+                        font-size: 0.85rem !important;
+                        width: 100%;
+                    }
+                    .parking-footer-separator {
+                        display: none !important;
+                    }
+                    .parking-footer-button {
+                        width: 100% !important;
+                    }
+                }
+            `}</style>
             {prelude.penaltyInformation ? (
                 <ErrorBanned
                     due={prelude.penaltyInformation?.due}
@@ -189,9 +209,14 @@ export function ParkingPage() {
             ) : (
                 <div
                     style={{
+                        padding: "2rem 1rem",
+                        maxWidth: "95%",
+                        margin: "0 auto",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        width: "100%",
+                        paddingBottom: "8rem"
                     }}
                 >
                     <DateTimeSelector
@@ -203,6 +228,12 @@ export function ParkingPage() {
                         maxTime={prelude.maxReservationTime}
                     />
 
+                    <Button
+                        label="Wybierz date"
+                        onClick={() => setDateSelectorVisible(true)}
+                        style={{ width: '100%' }}
+                    />
+
                     <Divider/>
 
                     <ParkingGrid
@@ -211,46 +242,57 @@ export function ParkingPage() {
                         setSelectedId={setSelectedId}
                     />
 
-                    <Divider/>
-
                     <div
                         style={{
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            width: "100%",
+                            width: "100vw",
+                            paddingTop: "1rem",
+                            paddingBottom: "1rem",
+                            borderTop: "1px solid #e5e5e5",
+                            backgroundColor: "#fafafa",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            position: "fixed",
+                            bottom: "0",
+                            left: "0",
+                            boxShadow: "0 -1px 6px rgba(0, 0, 0, 0.03)",
+                            gap: "0.75rem",
                         }}
                     >
-                        <Toolbar
-                            style={{
-                                width: "95%",
-                                marginTop: "1em",
-                            }}
-                            start={
-                                <>
-                                    <p> Miejsce: {selectedId ?? "brak"}</p>
-                                    <Divider layout={"vertical"}/>
-                                    <p>
-                                        {" "}
-                                        {formatDateWeek(
-                                            selectedDayTime.day
-                                        )}{" "}
-                                    </p>
-                                    <Divider layout={"vertical"}/>
-                                    <p>
-                                        {formatTime(selectedDayTime.startTime)}-
-                                        {formatTime(selectedDayTime.endTime)}
-                                    </p>
-                                </>
-                            }
-                            end={
-                                <Button
-                                    label="Zatwierdź"
-                                    onClick={handleReserve}
-                                    disabled={selectedId == null}
-                                />
-                            }
-                        />
+                        <div style={{ fontSize: "0.85rem", color: "#666", fontWeight: "500", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                            Podsumowanie
+                        </div>
+                        <div style={{ 
+                            display: "flex", 
+                            gap: "1.5rem", 
+                            alignItems: "center", 
+                            fontSize: "0.95rem", 
+                            width: "100%", 
+                            justifyContent: "space-between",
+                        }} className="parking-footer-content">
+                            <div style={{ 
+                                display: "flex", 
+                                gap: "1.5rem", 
+                                alignItems: "center",
+                                flexWrap: "wrap"
+                            }} className="parking-footer-data">
+                                <span>Miejsce: <strong>{selectedId ?? "—"}</strong></span>
+                                <span style={{ color: "#999" }} className="parking-footer-separator">•</span>
+                                <span>{formatDateWeek(selectedDayTime.day)}</span>
+                                <span style={{ color: "#999" }} className="parking-footer-separator">•</span>
+                                <span>{formatTime(selectedDayTime.startTime)}–{formatTime(selectedDayTime.endTime)}</span>
+                            </div>
+                            <Button
+                                label="Zatwierdź"
+                                onClick={handleReserve}
+                                disabled={selectedId == null}
+                                size="small"
+                                className="parking-footer-button"
+                                style={{ width: "auto" }}
+                            />
+                        </div>
                         <Toast position="bottom-center" ref={msgs}/>
                     </div>
                 </div>

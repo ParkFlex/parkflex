@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 
 /**
  * Strona 404 - wyświetlana dla nieznanych ścieżek.
@@ -13,6 +14,7 @@ import { Link } from "react-router";
  * ```
  */
 export function NotFound() {
+    useDocumentTitle("404");
     return (
         <>
             <span>Not found</span>

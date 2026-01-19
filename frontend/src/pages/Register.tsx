@@ -3,8 +3,10 @@ import { useNavigate } from "react-router";
 import { RegisterForm } from "../components/auth/RegisterForm";
 import { register } from "../api/auth";
 import { useAuth } from "../hooks/useAuth";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 
 export function Register() {
+    useDocumentTitle("Rejestracja");
     const [errorMessage, setErrorMessage] = useState<string | undefined>(
         undefined
     );
@@ -38,10 +40,11 @@ export function Register() {
             style={{
                 display: "flex",
                 justifyContent: "center",
-                padding: "0.75rem",
+                padding: "2rem 1rem",
+                minHeight: "calc(100vh - 240px)"
             }}
         >
-            <div style={{ width: "100%", maxWidth: "600px" }}>
+            <div style={{ width: "100%", maxWidth: "90%" }}>
                 <RegisterForm
                     onRegister={handleRegister}
                     errorMessage={errorMessage}

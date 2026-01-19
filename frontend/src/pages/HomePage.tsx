@@ -1,7 +1,9 @@
 import { LoginButtons } from "../components/LoginButtons";
 import logoImg from "./logoZielonyBezNapisu.png";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.ts";
 
 export function HomePage() {
+    useDocumentTitle("Strona główna");
     const morski = '#5c7e7b';
     const jasnaZielen = '#d9e2db';
 
@@ -35,7 +37,7 @@ export function HomePage() {
                 ParkFlex
             </h1>
 
-            <div style={{ width: '100%', maxWidth: '320px' }}>
+            <div style={{ width: '100%', maxWidth: '90%' }}>
                 <LoginButtons
                     subText="Masz już konto?"
                     label="Zaloguj się"
