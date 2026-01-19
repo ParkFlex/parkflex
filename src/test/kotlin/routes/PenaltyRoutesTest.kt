@@ -1,6 +1,6 @@
 package parkflex.routes
 
-import db.configDataBase.setupTestDB
+import parkflex.db.configDataBase.setupTestDB
 import dummyToken
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth

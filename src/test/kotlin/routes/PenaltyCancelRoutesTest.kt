@@ -1,7 +1,7 @@
 package parkflex.routes
 
 import adminToken
-import db.configDataBase.setupTestDB
+import parkflex.db.configDataBase.setupTestDB
 import dummyToken
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.patch

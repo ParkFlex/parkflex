@@ -1,7 +1,7 @@
 package parkflex.routes
 
 import dummyToken
-import db.configDataBase.setupTestDB
+import parkflex.db.configDataBase.setupTestDB
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.http.ContentType

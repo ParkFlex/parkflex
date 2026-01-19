@@ -1,11 +1,10 @@
-package db
+package parkflex.db
 
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import parkflex.db.*
 import java.time.LocalDateTime
 import kotlin.test.*
 
