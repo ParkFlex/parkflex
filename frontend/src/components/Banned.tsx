@@ -1,11 +1,11 @@
-import {useState} from "react";
-import {Card} from "primereact/card";
-import {Button} from "primereact/button";
-import {InputText} from "primereact/inputtext";
-import {formatDate} from "../utils/dateUtils.ts";
-import {Dialog} from "primereact/dialog";
-import {ConfirmDialog} from "primereact/confirmdialog";
-import {FloatLabel} from "primereact/floatlabel";
+import { useState } from "react";
+import { Card } from "primereact/card";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { formatDate } from "../utils/dateUtils.ts";
+import { Dialog } from "primereact/dialog";
+import { ConfirmDialog } from "primereact/confirmdialog";
+import { FloatLabel } from "primereact/floatlabel";
 
 /**
  * Komponent wyświetlający ekran blokady konta użytkownika.
@@ -37,11 +37,11 @@ import {FloatLabel} from "primereact/floatlabel";
  * ```
  */
 export const ErrorBanned = ({
-                                due,
-                                reason,
-                                charge,
-                                onPay,
-                            }: {
+    due,
+    reason,
+    charge,
+    onPay,
+}: {
     due: Date;
     reason: string;
     charge: number;
@@ -73,11 +73,11 @@ export const ErrorBanned = ({
                 )}
 
                 <ConfirmDialog
-                    header={<span style={{fontSize: "1.25rem"}}>Opłać blokadę</span>}
-                    headerStyle={{paddingBottom: "0.5em"}}
+                    header={<span style={{ fontSize: "1.25rem" }}>Opłać blokadę</span>}
+                    headerStyle={{ paddingBottom: "0.5em" }}
                     visible={showPayment}
                     onHide={() => setShowPayment(false)}
-                    contentStyle={{paddingTop: "1.5rem", paddingBottom: "1rem"}}
+                    contentStyle={{ paddingTop: "1.5rem", paddingBottom: "1rem" }}
                     acceptLabel={"Zapłać"}
                     accept={handlePay}
                     rejectLabel={"Anuluj"}
@@ -92,7 +92,7 @@ export const ErrorBanned = ({
                                     const v = e.target.value;
                                     if (!isNaN(Number(v))) setCode(v);
                                 }}
-                                style={{border: "1px solid"}}
+                                style={{ border: "1px solid" }}
                             />
                             <label htmlFor="payment-input">6-cyfrowy kod płatności</label>
                         </FloatLabel>

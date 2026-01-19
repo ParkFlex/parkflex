@@ -16,7 +16,7 @@ import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
 import type { SpotState } from "../models/reservation/SpotState.ts";
 import { usePrelude } from "../hooks/usePrelude.ts";
 import { useAxios } from "../hooks/useAxios.ts";
-import {penaltyReasonShowable} from "../models/PenaltyReason.ts";
+import { penaltyReasonShowable } from "../models/PenaltyReason.ts";
 
 /**
  * Komponent strony parkingu z rezerwacją miejsc.

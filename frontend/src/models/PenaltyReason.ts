@@ -6,4 +6,4 @@ export const penaltyReasonShowable = (pr: PenaltyReason): string => {
         case "Overtime": return "Przekroczono zaplanowany czas postoju";
         case "WrongSpot": return "Zaparkowano na miejscu innym niż zadeklarowano";
     }
-}
+};

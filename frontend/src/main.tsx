@@ -27,7 +27,7 @@ import { Login } from "./pages/Login.tsx";
 import { HomePage } from "./pages/HomePage.tsx";
 import { Protected } from "./components/auth/Protected.tsx";
 import { Unprotected } from "./components/auth/Unprotected.tsx";
-import {AdminProtected} from "./components/auth/AdminProtected.tsx";
+import { AdminProtected } from "./components/auth/AdminProtected.tsx";
 addLocale('pl', {
     firstDayOfWeek: 1,
     dayNames: ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'],

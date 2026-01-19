@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useAuth } from "../../hooks/useAuth.ts";
-import {Navigate, useLocation} from "react-router";
+import { Navigate, useLocation } from "react-router";
 
 export const Unprotected = ({ children }: { children: ReactNode }): ReactNode => {
     const authCtx = useAuth();
