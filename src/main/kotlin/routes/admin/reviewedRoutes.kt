@@ -9,10 +9,13 @@ import parkflex.db.ReportEntity
 
 import parkflex.models.ApiErrorModel
 import parkflex.runDB
+import parkflex.utils.admin
 
 fun Route.reviewedRoutes() {
     route("/{report_id}/reviewed") {
         patch {
+            call.admin()
+
             val id = call.parameters["report_id"]
             if (id == null) {
                 call.respond(

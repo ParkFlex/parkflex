@@ -15,11 +15,12 @@ import parkflex.routes.term.quickReservationRoutes
  * Routes for the REST API.
  */
 fun Route.apiRoutes() {
-    route("/admin") {
-        adminRoutes()
-    }
 
     authenticate {
+        route("/admin") {
+            adminRoutes()
+        }
+
         route("report") {
             userReportRoutes()
         }

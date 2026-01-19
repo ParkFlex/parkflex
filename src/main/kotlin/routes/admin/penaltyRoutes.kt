@@ -10,12 +10,14 @@ import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.admin.PenaltyModel
 import parkflex.runDB
+import parkflex.utils.admin
 
 
 fun Route.penaltyRoutes() {
     route("/{user_id}/penalty") {
-
         get {
+            call.admin()
+
             val userId = call.parameters["user_id"]?.toLongOrNull()
             if (userId == null) {
                 call.respond(
