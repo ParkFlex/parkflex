@@ -1,3 +1,6 @@
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.sse.sse
+import kotlinx.coroutines.flow.first
 import parkflex.db.UserEntity
 import parkflex.repository.JwtRepository
 
@@ -14,3 +17,11 @@ fun newAdmmin() = UserEntity.new(1) {
     this.hash = ""
 }
 
+suspend fun HttpClient.firstSSE(path: String): String? {
+    var token: String? = null
+    sse("/term/exit") {
+        incoming.first().data?.let { token = it }
+    }
+
+    return token
+}

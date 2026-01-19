@@ -1,10 +1,12 @@
 package parkflex.routes
 
 import dummyToken
+import firstSSE
 import io.ktor.client.plugins.sse.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -51,10 +53,7 @@ class LeaveRoutesTest {
         }
 
         // poll the first token from the exit gate API and terminate the flow
-        var token: String? = null
-        client.sse("/term/exit") {
-            incoming.first().data?.let { token = it }
-        }
+        val token = client.firstSSE("/term/exit")
 
         // make sure we didn't just time out
         assertNotEquals(null, token)
@@ -63,6 +62,8 @@ class LeaveRoutesTest {
         client.post("/api/leave/${token}") {
             bearerAuth(dummyToken(2))
         }
+
+        delay(200) // wait for the db to update the field
 
         // check that we filled the `left` col
         val left = newSuspendedTransaction(db = db) {
@@ -101,7 +102,12 @@ class LeaveRoutesTest {
             }
         }
 
-        val token = TermService.exit.generate()
+        // poll the first token from the exit gate API and terminate the flow
+        val token = client.firstSSE("/term/exit")
+
+        // make sure we didn't just time out
+        assertNotEquals(null, token)
+
         val response = client.post("/api/leave/$token") {
             bearerAuth(dummyToken(1))
         }
@@ -136,7 +142,12 @@ class LeaveRoutesTest {
             }
         }
 
-        val token = TermService.exit.generate()
+        // poll the first token from the exit gate API and terminate the flow
+        val token = client.firstSSE("/term/exit")
+
+        // make sure we didn't just time out
+        assertNotEquals(null, token)
+
         val response = client.post("/api/leave/$token") {
             bearerAuth(dummyToken(2))
         }
