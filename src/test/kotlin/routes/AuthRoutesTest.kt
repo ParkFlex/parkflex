@@ -1,5 +1,6 @@
 package parkflex.routes
 
+import dummyToken
 import db.configDataBase.setupTestDB
 import io.ktor.client.call.body
 import io.ktor.client.request.*
@@ -16,19 +17,14 @@ import parkflex.configureTest
 import parkflex.db.UserEntity
 import parkflex.db.UserTable
 import parkflex.models.*
-import parkflex.repository.JwtRepository
 import testingClient
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class AuthRoutesTest {
-
-    fun dummyToken(uid: Long) =
-        JwtRepository.generateToken(uid, "dummy@parkflex.pl", "user")
-
     @Test
-    fun `test register WoW success`() = testApplication {
+    fun `test register success`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -39,7 +35,6 @@ class AuthRoutesTest {
             UserTable.deleteAll()
         }
 
-        // ZMIANA: Używamy formatu tablicy, który na pewno przejdzie walidację (bez myślników lub standardowy)
         val registerReq = RegisterRequest(
             name = "Nowy User",
             email = "new@parkflex.pl",
@@ -63,7 +58,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test register SAD user already exists`() = testApplication {
+    fun `test register user already exists`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -72,13 +67,11 @@ class AuthRoutesTest {
             SchemaUtils.create(UserTable)
             UserTable.deleteAll()
 
-            // Wstawiamy użytkownika bezpośrednio (pomijając walidację API)
             UserEntity.new {
                 fullName = "Old User"; mail = "exists@parkflex.pl"; hash = "hash"; plate = "PO 99999"; role = "user"
             }
         }
 
-        // ZMIANA: Tablica musi być poprawna, aby dojść do sprawdzenia duplikatu emaila
         val registerReq = RegisterRequest("Nowy", "exists@parkflex.pl", "pass", "WA 66666")
 
         val response = client.post("api/register") {
@@ -86,13 +79,12 @@ class AuthRoutesTest {
             setBody(registerReq)
         }
 
-        // Teraz powinno zwrócić 409 Conflict, bo walidacja tablicy przejdzie
         assertEquals(HttpStatusCode.Conflict, response.status)
         assertEquals("Użytkownik już istnieje", response.body<ApiErrorModel>().message)
     }
 
     @Test
-    fun `test register SAD invalid plate`() = testApplication {
+    fun `test register invalid plate`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -111,7 +103,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test login WoW success`() = testApplication {
+    fun `test login success`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -141,7 +133,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test login SAD wrong password`() = testApplication {
+    fun `test login wrong password`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -166,7 +158,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test login SAD user not found`() = testApplication {
+    fun `test login user not found`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -183,7 +175,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test whoami WoW success`() = testApplication {
+    fun `test whoami success`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -206,7 +198,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test whoami SAD user deleted`() = testApplication {
+    fun `test whoami user deleted`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -223,7 +215,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test patch account WoW update plate`() = testApplication {
+    fun `test patch account update plate`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -248,16 +240,17 @@ class AuthRoutesTest {
         assertEquals(HttpStatusCode.OK, response.status)
         val body = response.body<UserPublicModel>()
 
-        assertTrue(body.plate.replace(" ", "") == newPlate.replace(" ", ""))
+        assertEquals(body.plate.replace(" ", ""), newPlate.replace(" ", ""))
 
-        newSuspendedTransaction(db = db) {
-            val updatedUser = UserEntity[userId]
-            assertTrue(updatedUser.plate.replace(" ", "") == newPlate.replace(" ", ""))
+        val updatedUser = newSuspendedTransaction(db = db) {
+            UserEntity.findById(userId)!!
         }
+
+        assertEquals(updatedUser.plate.replace(" ", ""), newPlate.replace(" ", ""))
     }
 
     @Test
-    fun `test patch account SAD invalid plate format`() = testApplication {
+    fun `test patch account invalid plate format`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -276,6 +269,9 @@ class AuthRoutesTest {
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
-        assertTrue(response.body<ApiErrorModel>().message.contains("nieprawidłowy format tablicy") || response.body<ApiErrorModel>().message.contains("Niepoprawne dane"))
+        assertTrue(
+            response.body<ApiErrorModel>().message.contains("nieprawidłowy format tablicy")
+                    || response.body<ApiErrorModel>().message.contains("Niepoprawne dane")
+        )
     }
 }

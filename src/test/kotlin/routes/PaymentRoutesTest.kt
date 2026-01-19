@@ -1,34 +1,25 @@
 package parkflex.routes
 
 import db.configDataBase.setupTestDB
-import io.ktor.client.call.body
-import io.ktor.client.request.bearerAuth
-import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
-import io.ktor.server.testing.testApplication
+import dummyToken
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
 import parkflex.models.ApiErrorModel
-import parkflex.repository.JwtRepository
 import testingClient
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class PaymentRoutesTest {
-
-
-    fun dummyToken(uid: Long) =
-        JwtRepository.generateToken(uid, "dummy@parkflex.pl", "user")
-
     @Test
-    fun `test post payment WoW pay all penalties`() = testApplication {
+    fun `test post payment pay all penalties`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -69,13 +60,13 @@ class PaymentRoutesTest {
         assertEquals(HttpStatusCode.OK, response.status)
 
         newSuspendedTransaction(db = db) {
-            val penalty = PenaltyEntity[penaltyId]
+            val penalty = PenaltyEntity.findById(penaltyId)!!
             assertTrue(penalty.paid, "Kara powinna byc oznaczona jako oplacona (paid=true)")
         }
     }
 
     @Test
-    fun `test post payment WoW user has no penalties`() = testApplication {
+    fun `test post payment user has no penalties`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -99,7 +90,7 @@ class PaymentRoutesTest {
     }
 
     @Test
-    fun `test post payment SAD unauthorized`() = testApplication {
+    fun `test post payment unauthorized`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -108,7 +99,6 @@ class PaymentRoutesTest {
         val token = dummyToken(999)
         val response = client.post("api/payment") {
             bearerAuth(token)
-
         }
 
         assertEquals(HttpStatusCode.Unauthorized, response.status)

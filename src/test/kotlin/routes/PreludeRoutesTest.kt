@@ -1,20 +1,17 @@
 package parkflex.routes
 
-import dummyToken
 import db.configDataBase.setupTestDB
-import io.ktor.client.call.body
-import io.ktor.client.request.bearerAuth
-import io.ktor.client.request.get
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.testApplication
+import dummyToken
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
-import parkflex.models.ApiErrorModel
 import parkflex.models.PreludeModel
-import parkflex.repository.JwtRepository
 import testingClient
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
@@ -23,12 +20,12 @@ import kotlin.test.assertNull
 
 class PreludeRoutesTest {
     @Test
-    fun `test get prelude WoW user with penalty`() = testApplication {
+    fun `test get prelude user with penalty`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
 
-        val (userId, _) = newSuspendedTransaction(db = db) {
+        val userId = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
 
             ParameterEntity.new {
@@ -36,6 +33,7 @@ class PreludeRoutesTest {
                 value = "30"
                 this.type = ParameterType.Number
             }
+
             ParameterEntity.new {
                 key = "reservation/duration/max"
                 value = "120"
@@ -63,7 +61,7 @@ class PreludeRoutesTest {
                 this.due = LocalDateTime.now().plusDays(7)
             }
 
-            Pair(user.id.value, res.id.value)
+            user.id.value
         }
 
         val token = dummyToken(userId)
@@ -80,12 +78,12 @@ class PreludeRoutesTest {
         assertEquals(120L, body.maxReservationTime)
 
         assertNotNull(body.penaltyInformation, "Informacja o karze powinna być obecna")
-        assertEquals(100, body.penaltyInformation?.fine)
-        assertEquals(PenaltyReason.Overtime, body.penaltyInformation?.reason)
+        assertEquals(100, body.penaltyInformation.fine)
+        assertEquals(PenaltyReason.Overtime, body.penaltyInformation.reason)
     }
 
     @Test
-    fun `test get prelude WoW clean user`() = testApplication {
+    fun `test get prelude clean user`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -130,7 +128,7 @@ class PreludeRoutesTest {
     }
 
     @Test
-    fun `test get prelude SAD unauthorized`() = testApplication {
+    fun `test get prelude unauthorized`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -147,6 +145,5 @@ class PreludeRoutesTest {
         }
 
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-
     }
 }
