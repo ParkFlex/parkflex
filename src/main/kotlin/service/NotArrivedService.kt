@@ -1,28 +1,45 @@
 package parkflex.service
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.timeout
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.innerJoin
-import org.jetbrains.exposed.sql.leftJoin
+import kotlinx.coroutines.withContext
+import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 import parkflex.db.PenaltyEntity
 import parkflex.db.PenaltyReason
-import parkflex.db.PenaltyTable
 import parkflex.db.ReservationEntity
 import parkflex.db.ReservationTable
 import parkflex.repository.ParameterRepository
 import java.time.Duration
 import java.time.LocalDateTime
 
+/**
+ * A daemon that automatically applies [PenaltyReason.NotArrived] penalties every couple of minutes.
+ *
+ * Spawned via [NotArrivedService.launch]
+ *
+ * Can be configured with the following parameters
+ *   - "penalty/notArrived/margin" - Maximum time (in minutes) a user can be late at the spot. Daemon
+ *     timer interval is also set to this value.
+ *   - "penalty/fine/notArrived" - The amount of a fine that a [PenaltyReason.NotArrived] penalty should
+ *      have.
+ */
 object NotArrivedService {
     private val logger = LoggerFactory.getLogger("NotArrivedService")
 
+    /**
+     * Launches the daemon with an implicit coroutine context.
+     *
+     * @param db Database connection. Uses an implicit connection if `null`.
+     *
+     * @see withContext
+     */
     @OptIn(FlowPreview::class)
     suspend fun launch(db: Database? = null) {
         val period = transaction(db) { ParameterRepository.get("penalty/notArrived/margin") }!!.toLong()
