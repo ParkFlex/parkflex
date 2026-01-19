@@ -27,12 +27,18 @@ suspend fun ApplicationCall.admin(): UserEntity? {
         return null
     }
 
-    val user = runDB { UserEntity.findById(id) }
-
-    if (user?.role != "admin") {
+    val user = runDB { UserEntity.findById(id) } ?: run {
         respond(
             status = HttpStatusCode.Unauthorized,
-            message = ApiErrorModel("Not an admin", "admin auth")
+            message = ApiErrorModel("No user id ${id} found", "admin auth")
+        )
+        return null
+    }
+
+    if (user.role != "admin") {
+        respond(
+            status = HttpStatusCode.Unauthorized,
+            message = ApiErrorModel("User of id ${user.id.value} is not an admin", "admin auth")
         )
         return null
     }
