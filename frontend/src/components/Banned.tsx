@@ -61,7 +61,7 @@ export const ErrorBanned = ({
     return (
         <Card className="banned-page" title="Dostęp został zablokowany">
             <p>
-                Twoje konto zostało zablokowane z powodu {reason}.
+                Twoje konto zostało zablokowane z następującego powodu: {reason}.
                 <br />
                 Blokada jest aktywna do: {formatDate(due)}
                 <br />
