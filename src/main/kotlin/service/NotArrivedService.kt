@@ -81,10 +81,10 @@ object NotArrivedService {
 
         logger.info("Found ${records.size} records to reap")
 
-        val blockDuration = transaction(db) { ParameterRepository.get("penalty/block/duration") }!!.toLong()
+        val blockDuration = ParameterRepository.get("penalty/block/duration")!!.toLong()
         val due = now.plusHours(blockDuration)
 
-        val fine = transaction(db) { ParameterRepository.get("penalty/fine/notArrived") }!!.toLong()
+        val fine = ParameterRepository.get("penalty/fine/notArrived")!!.toLong()
 
         records.forEach { reservation ->
             val p = PenaltyEntity.new {

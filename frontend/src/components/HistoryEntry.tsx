@@ -1,6 +1,6 @@
-import {Card} from 'primereact/card';
-import {addMinutes, formatTime, isActiveNow, endsBeforeNow} from "../utils/dateUtils";
-import type {HistoryEntry, HistoryEntryStatus} from "../models/history/HistoryEntry.tsx";
+import { Card } from 'primereact/card';
+import { addMinutes, formatTime, isActiveNow, endsBeforeNow } from "../utils/dateUtils";
+import type { HistoryEntry, HistoryEntryStatus } from "../models/history/HistoryEntry.tsx";
 
 /**
  * Komponent wyświetlający pojedynczy wpis w historii rezerwacji.
@@ -27,7 +27,7 @@ import type {HistoryEntry, HistoryEntryStatus} from "../models/history/HistoryEn
  * <HistoryEntryComp entry={entry} />
  * ```
  */
-export default function HistoryEntryComp({entry}: { entry: HistoryEntry }) {
+export default function HistoryEntryComp({ entry}: { entry: HistoryEntry }) {
     const startDate = new Date(entry.startTime);
     const endTime = addMinutes(startDate, entry.durationMin);
 
@@ -35,7 +35,7 @@ export default function HistoryEntryComp({entry}: { entry: HistoryEntry }) {
         switch(status) {
             case 'Penalty': return "Kara";
             case "InProgress": return "W trakcie";
-            case "Past": return "Zakończona"
+            case "Past": return "Zakończona";
             case "Planned": return "Zaplanowana";
         }
     };
@@ -67,8 +67,8 @@ export default function HistoryEntryComp({entry}: { entry: HistoryEntry }) {
                 borderLeft: '10px solid ' + color,
             }}
         >
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <div style={{flex: 1,}}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ flex: 1, }}>
                     <div style={{
                         fontSize: '1.3rem',
                         marginBottom: '0.3rem',

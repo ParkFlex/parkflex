@@ -16,8 +16,9 @@ import parkflex.runDB
  * These can be modified at runtime through admin interface.
  * 
  * Parameters:
- * - penalty/fine/wrongSpot: Fine amount for parking in wrong spot (in cents/grosz)
- * - penalty/fine/overtime: Fine amount per 15 minutes of overtime (in cents/grosz)
+ * - penalty/fine/wrongSpot: Fine amount for parking in wrong spot (in PLN)
+ * - penalty/fine/overtime: Fine amount per 15 minutes of overtime (in PLN)
+ * - penalty/fine/notArrived: Fine amount for not arriving in time (in PLN)
  * - penalty/block/duration: How long user is blocked after penalty (in hours)
  * - reservation/duration/min: Minimum reservation duration (in minutes)
  * - reservation/duration/max: Maximum reservation duration (in minutes)
@@ -28,6 +29,7 @@ private val defaultParameters =
     listOf(
         Triple("penalty/fine/wrongSpot", ParameterType.Number, "500"), // one time fee
         Triple("penalty/fine/overtime", ParameterType.Number, "150"),  // fee per 15mins of overtime
+        Triple("penalty/fine/notArrived", ParameterType.Number, "500"), // one time fee
         Triple("penalty/notArrived/margin", ParameterType.Number, "15"),  // how late can a person be in minutes
         Triple("penalty/block/duration", ParameterType.Number, (7 * 24).toString()), // duration in hours
         Triple("reservation/duration/min", ParameterType.Number, "30"), // minutes

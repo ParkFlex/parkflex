@@ -16,6 +16,7 @@ import { formatDateWeek, formatTime } from "../utils/dateUtils.ts";
 import type { SpotState } from "../models/reservation/SpotState.ts";
 import { usePrelude } from "../hooks/usePrelude.ts";
 import { useAxios } from "../hooks/useAxios.ts";
+import { penaltyReasonShowable } from "../models/PenaltyReason.ts";
 
 /**
  * Komponent strony parkingu z rezerwacją miejsc.
@@ -177,13 +178,10 @@ export function ParkingPage() {
             {prelude.penaltyInformation ? (
                 <ErrorBanned
                     due={prelude.penaltyInformation?.due}
-                    reason={prelude.penaltyInformation.reason}
+                    reason={penaltyReasonShowable(prelude.penaltyInformation.reason)}
                     charge={prelude.penaltyInformation.fine}
                     onPay={() => {
                         axios.post("/payment").then(getPrelude);
-                    }}
-                    onWait={() => {
-                        alert("wait");
                     }}
                 />
             ) : (

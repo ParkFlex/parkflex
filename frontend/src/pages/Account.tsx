@@ -176,9 +176,9 @@ export function Account() {
                     <div
                         style={{
                             display: "grid",
-                                gridTemplateColumns: isNarrowInfo
-                                    ? "1fr"
-                                    : "130px 1fr",
+                            gridTemplateColumns: isNarrowInfo
+                                ? "1fr"
+                                : "130px 1fr",
                             rowGap: "0.5rem",
                             columnGap: "0.75rem",
                         }}
