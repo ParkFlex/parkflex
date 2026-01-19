@@ -9,7 +9,6 @@ import "@parkflex/themes/dist/theme.css";
 import './index.css';
 import { AdminParameters } from './components/admin/AdminParameters.tsx';
 import { Layout } from './pages/Layout.tsx';
-import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
 import { Report } from "./pages/Report.tsx";
@@ -54,7 +53,6 @@ createRoot(document.getElementById("root")!).render(
                             <Route path="/arrive/:token" element={<ArrivalPage/>}/>
                             <Route path="/leave/:token" element={<LeavePage/>}/>
                             <Route path="/parking" element={<ParkingPage />} />
-                            <Route path="/demo" element={<Demo />} />
                             <Route path="/history" element={<History />} />
                             <Route path="/account" element={<Account />} />
                             <Route path="/report" element={<Report/>}/>
