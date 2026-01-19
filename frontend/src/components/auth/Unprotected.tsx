@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
 import { useAuth } from "../../hooks/useAuth.ts";
-import { Navigate } from "react-router";
+import {Navigate, useLocation} from "react-router";
 
 export const Unprotected = ({ children }: { children: ReactNode }): ReactNode => {
     const authCtx = useAuth();
+    const location = useLocation();
+
+    const bounceBack = location?.state?.protected || "/parking";
 
     return authCtx.isAuthenticated
-        ? <Navigate to="/parking"/>
+        ? <Navigate to={bounceBack} />
         : children;
 };

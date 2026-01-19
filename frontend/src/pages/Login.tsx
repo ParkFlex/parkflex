@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { login } from "../api/auth";
-import { LoginForm } from "../components/auth/LoginForm";
+import { LoginForm } from "../components/auth";
 
 export function Login() {
     const [errorMessage, setErrorMessage] = useState<string | undefined>(
@@ -11,7 +11,11 @@ export function Login() {
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    const bounceBack = location?.state?.protected || "/parking";
+
     const { login: setAuth } = useAuth();
+
 
     const handleLogin = async (email: string, password: string) => {
         setErrorMessage(undefined);
@@ -19,7 +23,7 @@ export function Login() {
         try {
             const response = await login({ email, password });
             setAuth(response.token, response.user);
-            navigate(location.state?.path || "/parking");
+            navigate(location.state?.protected || "/parking");
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -48,7 +52,7 @@ export function Login() {
                 <div style={{ textAlign: "center", marginTop: "1rem" }}>
                     <small style={{ color: "#666" }}>
                         Nie masz konta?{" "}
-                        <Link to="/register">Zarejestruj się</Link>
+                        <Link to="/register" state={{ protected: bounceBack }}>Zarejestruj się</Link>
                     </small>
                 </div>
             </div>
