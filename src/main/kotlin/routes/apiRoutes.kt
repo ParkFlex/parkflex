@@ -19,8 +19,52 @@ fun Route.apiRoutes() {
         adminRoutes()
     }
 
-    route("report") {
-        userReportRoutes()
+    authenticate {
+        route("report") {
+            userReportRoutes()
+        }
+        route("/account") {
+            patchAccountRoute()
+        }
+
+        route("/whoami") {
+            whoAmIRoute()
+        }
+
+        route("/historyEntry") {
+            historyRoutes()
+        }
+
+        route("/reservation") {
+            reservationRoutes()
+        }
+        route("/spot") {
+            spotRoutes()
+        }
+
+        route("/spots") {
+            spotsRoutes()
+        }
+
+        route("/arrive") {
+            arrivalRoutes()
+        }
+
+        route("/leave") {
+            leaveRoutes()
+        }
+
+        route("/prelude") {
+            preludeRoutes()
+        }
+
+        route("/payment") {
+            paymentRoutes()
+        }
+
+        route("/quickReservation") {
+            quickReservationRoutes()
+        }
     }
 
     route("/register") {
@@ -31,68 +75,9 @@ fun Route.apiRoutes() {
         loginRoute()
     }
 
-    route("/account") {
-        authenticate {
-            patchAccountRoute()
-        }
-    }
-
-    route("/whoami") {
-        authenticate {
-            whoAmIRoute()
-        }
-    }
-
     route("/demo") {
         demoRoutes()
     }
 
-    route("/historyEntry") {
-        authenticate {
-            historyRoutes()
-        }
-    }
-
-    route("/reservation") {
-        authenticate {
-            reservationRoutes()
-        }
-    }
-
-    route("/quickReservation") {
-        quickReservationRoutes()
-    }
-
-    route("/spot") {
-        spotRoutes()
-    }
-
-    route("/spots") {
-        spotsRoutes()
-    }
-
-    route("/arrive") {
-        authenticate {
-            arrivalRoutes()
-        }
-    }
-
-    route("/leave") {
-        authenticate {
-            leaveRoutes()
-        }
-    }
-
-    route("/prelude") {
-        authenticate {
-            preludeRoutes()
-        }
-    }
-
-    route("/payment") {
-        authenticate {
-            paymentRoutes()
-        }
-    }
 }
 

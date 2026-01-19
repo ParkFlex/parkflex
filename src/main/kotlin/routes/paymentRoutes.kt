@@ -13,7 +13,7 @@ fun Route.paymentRoutes() {
         val user = call.currentUserEntity() ?: run {
             call.respond(
                 status = HttpStatusCode.Unauthorized,
-                message = ApiErrorModel("No user found in context", "GET /payment")
+                message = ApiErrorModel("No user found in context", "POST /payment")
             )
 
             return@post

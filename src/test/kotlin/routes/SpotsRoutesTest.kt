@@ -1,6 +1,7 @@
 package parkflex.routes
 
 import db.configDataBase.setupTestDB
+import dummyToken
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -60,6 +61,7 @@ class SpotsRoutesTest {
                 parameters.append("start", start)
                 parameters.append("end", end)
             }
+            bearerAuth(dummyToken(1))
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -105,6 +107,7 @@ class SpotsRoutesTest {
                 parameters.append("start", start)
                 parameters.append("end", end)
             }
+            bearerAuth(dummyToken(1))
         }
 
         val body = response.body<SpotsModel>()
@@ -122,6 +125,7 @@ class SpotsRoutesTest {
                 parameters.append("start", "2024-10-10")
                 parameters.append("end", "nie-data")
             }
+            bearerAuth(dummyToken(1))
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -139,6 +143,7 @@ class SpotsRoutesTest {
                 parameters.append("start", "2024-10-10T15:00:00")
                 parameters.append("end", "2024-10-10T14:00:00")
             }
+            bearerAuth(dummyToken(1))
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
