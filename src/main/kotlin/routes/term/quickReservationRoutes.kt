@@ -11,6 +11,7 @@ import parkflex.repository.ParameterRepository
 import parkflex.repository.SpotRepository
 import parkflex.runDB
 import parkflex.service.TermService
+import parkflex.utils.userId
 import java.time.LocalDateTime
 import java.time.Duration
 import java.time.LocalTime
@@ -19,7 +20,14 @@ import kotlin.math.absoluteValue
 fun Route.quickReservationRoutes() {
     route("/{token}") {
         post {
-            val uid = 2L
+            val uid = call.userId() ?: run {
+                call.respond(
+                    status = HttpStatusCode.Unauthorized,
+                    message = ApiErrorModel("No user in context", "POST /api/quickReservation/{token}")
+                )
+
+                return@post
+            }
 
             val token = call.parameters["token"] ?: run {
                 call.respond(

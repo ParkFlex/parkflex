@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 
 class ReservationRoutesTest {
     @Test
-    fun `test post reservation WoW user exist`() = testApplication {
+    fun `test post reservation user exist`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -65,7 +65,7 @@ class ReservationRoutesTest {
     }
 
     @Test
-    fun `test post reservation SAD user doest exist`() = testApplication {
+    fun `test post reservation user doest exist`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()

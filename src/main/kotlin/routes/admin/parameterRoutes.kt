@@ -11,6 +11,7 @@ import parkflex.*
 import io.ktor.http.HttpStatusCode
 import parkflex.models.admin.ParameterModel
 import parkflex.models.admin.ParameterUpdateModel
+import parkflex.utils.admin
 
 fun Route.parameterRoutes() {
     suspend fun withParam(call: RoutingCall, body: suspend (ParameterEntity) -> Unit) {
@@ -37,6 +38,8 @@ fun Route.parameterRoutes() {
      * Return a list of system parameters.
      */
     get("/all") {
+        call.admin()
+
         val params = runDB { ParameterEntity.all().map { ParameterModel(it.key, it.type, it.value) } }
         call.respond(params)
     }
@@ -46,6 +49,8 @@ fun Route.parameterRoutes() {
          * Returns a specified parameter.
          */
         get {
+            call.admin()
+
             withParam(call) { param ->
                 call.respond(
                     status = HttpStatusCode.OK,
@@ -58,6 +63,8 @@ fun Route.parameterRoutes() {
          * Updates the value of the specified parameter.
          */
         patch {
+            call.admin()
+
             withParam(call) { param ->
                 runCatching { call.receive<ParameterUpdateModel>() }
                     .mapCatching {

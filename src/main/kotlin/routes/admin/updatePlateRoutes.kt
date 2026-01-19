@@ -10,10 +10,12 @@ import parkflex.db.UserEntity
 import parkflex.models.ApiErrorModel
 import parkflex.models.admin.UpdatePlateModel
 import parkflex.runDB
+import parkflex.utils.admin
 
 fun Route.updatePlateRoutes() {
     route("/{user_id}") {
         patch {
+            call.admin()
 
             val id = call.parameters["user_id"]
             if (id == null) {

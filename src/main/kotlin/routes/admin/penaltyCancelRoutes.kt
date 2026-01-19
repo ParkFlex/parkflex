@@ -8,10 +8,13 @@ import io.ktor.server.routing.route
 import parkflex.db.PenaltyEntity
 import parkflex.models.ApiErrorModel
 import parkflex.runDB
+import parkflex.utils.admin
 
 fun Route.penaltyCancelRoutes() {
     route("/penalty/{penalty_id}/cancel") {
         patch {
+            call.admin()
+
             val id = call.parameters["penalty_id"]
             if (id == null) {
                 call.respond(
@@ -30,7 +33,7 @@ fun Route.penaltyCancelRoutes() {
                 )
                 return@patch
             }
-            if(penalty.paid == false){
+            if (penalty.paid == false) {
                 runDB {
                     penalty.paid = true
                 }
@@ -42,7 +45,10 @@ fun Route.penaltyCancelRoutes() {
             } else {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = ApiErrorModel("Penalty with ID $idLong is already cancelled.", "/user/penalty/{penalty_id}/cancel PATCH")
+                    message = ApiErrorModel(
+                        "Penalty with ID $idLong is already cancelled.",
+                        "/user/penalty/{penalty_id}/cancel PATCH"
+                    )
                 )
             }
         }

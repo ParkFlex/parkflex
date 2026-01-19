@@ -1,6 +1,7 @@
 package parkflex.routes
 
 import db.configDataBase.setupTestDB
+import dummyToken
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -52,6 +53,7 @@ class SpotRoutesTest {
 
         val response = client.get("/api/spot") {
             url { parameters.append("spot_id", spotId.toString()) }
+            bearerAuth(dummyToken(1))
         }
 
         assertEquals(HttpStatusCode.OK, response.status)
@@ -71,7 +73,9 @@ class SpotRoutesTest {
         application { configureTest(db) }
         val client = testingClient()
 
-        val response = client.get("/api/spot")
+        val response = client.get("/api/spot") {
+            bearerAuth(dummyToken(1))
+        }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
         val body = response.body<ApiErrorModel>()
@@ -90,6 +94,7 @@ class SpotRoutesTest {
 
         val response = client.get("/api/spot") {
             url { parameters.append("spot_id", "999") }
+            bearerAuth(dummyToken(1))
         }
 
         assertEquals(HttpStatusCode.NotFound, response.status)
@@ -105,6 +110,7 @@ class SpotRoutesTest {
 
         val response = client.get("/api/spot") {
             url { parameters.append("spot_id", "abc") }
+            bearerAuth(dummyToken(1))
         }
 
         assertEquals(HttpStatusCode.BadRequest, response.status)
