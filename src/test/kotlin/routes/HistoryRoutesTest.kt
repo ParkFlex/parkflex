@@ -52,7 +52,7 @@ class HistoryRoutesTest {
     }
 
     @Test
-    fun `test history returns mixed statuses (ok and penalty)`() = testApplication {
+    fun `test history returns different statuses`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
