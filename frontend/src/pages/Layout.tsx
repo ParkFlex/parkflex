@@ -173,7 +173,12 @@ export function Layout() {
                     onTabChange={(e) => setActiveIndex(e.index)}
                 />
             </div>
-            <div id="content">
+            <div style={{
+                marginLeft: "2%",
+                marginRight: "2%",
+                marginTop: "2%",
+                marginBottom: "2%",
+            }} id="content">
                 <Outlet />
             </div>
         </>
