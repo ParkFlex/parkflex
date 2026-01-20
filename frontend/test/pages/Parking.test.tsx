@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { ParkingPage } from "../../src/pages/Parking";
 import { expect, test, vi, describe } from "vitest";
-// Importujemy moduł do szpiegowania (spy), używając pełnej ścieżki
 import * as usePreludeModule from "../../src/hooks/usePrelude";
+import { PenaltyReason } from "../../src/models/PenaltyReason";
 
 // 1. Mockowanie hooków z użyciem pełnych ścieżek do src
 vi.mock("../../src/hooks/usePrelude", () => ({
@@ -71,7 +71,7 @@ describe("ParkingPage", () => {
             prelude: {
                 penaltyInformation: {
                     due: new Date("2026-12-31"),
-                    reason: "LATE_RETURN" as any,
+                    reason: "Overtime",
                     fine: 50
                 },
                 minReservationTime: 10,
