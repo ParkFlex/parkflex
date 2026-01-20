@@ -15,15 +15,6 @@ export function Account() {
     const [plateValue, setPlateValue] = useState(user?.plate ?? "");
     const [plateError, setPlateError] = useState<string | undefined>(undefined);
     const [isSaving, setIsSaving] = useState(false);
-    const [isNarrowInfo, setIsNarrowInfo] = useState(false);
-
-    useEffect(() => {
-        const media = window.matchMedia("(max-width: 640px)");
-        const sync = () => setIsNarrowInfo(media.matches);
-        sync();
-        media.addEventListener("change", sync);
-        return () => media.removeEventListener("change", sync);
-    }, []);
 
     const copyToken = async () => {
         if (!token) return;
@@ -148,23 +139,6 @@ export function Account() {
                         </div>
                     </div>
 
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "0.4rem",
-                            flex: "0 0 auto",
-                            marginLeft: "auto",
-                        }}
-                    >
-                        <Button
-                            label="Wyloguj"
-                            icon="pi pi-sign-out"
-                            className="p-button-danger"
-                            onClick={() => logout()}
-                            style={{ padding: "0.4rem 0.6rem" }}
-                        />
-                    </div>
                 </div>
 
                 <div
@@ -176,9 +150,7 @@ export function Account() {
                     <div
                         style={{
                             display: "grid",
-                            gridTemplateColumns: isNarrowInfo
-                                ? "1fr"
-                                : "130px 1fr",
+                            gridTemplateColumns: "1fr 1fr",
                             rowGap: "0.5rem",
                             columnGap: "0.75rem",
                         }}
