@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputText } from "primereact/inputtext";
@@ -16,13 +16,18 @@ export function Account() {
     const [plateError, setPlateError] = useState<string | undefined>(undefined);
     const [isSaving, setIsSaving] = useState(false);
     const [isNarrowInfo, setIsNarrowInfo] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const media = window.matchMedia("(max-width: 640px)");
-        const sync = () => setIsNarrowInfo(media.matches);
-        sync();
-        media.addEventListener("change", sync);
-        return () => media.removeEventListener("change", sync);
+        const container = containerRef.current;
+        if (!container) return;
+
+        const resizeObserver = new ResizeObserver(() => {
+            setIsNarrowInfo(container.offsetWidth < 640);
+        });
+
+        resizeObserver.observe(container);
+        return () => resizeObserver.disconnect();
     }, []);
 
     const copyToken = async () => {
@@ -101,6 +106,7 @@ export function Account() {
 
     return (
         <div
+            ref={containerRef}
             style={{
                 display: "flex",
                 justifyContent: "center",
