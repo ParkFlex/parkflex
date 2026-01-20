@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -6,6 +6,10 @@ import { formatDate } from "../utils/dateUtils.ts";
 import { Dialog } from "primereact/dialog";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { FloatLabel } from "primereact/floatlabel";
+import {Message} from "primereact/message";
+import {Divider} from "primereact/divider";
+import {Toast} from "primereact/toast";
+import {useReport} from "../hooks/report/useReport.ts";
 
 /**
  * Komponent wyświetlający ekran blokady konta użytkownika.
@@ -49,12 +53,20 @@ export const ErrorBanned = ({
 }) => {
     const [showPayment, setShowPayment] = useState(false);
     const [code, setCode] = useState("");
+    const errToast = useRef<Toast | null>(null);
 
     const handlePay = () => {
         if (code.length !== 6) {
-            alert("Nieprawidłowy kod płatności. Kod powinien mieć 6 znaków.");
+            console.log()
+            errToast.current?.show({
+                severity: "error",
+                life: 3000,
+                summary: "Nieprawidłowy kod płatności",
+                detail: "Kod powinien mieć 6 znaków"
+            });
             return;
         }
+
         onPay(code);
     };
     return (
@@ -82,23 +94,26 @@ export const ErrorBanned = ({
                     accept={handlePay}
                     rejectLabel={"Anuluj"}
                     message={
-                        <FloatLabel>
-                            <InputText
-                                id="payment-input"
-                                type="text"
-                                maxLength={6}
-                                value={code}
-                                onChange={(e) => {
-                                    const v = e.target.value;
-                                    if (!isNaN(Number(v))) setCode(v);
-                                }}
-                                style={{ border: "1px solid" }}
-                            />
-                            <label htmlFor="payment-input">6-cyfrowy kod płatności</label>
-                        </FloatLabel>
+                        <div>
+                            <FloatLabel>
+                                <InputText
+                                    id="payment-input"
+                                    type="text"
+                                    maxLength={6}
+                                    value={code}
+                                    onChange={(e) => {
+                                        const v = e.target.value;
+                                        if (!isNaN(Number(v))) setCode(v);
+                                    }}
+                                    style={{ border: "1px solid" }}
+                                />
+                                <label htmlFor="payment-input">6-cyfrowy kod płatności</label>
+                            </FloatLabel>
+                        </div>
                     }
                 />
             </Card>
+            <Toast position="bottom-center" ref={errToast} />
         </Card>
     );
 };
