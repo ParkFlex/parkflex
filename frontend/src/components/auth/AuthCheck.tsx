@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
 import { createAxiosInstance } from "../../hooks/useAxios";
 import { LoadingPage } from "../../pages/LoadingPage";
 
-export function AuthCheck({ children }: { children: React.ReactNode }) {
+export function AuthCheck({ children }: { children: ReactNode }) {
     const [isChecking, setIsChecking] = useState(true);
     const navigate = useNavigate();
     const { logout, token } = useAuth();
@@ -31,7 +31,7 @@ export function AuthCheck({ children }: { children: React.ReactNode }) {
             }
         };
 
-        validateToken();
+        void validateToken();
 
         return () => {
             isMounted = false;

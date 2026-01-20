@@ -1,10 +1,11 @@
 package parkflex.routes
 
-import db.configDataBase.setupTestDB
+import parkflex.db.configDataBase.setupTestDB
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import kotlinx.coroutines.delay
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
@@ -51,7 +52,7 @@ class HistoryRoutesTest {
     }
 
     @Test
-    fun `test history returns mixed statuses (ok and penalty)`() = testApplication {
+    fun `test history returns different statuses`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -175,6 +176,8 @@ class HistoryRoutesTest {
         }
 
         assertEquals(HttpStatusCode.OK, postResponse.status)
+
+        delay(200)
 
         val getResponse = client.get("/api/historyEntry") {
             header(HttpHeaders.Authorization, "Bearer $token")

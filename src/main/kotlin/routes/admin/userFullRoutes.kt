@@ -1,16 +1,20 @@
 package parkflex.routes.admin
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import parkflex.db.UserEntity
 import parkflex.models.admin.PenaltyModel
 import parkflex.models.admin.UserListEntry
 import parkflex.runDB
+import parkflex.utils.admin
 import java.time.LocalDateTime
 
 
 fun Route.userFullRoutes() {
     get {
+        call.admin()
+
         val userList = mutableListOf<UserListEntry>()
 
         runDB {

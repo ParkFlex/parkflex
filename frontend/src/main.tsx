@@ -6,10 +6,11 @@ import { PrimeReactProvider } from "primereact/api";
 import { addLocale, locale } from "primereact/api";
 import "@parkflex/themes/dist/theme.css";
 
+import 'primeicons/primeicons.css';
+
 import "./index.css";
 import { AdminParameters } from "./components/admin/AdminParameters.tsx";
 import { Layout } from "./pages/Layout.tsx";
-import { Demo } from "./pages/Demo.tsx";
 import { NotFound } from "./pages/NotFound.tsx";
 import { History } from "./pages/History.tsx";
 import { Report } from "./pages/Report.tsx";
@@ -29,6 +30,7 @@ import { Protected } from "./components/auth/Protected.tsx";
 import { Unprotected } from "./components/auth/Unprotected.tsx";
 import { AdminProtected } from "./components/auth/AdminProtected.tsx";
 import { AuthCheck } from "./components/auth/AuthCheck.tsx";
+
 addLocale("pl", {
     firstDayOfWeek: 1,
     dayNames: [
@@ -82,90 +84,26 @@ createRoot(document.getElementById("root")!).render(
                 <BrowserRouter>
                     <AuthCheck>
                         <Routes>
-                            <Route
-                                path="/homepage"
-                                element={
-                                    <Unprotected>
-                                        <HomePage />
-                                    </Unprotected>
-                                }
-                            />
-                            <Route
-                                path="/login"
-                                element={
-                                    <Unprotected>
-                                        <Login />
-                                    </Unprotected>
-                                }
-                            />
-                            <Route
-                                path="/register"
-                                element={
-                                    <Unprotected>
-                                        <Register />
-                                    </Unprotected>
-                                }
-                            />
-                            <Route
-                                index
-                                element={<Navigate to="/homepage" />}
-                            />
-                            <Route
-                                element={
-                                    <Protected>
-                                        <Layout />
-                                    </Protected>
-                                }
-                            >
-                                <Route
-                                    path="/arrive/:token"
-                                    element={<ArrivalPage />}
-                                />
-                                <Route
-                                    path="/leave/:token"
-                                    element={<LeavePage />}
-                                />
-                                <Route
-                                    path="/parking"
-                                    element={<ParkingPage />}
-                                />
-                                <Route path="/demo" element={<Demo />} />
-                                <Route path="/history" element={<History />} />
-                                <Route path="/account" element={<Account />} />
-                                <Route path="/report" element={<Report />} />
-                                <Route
-                                    path="/admin"
-                                    element={
-                                        <AdminProtected>
-                                            <AdminHeaderAndSidebar />
-                                        </AdminProtected>
-                                    }
-                                >
-                                    <Route
-                                        index
-                                        element={
-                                            <Navigate to="users" replace />
-                                        }
-                                    />
-                                    <Route
-                                        path="users"
-                                        element={<AdminUserList />}
-                                    />
-                                    <Route
-                                        path="reservation_history"
-                                        element={<AdminHistoryList />}
-                                    />
-                                    <Route
-                                        path="report_history"
-                                        element={<AdminReportList />}
-                                    />
-                                    <Route
-                                        path="settings"
-                                        element={<AdminParameters />}
-                                    />
+                            <Route path="/homepage" element={<Unprotected><HomePage/></Unprotected>}/>
+                            <Route path="/login" element={<Unprotected><Login/></Unprotected>}/>
+                            <Route path="/register" element={<Unprotected><Register/></Unprotected>}/>
+                            <Route index element={<Navigate to="/homepage"/>}/>
+                            <Route element={<Protected><Layout/></Protected>}>
+                                <Route path="/arrive/:token" element={<ArrivalPage/>}/>
+                                <Route path="/leave/:token" element={<LeavePage/>}/>
+                                <Route path="/parking" element={<ParkingPage/>}/>
+                                <Route path="/history" element={<History/>}/>
+                                <Route path="/account" element={<Account/>}/>
+                                <Route path="/report" element={<Report/>}/>
+                                <Route path="/admin" element={<AdminProtected><AdminHeaderAndSidebar/></AdminProtected>}>
+                                    <Route index element={<Navigate to="users" replace/>}/>
+                                    <Route path="users" element={<AdminUserList/>}/>
+                                    <Route path="reservation_history" element={<AdminHistoryList/>}/>
+                                    <Route path="report_history" element={<AdminReportList/>}/>
+                                    <Route path="settings" element={<AdminParameters/>}/>
                                 </Route>
                             </Route>
-                            <Route path="*" element={<NotFound />} />
+                            <Route path="*" element={<NotFound/>}/>
                         </Routes>
                     </AuthCheck>
                 </BrowserRouter>

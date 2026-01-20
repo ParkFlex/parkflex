@@ -17,6 +17,7 @@ import parkflex.repository.ParameterRepository
 import parkflex.repository.ReservationRepository
 import parkflex.repository.ReservationRepository.TimeRelation
 import parkflex.runDB
+import parkflex.utils.admin
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -51,6 +52,8 @@ private fun fineFromRelation(timestamp: LocalDateTime, reservation: ReservationE
 
 fun Route.penaltyCreationRoutes() {
     post {
+        call.admin()
+
         val reportID = runCatching { call.receive<ReportIdWrapper>() }.map { it.reportId }.getOrElse {
             call.respond(
                 status = HttpStatusCode.BadRequest,

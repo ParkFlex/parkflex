@@ -7,12 +7,15 @@ import io.ktor.server.routing.route
 import parkflex.db.ReservationEntity
 import parkflex.models.admin.AdminHistoryEntryModel
 import parkflex.runDB
+import parkflex.utils.admin
 
 fun Route.adminHistoryRoutes() {
     route("/history") {
         get {
+            call.admin()
+
             var historyList: List<AdminHistoryEntryModel> = listOf()
-            runDB{
+            runDB {
                 val reservations = ReservationEntity.all().toList()
                 for (reservation in reservations) {
                     val status: String

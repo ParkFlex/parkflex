@@ -7,9 +7,12 @@ import parkflex.db.ReportEntity
 import parkflex.models.admin.AdminReportEntry
 import parkflex.models.admin.AdminReportEntryPenalty
 import parkflex.runDB
+import parkflex.utils.admin
 
 fun Route.reportsRoutes() {
     get {
+        call.admin()
+
         val adminReportList: MutableList<AdminReportEntry> = mutableListOf()
 
         runDB {

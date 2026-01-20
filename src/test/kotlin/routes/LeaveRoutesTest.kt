@@ -1,24 +1,26 @@
 package parkflex.routes
 
-import db.configDataBase.setupTestDB
 import dummyToken
-import io.ktor.client.plugins.sse.sse
+import firstSSE
+import io.ktor.client.plugins.sse.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
+import parkflex.db.configDataBase.setupTestDB
 import parkflex.service.TermService
 import testingClient
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class LeaveRoutesTest {
-/*
     @Test
     fun `test successful exit`() = testApplication {
         val db = setupTestDB()
@@ -39,6 +41,7 @@ class LeaveRoutesTest {
                 role = "standard"
                 displayOrder = 1
             }
+
             ReservationEntity.new {
                 this.user = user
                 this.spot = spot
@@ -49,17 +52,27 @@ class LeaveRoutesTest {
             }
         }
 
-        runBlocking {
-            client.sse(host = "127.0.0.1", port = 8080, path = "/events") {
-                // this: ClientSSESession
-            }
+        // poll the first token from the exit gate API and terminate the flow
+        val token = client.firstSSE("/term/exit")
+
+        // make sure we didn't just time out
+        assertNotEquals(null, token)
+
+        // act: leave
+        client.post("/api/leave/${token}") {
+            bearerAuth(dummyToken(2))
         }
-        val response = client.post("/api/leave/$validToken")
 
-        assertEquals(HttpStatusCode.OK, response.status)
+        delay(200) // wait for the db to update the field
 
+        // check that we filled the `left` col
+        val left = newSuspendedTransaction(db = db) {
+            ReservationEntity.all().first().left
+        }
+
+        assertNotEquals(null, left)
     }
-*/
+
     @Test
     fun `test exit with invalid token returns 400`() = testApplication {
         val db = setupTestDB()
@@ -89,7 +102,12 @@ class LeaveRoutesTest {
             }
         }
 
-        val token = TermService.exit.generate()
+        // poll the first token from the exit gate API and terminate the flow
+        val token = client.firstSSE("/term/exit")
+
+        // make sure we didn't just time out
+        assertNotEquals(null, token)
+
         val response = client.post("/api/leave/$token") {
             bearerAuth(dummyToken(1))
         }
@@ -124,7 +142,12 @@ class LeaveRoutesTest {
             }
         }
 
-        val token = TermService.exit.generate()
+        // poll the first token from the exit gate API and terminate the flow
+        val token = client.firstSSE("/term/exit")
+
+        // make sure we didn't just time out
+        assertNotEquals(null, token)
+
         val response = client.post("/api/leave/$token") {
             bearerAuth(dummyToken(2))
         }

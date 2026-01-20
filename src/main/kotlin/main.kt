@@ -62,4 +62,7 @@ suspend fun Application.configureTest(db: Database? = null) {
     configureStatusPages()
     configureAuth(TestConfig)
     configureRouting()
+
+    TermService.entry.generate()
+    TermService.exit.generate()
 }
