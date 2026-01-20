@@ -205,9 +205,13 @@ class ReportsRoutesTest {
         assertNotNull(withPenalty, "Expected to find a report for plate DR-777")
 
         assertNotNull(withPenalty.penalty, "Expected penalty to be present")
-        assertEquals(77, withPenalty.penalty!!.fine)
-        assertEquals(PenaltyReason.WrongSpot, withPenalty.penalty!!.reason)
-        assertEquals(false, withPenalty.penalty!!.paid)
+        val penalty = withPenalty.penalty
+        assertNotNull(penalty, "Expected penalty to be present")
+
+        assertEquals(77, penalty.fine)
+        assertEquals(PenaltyReason.WrongSpot, penalty.reason)
+        assertEquals(false, penalty.paid)
+
     }
 
     @Test
