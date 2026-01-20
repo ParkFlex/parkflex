@@ -7,6 +7,7 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.jetbrains.exposed.sql.and
 import org.mindrot.jbcrypt.BCrypt
 import parkflex.db.UserEntity
 import parkflex.db.UserTable
@@ -75,6 +76,16 @@ fun Route.registerRoute() {
             return@post
         }
 
+        val plateExists =
+            runDB {
+                UserEntity.find { UserTable.plate eq plate }.firstOrNull()
+            }
+
+        if (plateExists != null) {
+            call.respond(HttpStatusCode.Conflict, ApiErrorModel("Tablica rejestracyjna jest już w użyciu", "/api/register"))
+            return@post
+        }
+
         runDB {
             UserRepository.unsafeCreateUser(email, name, password, "user", plate)
         }
@@ -131,6 +142,20 @@ fun Route.patchAccountRoute() {
                 call.respond(
                     HttpStatusCode.BadRequest,
                     ApiErrorModel("Niepoprawne dane: nieprawidłowy format tablicy rejestracyjnej", "/api/account"),
+                )
+
+                return@patch
+            }
+
+            val plateExists =
+                runDB {
+                    UserEntity.find { (UserTable.plate eq plate) and (UserTable.id neq userId) }.firstOrNull()
+                }
+
+            if (plateExists != null) {
+                call.respond(
+                    HttpStatusCode.Conflict,
+                    ApiErrorModel("Tablica rejestracyjna jest już w użyciu", "/api/account"),
                 )
 
                 return@patch

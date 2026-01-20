@@ -274,4 +274,88 @@ class AuthRoutesTest {
                     || response.body<ApiErrorModel>().message.contains("Niepoprawne dane")
         )
     }
+
+    @Test
+    fun `test register duplicate plate`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        newSuspendedTransaction(db = db) {
+            SchemaUtils.create(UserTable)
+            UserTable.deleteAll()
+
+            UserEntity.new {
+                fullName = "Existing User"; mail = "existing@parkflex.pl"; hash = "hash"; plate = "PO12345"; role = "user"
+            }
+        }
+
+        val registerReq = RegisterRequest(
+            name = "New User",
+            email = "new@parkflex.pl",
+            password = "SecretPassword123!",
+            plate = "PO 12345"
+        )
+
+        val response = client.post("api/register") {
+            contentType(ContentType.Application.Json)
+            setBody(registerReq)
+        }
+
+        assertEquals(HttpStatusCode.Conflict, response.status)
+        assertEquals("Tablica rejestracyjna jest już w użyciu", response.body<ApiErrorModel>().message)
+    }
+
+    @Test
+    fun `test patch account duplicate plate`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        val userId = newSuspendedTransaction(db = db) {
+            SchemaUtils.create(UserTable)
+            UserTable.deleteAll()
+
+            UserEntity.new {
+                fullName = "Other User"; mail = "other@pf.pl"; hash = "h"; plate = "WA99999"; role = "user"
+            }
+
+            UserEntity.new {
+                fullName = "Current User"; mail = "current@pf.pl"; hash = "h"; plate = "PO12345"; role = "user"
+            }.id.value
+        }
+
+        val response = client.patch("api/account") {
+            contentType(ContentType.Application.Json)
+            setBody(PatchAccountRequest(plate = "WA 99999"))
+            bearerAuth(dummyToken(userId))
+        }
+
+        assertEquals(HttpStatusCode.Conflict, response.status)
+        assertEquals("Tablica rejestracyjna jest już w użyciu", response.body<ApiErrorModel>().message)
+    }
+
+    @Test
+    fun `test patch account same plate as own`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        val userId = newSuspendedTransaction(db = db) {
+            SchemaUtils.create(UserTable)
+            UserTable.deleteAll()
+
+            UserEntity.new {
+                fullName = "Current User"; mail = "current@pf.pl"; hash = "h"; plate = "PO12345"; role = "user"
+            }.id.value
+        }
+
+        val response = client.patch("api/account") {
+            contentType(ContentType.Application.Json)
+            setBody(PatchAccountRequest(plate = "PO 12345"))
+            bearerAuth(dummyToken(userId))
+        }
+
+        assertEquals(HttpStatusCode.OK, response.status)
+    }
 }
