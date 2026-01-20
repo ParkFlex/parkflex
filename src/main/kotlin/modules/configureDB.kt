@@ -100,7 +100,6 @@ suspend fun Application.configureDB(config: Config, db: Database? = null) {
     /* Create database tables */
     runDB {
         SchemaUtils.create(
-            DemoNoteTable,
             SpotTable,
             UserTable,
             ReservationTable,

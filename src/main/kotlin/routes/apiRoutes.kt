@@ -75,10 +75,5 @@ fun Route.apiRoutes() {
     route("/login") {
         loginRoute()
     }
-
-    route("/demo") {
-        demoRoutes()
-    }
-
 }
 
