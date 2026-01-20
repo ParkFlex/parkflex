@@ -7,6 +7,10 @@ import { MemoryRouter } from "react-router";
 
 vi.mock("../src/hooks/useAuth");
 vi.mock("../src/api/auth");
+vi.mock("../src/utils/plateUtils", () => ({
+    isPlateValid: vi.fn(() => true),
+    normalizePlate: vi.fn((val) => val.toUpperCase()),
+}));
 
 describe("Account Component", () => {
     const mockLogout = vi.fn();
@@ -14,6 +18,19 @@ describe("Account Component", () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        Object.defineProperty(window, 'matchMedia', {
+            writable: true,
+            value: vi.fn().mockImplementation(query => ({
+                matches: false,
+                media: query,
+                onchange: null,
+                addListener: vi.fn(),
+                removeListener: vi.fn(),
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+                dispatchEvent: vi.fn(),
+            })),
+        });
     });
 
     it("should display login prompt when user is not authenticated", () => {
@@ -30,8 +47,8 @@ describe("Account Component", () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText("Nie jesteś zalogowany.")).toBeTruthy();
-        expect(screen.getByLabelText("Zaloguj się")).toBeTruthy();
+        expect(screen.getByText("Nie jesteś zalogowany.")).toBeDefined();
+        expect(screen.getByRole("button", { name: /Zaloguj się/i })).toBeDefined();
     });
 
     it("should correctly display authenticated user data", () => {
@@ -55,10 +72,10 @@ describe("Account Component", () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByText("John Doe")).toBeTruthy();
-        expect(screen.getByText("john@example.com")).toBeTruthy();
-        expect(screen.getByText("XYZ123")).toBeTruthy();
-        expect(screen.getByText("user")).toBeTruthy();
+        expect(screen.getByText("John Doe")).toBeDefined();
+        expect(screen.getByText("john@example.com")).toBeDefined();
+        expect(screen.getByText("XYZ123")).toBeDefined();
+        expect(screen.getByText("user")).toBeDefined();
     });
 
     it("should allow editing the license plate and call patchAccount", async () => {
@@ -89,19 +106,20 @@ describe("Account Component", () => {
 
         await waitFor(() => {
             expect(patchAccount).toHaveBeenCalledWith({ plate: "NEW789" });
-            expect(mockSetUser).toHaveBeenCalled();
+            expect(mockSetUser).toHaveBeenCalledWith({ ...mockUser, plate: "NEW789" });
         });
     });
 
     it("should copy token to clipboard when copy button is clicked", async () => {
-        const writeTextMock = vi.fn().mockResolvedValue(undefined);
+
+        const writeTextMock = vi.fn();
         Object.assign(navigator, {
             clipboard: { writeText: writeTextMock }
         });
 
         (useAuth as any).mockReturnValue({
             isAuthenticated: true,
-            user: { name: "John" },
+            user: { name: "John", email: "j@j.com", plate: "X" },
             token: "secret-token-123",
         });
 
