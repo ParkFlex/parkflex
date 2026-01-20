@@ -77,7 +77,7 @@ class ReservationEntity(id: EntityID<Long>) : LongEntity(id) {
      * @return true if there is a collision, false otherwise
      */
     fun timeCollidesWith(breakDurationMinutes: Long, startTime: LocalDateTime, endTime: LocalDateTime): Boolean {
-        val existingEnd = this.start.plusMinutes(this.duration.toLong())
+        val existingEnd = this.end()
 
         // Add break duration to prevent
         // <reservation>---break (0minutes)---<reservation> conflicts

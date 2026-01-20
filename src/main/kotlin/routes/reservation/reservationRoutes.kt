@@ -30,8 +30,6 @@ import kotlin.math.min
  * - Spot must exist and be of type "normal"
  * - Start time must be valid ISO 8601 format
  * - Time slot must not conflict with existing reservations (accounting for break time)
- * 
- * TODO: Replace hardcoded userId=2L with actual authentication
  */
 fun Route.reservationRoutes() {
     post {
@@ -148,13 +146,7 @@ fun Route.reservationRoutes() {
 
 
         // Check for reservation interval conflicts
-        val breakDurationMinutes: Long = runDB {
-            val param = ParameterEntity.find {
-                ParameterTable.key eq "reservation/break/duration"
-            }.firstOrNull()
-
-            return@runDB param?.value?.toLongOrNull() ?: 0L
-        }
+        val breakDurationMinutes: Long = runDB { ParameterRepository.get("reservation/break/duration")!!.toLong() }
 
         val hasConflict: Boolean = runDB {
             ReservationEntity

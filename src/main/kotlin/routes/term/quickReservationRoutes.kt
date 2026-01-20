@@ -56,10 +56,13 @@ fun Route.quickReservationRoutes() {
                 return@post
             }
 
+            val breakDuration = runDB { ParameterRepository.get("reservation/break/duration") }!!.toLong()
+
             val now = LocalDateTime.now()
             val endDateTime = endTime.atDate(now.toLocalDate())
+            val endDateTimePadded = endDateTime.plusMinutes(breakDuration)
 
-            val freeSpot = runDB { SpotRepository.getFirstFree(now, endDateTime) } ?: run {
+            val freeSpot = runDB { SpotRepository.getFirstFree(now, endDateTimePadded) } ?: run {
                 call.respond(
                     status = HttpStatusCode.NotFound,
                     message = ApiErrorModel(
