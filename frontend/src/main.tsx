@@ -6,6 +6,8 @@ import { PrimeReactProvider } from "primereact/api";
 import { addLocale, locale } from 'primereact/api';
 import "@parkflex/themes/dist/theme.css";
 
+import 'primeicons/primeicons.css';
+
 import './index.css';
 import { AdminParameters } from './components/admin/AdminParameters.tsx';
 import { Layout } from './pages/Layout.tsx';
