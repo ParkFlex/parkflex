@@ -71,11 +71,11 @@ describe("ParkingPage", () => {
             prelude: {
                 penaltyInformation: {
                     due: new Date("2026-12-31"),
-                    reason: "LATE_RETURN",
+                    reason: "LATE_RETURN" as any,
                     fine: 50
                 },
-                minReservationTime: null,
-                maxReservationTime: null
+                minReservationTime: 10,
+                maxReservationTime: 12
             },
             getPrelude: vi.fn(),
         });
