@@ -35,7 +35,7 @@ export const useUserList = () => {
     const cancelPenalty = useCallback(async (penaltyId: number) => {
         if (!penaltyId) return;
         try {
-            await axios.patch(`/admin/penalty/${penaltyId}/cancel`, null, { headers: { 'Content-Type': 'application/json' } });
+            await axios.patch(`/admin/user/penalty/${penaltyId}/cancel`, null, { headers: { 'Content-Type': 'application/json' } });
             try {
                 const resp = await axios.get<AdminUserEntry[]>(`/admin/user`);
                 setUserListEntries(resp.data);
