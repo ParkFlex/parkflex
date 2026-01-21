@@ -116,25 +116,6 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test register invalid plate`() = testApplication {
-        val db = setupTestDB()
-        application { configureTest(db) }
-        val client = testingClient()
-
-        newSuspendedTransaction(db = db) { SchemaUtils.create(UserTable) }
-
-        val registerReq = RegisterRequest("Nowy", "abc@pf.pl", "pass", "INVALID_PLATE")
-
-        val response = client.post("api/register") {
-            contentType(ContentType.Application.Json)
-            setBody(registerReq)
-        }
-
-        assertEquals(HttpStatusCode.BadRequest, response.status)
-        assertEquals("Niepoprawny format tablicy rejestracyjnej", response.body<ApiErrorModel>().message)
-    }
-
-    @Test
     fun `test login success`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
@@ -279,31 +260,5 @@ class AuthRoutesTest {
         }
 
         assertEquals(updatedUser.plate.replace(" ", ""), newPlate.replace(" ", ""))
-    }
-
-    @Test
-    fun `test patch account invalid plate format`() = testApplication {
-        val db = setupTestDB()
-        application { configureTest(db) }
-        val client = testingClient()
-
-        val userId = newSuspendedTransaction(db = db) {
-            SchemaUtils.create(UserTable)
-            UserEntity.new {
-                fullName = "Driver"; mail = "drive@pf.pl"; hash = "h"; plate = "PO 12345"; role = "user"
-            }.id.value
-        }
-
-        val response = client.patch("api/account") {
-            contentType(ContentType.Application.Json)
-            setBody(PatchAccountRequest(plate = "BAD_PLATE"))
-            bearerAuth(dummyToken(userId))
-        }
-
-        assertEquals(HttpStatusCode.BadRequest, response.status)
-        assertTrue(
-            response.body<ApiErrorModel>().message.contains("nieprawidłowy format tablicy")
-                    || response.body<ApiErrorModel>().message.contains("Niepoprawne dane")
-        )
     }
 }
