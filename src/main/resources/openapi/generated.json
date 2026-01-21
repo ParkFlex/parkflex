@@ -1231,7 +1231,7 @@
                     "mail": {
                         "type": "string"
                     },
-                    "currentPenaltyModel": {
+                    "currentPenalty": {
                         "type": "object",
                         "properties": {
                             "id": {
