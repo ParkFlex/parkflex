@@ -56,33 +56,44 @@ fun Route.registerRoute() {
         val password = req.password
         val plate = UserRepository.normalizePlate(req.plate)
         if (name.isBlank() || email.isBlank() || password.isBlank() || plate.isBlank()) {
-            call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawne dane w request: brakujace pola", "/api/register"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiErrorModel("Niepoprawne dane w request: brakujace pola", "/api/register")
+            )
             return@post
         }
 
         if (!UserRepository.isPlateValid(plate)) {
-            call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawny format tablicy rejestracyjnej", "/api/register"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiErrorModel("Niepoprawny format tablicy rejestracyjnej", "/api/register")
+            )
             return@post
         }
 
-        val existing =
-            runDB {
-                UserEntity.find { UserTable.mail eq email }.firstOrNull()
-            }
+        val emailClashes = runDB { UserEntity.find { UserTable.mail eq email }.any() }
 
-        if (existing != null) {
-            call.respond(HttpStatusCode.Conflict, ApiErrorModel("Użytkownik już istnieje", "/api/register"))
+        if (emailClashes) {
+            call.respond(HttpStatusCode.Conflict, ApiErrorModel("Adres e-mail jest już w użyciu", "/api/register"))
             return@post
         }
 
-        runDB {
-            UserRepository.unsafeCreateUser(email, name, password, "user", plate)
+        val plateClashes = runDB { UserEntity.find { UserTable.plate eq plate }.any() }
+
+        if (plateClashes) {
+            call.respond(
+                HttpStatusCode.Conflict,
+                ApiErrorModel("Podana tablica rejestracja jest już w użyciu", "/api/register")
+            )
+            return@post
         }
 
-        val created =
+
+        val created = runCatching {
             runDB {
-                UserEntity.find { UserTable.mail eq email }.firstOrNull()
+                UserRepository.unsafeCreateUser(email, name, password, "user", plate)
             }
+        }.getOrNull()
 
         if (created == null) {
             call.respond(
@@ -144,7 +155,10 @@ fun Route.patchAccountRoute() {
         val updated = runDB { UserEntity.findById(userId) }
 
         if (updated == null) {
-            call.respond(HttpStatusCode.InternalServerError, ApiErrorModel("Użytkownik nie odnaleziony po aktualizacji", "/api/account"))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                ApiErrorModel("Użytkownik nie odnaleziony po aktualizacji", "/api/account")
+            )
             return@patch
         }
 
@@ -160,6 +174,7 @@ fun Route.patchAccountRoute() {
         call.respond(HttpStatusCode.OK, userModel)
     }
 }
+
 fun Route.loginRoute() {
     post {
         val req =
@@ -172,7 +187,10 @@ fun Route.loginRoute() {
         val email = req.email
         val password = req.password
         if (email.isBlank() || password.isBlank()) {
-            call.respond(HttpStatusCode.BadRequest, ApiErrorModel("Niepoprawne dane w request: brakujace pola", "/api/login"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiErrorModel("Niepoprawne dane w request: brakujace pola", "/api/login")
+            )
             return@post
         }
         val user =
@@ -193,7 +211,7 @@ fun Route.loginRoute() {
             call.respond(HttpStatusCode.Unauthorized, ApiErrorModel("Nieprawidłowy email lub hasło", "/api/login"))
             return@post
         }
-        
+
         val token = parkflex.repository.JwtRepository.generateToken(user.id.value, user.mail, user.role)
 
         val userModel =
@@ -205,5 +223,5 @@ fun Route.loginRoute() {
                 plate = user.plate,
             )
         call.respond(HttpStatusCode.OK, LoginResponse(token, userModel))
-    }   
+    }
 }
