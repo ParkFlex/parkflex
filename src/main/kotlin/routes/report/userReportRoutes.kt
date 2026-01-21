@@ -49,6 +49,16 @@ fun Route.userReportRoutes() {
             return@post
         }
 
+        val currentReservation = runDB { ReservationRepository.getInProgress(user.id.value) }
+            ?: run {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = ApiErrorModel("No reservation in progress", "POST /report")
+                )
+                return@post
+
+            }
+
         runDB {
             ReportEntity.new {
                 this.plate = plate
@@ -59,16 +69,6 @@ fun Route.userReportRoutes() {
                 this.timestamp = LocalDateTime.now()
             }
         }
-
-        val currentReservation = runDB { ReservationRepository.getInProgress(user.id.value) }
-            ?: run {
-                call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = ApiErrorModel("No reservation in progress", "POST /report")
-                )
-                return@post
-
-            }
 
         val firstSpot = runDB { SpotRepository.getFirstFree(currentReservation.start, currentReservation.end()) }
 
