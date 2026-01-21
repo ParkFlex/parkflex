@@ -177,7 +177,7 @@ class HistoryRoutesTest {
 
         assertEquals(HttpStatusCode.OK, postResponse.status)
 
-        delay(200)
+        delay(400)
 
         val getResponse = client.get("/api/historyEntry") {
             header(HttpHeaders.Authorization, "Bearer $token")
