@@ -1,7 +1,6 @@
 package parkflex.models.admin
 
 import kotlinx.serialization.Serializable
-import parkflex.models.admin.PenaltyModel
 
 @Serializable
 data class UserListEntry(
@@ -10,7 +9,7 @@ data class UserListEntry(
     val role: String,
     val name: String,
     val mail: String,
-    val currentPenaltyModel: PenaltyModel?,
+    val currentPenalty: PenaltyModel?,
     val numberOfPastReservations: Long,
     val numberOfFutureReservations: Long,
     val numberOfPastBans: Long,

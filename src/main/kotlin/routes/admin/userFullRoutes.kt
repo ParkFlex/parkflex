@@ -1,6 +1,5 @@
 package parkflex.routes.admin
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import parkflex.db.UserEntity
@@ -66,7 +65,7 @@ fun Route.userFullRoutes() {
                     role = entry.role,
                     name = entry.fullName,
                     mail = entry.mail,
-                    currentPenaltyModel = currentPenalty,
+                    currentPenalty = currentPenalty,
                     numberOfPastReservations = numberOfPastReservations,
                     numberOfFutureReservations = numberOfFutureReservations,
                     numberOfPastBans = numberOfPastBans,
