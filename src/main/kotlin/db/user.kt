@@ -18,7 +18,7 @@ object UserTable : LongIdTable("user") {
     val hash = text("hash")
     
     /** License plate number associated with the user's vehicle */
-    val plate = text("plate")
+    val plate = text("plate").uniqueIndex()
     
     /** User role (e.g., "admin", "user") */
     val role = text("role")

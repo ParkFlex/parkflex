@@ -13,10 +13,20 @@ import parkflex.models.report.ReportEntryModel
 import parkflex.repository.ReservationRepository
 import parkflex.repository.SpotRepository
 import parkflex.runDB
+import parkflex.utils.currentUserEntity
 import java.time.LocalDateTime
 
 fun Route.userReportRoutes() {
     post {
+        val user = call.currentUserEntity() ?: run {
+            call.respond(
+                status = HttpStatusCode.Unauthorized,
+                message = ApiErrorModel("No user in context", "POST /report")
+            )
+
+            return@post
+        }
+
         val entry = call.receive<ReportEntryModel>()
 
         val plate = entry.plate
@@ -45,12 +55,12 @@ fun Route.userReportRoutes() {
                 this.description = description
                 this.image = image
                 this.reviewed = false
-                this.submitter = parkflex.db.UserEntity.findById(2)!! // TODO change after auth
-                this.timestamp = java.time.LocalDateTime.now()
+                this.submitter = user
+                this.timestamp = LocalDateTime.now()
             }
         }
 
-        val currentReservation = runDB { ReservationRepository.getInProgress(2) } // TODO change after auth
+        val currentReservation = runDB { ReservationRepository.getInProgress(user.id.value) }
             ?: run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
