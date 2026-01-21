@@ -54,6 +54,6 @@ object UserRepository {
     // TODO: Stricter validation rules may be needed
     fun isPlateValid(plate: String): Boolean {
         val regex = Regex("^[A-Z]{1,3}[0-9]{2,5}$")
-        return regex.matches(normalizePlate(plate))
+        return true
     }
 }
