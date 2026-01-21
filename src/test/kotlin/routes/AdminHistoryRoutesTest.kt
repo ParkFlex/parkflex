@@ -1,7 +1,10 @@
 package parkflex.routes
 
+import adminToken
 import io.ktor.client.call.body
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -11,6 +14,7 @@ import parkflex.configureTest
 import parkflex.db.*
 import parkflex.models.admin.AdminHistoryEntryModel
 import io.ktor.server.routing.routing
+import newAdmmin
 import parkflex.db.configDataBase.setupTestDB
 import parkflex.routes.admin.adminHistoryRoutes
 import testingClient
@@ -20,24 +24,24 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class AdminHistoryRoutesTest {
-
-
-    private val url = "/history"
+    private val url = "/api/admin/users/history"
 
     @Test
     fun `test admin history returns empty list when no reservations`() = testApplication {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing { adminHistoryRoutes() }
         }
         val client = testingClient()
 
         newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
+            newAdmmin()
         }
 
-        val response = client.get(url)
+        val response = client.get(url) {
+            bearerAuth(adminToken())
+        }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
@@ -50,12 +54,13 @@ class AdminHistoryRoutesTest {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing { adminHistoryRoutes() }
         }
         val client = testingClient()
 
         newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
+
+            newAdmmin()
 
             val user = UserEntity.new {
                 fullName = "Admin History User"
@@ -75,7 +80,9 @@ class AdminHistoryRoutesTest {
             }
         }
 
-        val response = client.get(url)
+        val response = client.get(url) {
+            bearerAuth(adminToken())
+        }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
@@ -88,12 +95,13 @@ class AdminHistoryRoutesTest {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing { adminHistoryRoutes() }
         }
         val client = testingClient()
 
         newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
+
+            newAdmmin()
 
             val userOk = UserEntity.new {
                 fullName = "User OK"
@@ -137,7 +145,9 @@ class AdminHistoryRoutesTest {
             }
         }
 
-        val response = client.get(url)
+        val response = client.get(url) {
+            bearerAuth(adminToken())
+        }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
@@ -153,7 +163,6 @@ class AdminHistoryRoutesTest {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing { adminHistoryRoutes() }
         }
         val client = testingClient()
 
@@ -163,6 +172,8 @@ class AdminHistoryRoutesTest {
 
         val expectedSpotId = newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ParameterTable)
+
+            newAdmmin()
 
             val user = UserEntity.new {
                 fullName = "Full Data User"
@@ -184,7 +195,9 @@ class AdminHistoryRoutesTest {
             spot.id.value.toInt()
         }
 
-        val response = client.get(url)
+        val response = client.get(url) {
+            bearerAuth(adminToken())
+        }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
