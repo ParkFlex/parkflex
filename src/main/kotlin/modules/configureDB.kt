@@ -119,7 +119,7 @@ suspend fun Application.configureDB(config: Config, db: Database? = null) {
                 fullName = "Admin Adminowski",
                 password = config.adminData.second,
                 role = "admin",
-                plate = ""
+                plate = "W1-ADMIN"
             )
         }
 
