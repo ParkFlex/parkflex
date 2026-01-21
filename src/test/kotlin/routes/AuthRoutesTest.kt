@@ -58,7 +58,7 @@ class AuthRoutesTest {
     }
 
     @Test
-    fun `test register user already exists`() = testApplication {
+    fun `test register email already used`() = testApplication {
         val db = setupTestDB()
         application { configureTest(db) }
         val client = testingClient()
@@ -80,7 +80,39 @@ class AuthRoutesTest {
         }
 
         assertEquals(HttpStatusCode.Conflict, response.status)
-        assertEquals("Użytkownik już istnieje", response.body<ApiErrorModel>().message)
+        assertEquals("Adres e-mail jest już w użyciu", response.body<ApiErrorModel>().message)
+    }
+
+    @Test
+    fun `test register plate already used`() = testApplication {
+        val db = setupTestDB()
+        application { configureTest(db) }
+        val client = testingClient()
+
+        val plate = "WR12345"
+
+        newSuspendedTransaction(db = db) {
+            SchemaUtils.create(UserTable)
+            UserTable.deleteAll()
+
+            UserEntity.new {
+                this.fullName = "Old User"
+                this.mail = "ziutek1@parkflex.pl"
+                this.hash = "hash"
+                this.plate = plate
+                this.role = "user"
+            }
+        }
+
+        val registerReq = RegisterRequest("Nowy", "ziutek2@parkflex.pl", "pass", plate)
+
+        val response = client.post("api/register") {
+            contentType(ContentType.Application.Json)
+            setBody(registerReq)
+        }
+
+        assertEquals(HttpStatusCode.Conflict, response.status)
+        assertEquals("Podana tablica rejestracja jest już w użyciu", response.body<ApiErrorModel>().message)
     }
 
     @Test
