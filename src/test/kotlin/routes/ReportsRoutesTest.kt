@@ -1,6 +1,6 @@
 package parkflex.routes
 
-import db.configDataBase.setupTestDB
+import adminToken
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
@@ -8,11 +8,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
+import newAdmmin
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.junit.jupiter.api.Test
 import parkflex.configureTest
 import parkflex.db.*
+import parkflex.db.configDataBase.setupTestDB
 import parkflex.models.ApiErrorModel
 import parkflex.models.admin.AdminReportEntry
 import parkflex.repository.JwtRepository
@@ -25,34 +27,22 @@ import kotlin.test.assertTrue
 
 class ReportsRoutesTest {
 
-    private val url = "/reports"
+    private val url = "/api/admin/reports"
 
     @Test
     fun `test reports returns empty list when no reports`() = testApplication {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing {
-                route(url) { reportsRoutes() }
-            }
         }
         val client = testingClient()
 
-        val adminId = newSuspendedTransaction(db = db) {
+        newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, ReportTable)
-
-            UserEntity.new {
-                fullName = "Admin"
-                mail = "admin@pf.pl"
-                hash = "h"
-                plate = "ADMIN-001"
-                role = "admin"
-            }.id.value
+            newAdmmin()
         }
 
-        val token = JwtRepository.generateToken(adminId, "admin@pf.pl", "admin")
-
-        val response = client.get(url) { bearerAuth(token) }
+        val response = client.get(url) { bearerAuth(adminToken()) }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
@@ -65,24 +55,15 @@ class ReportsRoutesTest {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing {
-                route(url) { reportsRoutes() }
-            }
         }
         val client = testingClient()
 
         val now = LocalDateTime.now()
 
-        val adminId = newSuspendedTransaction(db = db) {
+        newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, ReportTable)
 
-            val admin = UserEntity.new {
-                fullName = "Admin"
-                mail = "admin2@pf.pl"
-                hash = "h"
-                plate = "ADMIN-002"
-                role = "admin"
-            }
+            newAdmmin()
 
             val submitter = UserEntity.new {
                 fullName = "Report Submitter"
@@ -101,13 +82,9 @@ class ReportsRoutesTest {
                 reviewed = false
                 penalty = null
             }
-
-            admin.id.value
         }
 
-        val token = JwtRepository.generateToken(adminId, "admin2@pf.pl", "admin")
-
-        val response = client.get(url) { bearerAuth(token) }
+        val response = client.get(url) { bearerAuth(adminToken()) }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
@@ -129,24 +106,15 @@ class ReportsRoutesTest {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing {
-                route(url) { reportsRoutes() }
-            }
         }
         val client = testingClient()
 
         val now = LocalDateTime.now()
 
-        val adminId = newSuspendedTransaction(db = db) {
+        newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, SpotTable, ReservationTable, PenaltyTable, ReportTable, ParameterTable)
 
-            val admin = UserEntity.new {
-                fullName = "Admin"
-                mail = "admin3@pf.pl"
-                hash = "h"
-                plate = "ADMIN-003"
-                role = "admin"
-            }
+            newAdmmin()
 
             val submitter = UserEntity.new {
                 fullName = "Report Submitter"
@@ -190,13 +158,9 @@ class ReportsRoutesTest {
                 reviewed = false
                 this.penalty = penalty
             }
-
-            admin.id.value
         }
 
-        val token = JwtRepository.generateToken(adminId, "admin3@pf.pl", "admin")
-
-        val response = client.get(url) { bearerAuth(token) }
+        val response = client.get(url) { bearerAuth(adminToken()) }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
@@ -219,25 +183,16 @@ class ReportsRoutesTest {
         val db = setupTestDB()
         application {
             configureTest(db)
-            routing {
-                route(url) { reportsRoutes() }
-            }
         }
         val client = testingClient()
 
         val older = LocalDateTime.now().minusDays(1)
         val newer = LocalDateTime.now()
 
-        val adminId = newSuspendedTransaction(db = db) {
+        newSuspendedTransaction(db = db) {
             SchemaUtils.create(UserTable, ReportTable)
 
-            val admin = UserEntity.new {
-                fullName = "Admin"
-                mail = "admin4@pf.pl"
-                hash = "h"
-                plate = "ADMIN-004"
-                role = "admin"
-            }
+            newAdmmin()
 
             val submitter = UserEntity.new {
                 fullName = "Report Submitter"
@@ -266,13 +221,9 @@ class ReportsRoutesTest {
                 reviewed = true
                 penalty = null
             }
-
-            admin.id.value
         }
 
-        val token = JwtRepository.generateToken(adminId, "admin4@pf.pl", "admin")
-
-        val response = client.get(url) { bearerAuth(token) }
+        val response = client.get(url) { bearerAuth(adminToken()) }
 
         assertEquals(HttpStatusCode.OK, response.status)
 
