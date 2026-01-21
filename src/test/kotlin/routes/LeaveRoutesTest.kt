@@ -63,7 +63,7 @@ class LeaveRoutesTest {
             bearerAuth(dummyToken(2))
         }
 
-        delay(500) // wait for the db to update the field
+        delay(1000) // wait for the db to update the field
 
         // check that we filled the `left` col
         val left = newSuspendedTransaction(db = db) {
